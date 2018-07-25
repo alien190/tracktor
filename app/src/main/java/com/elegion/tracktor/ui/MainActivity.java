@@ -14,9 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
