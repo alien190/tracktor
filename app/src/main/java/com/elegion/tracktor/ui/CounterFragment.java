@@ -16,7 +16,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.event.StartRouteEvent;
+import com.elegion.tracktor.event.StopRouteEvent;
 import com.elegion.tracktor.viewmodel.CounterViewModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,10 +56,12 @@ public class CounterFragment extends Fragment {
     @OnClick(R.id.buttonStart)
     void onStartClick() {
         viewModel.startTimer();
+        EventBus.getDefault().post(new StartRouteEvent());
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         viewModel.stopTimer();
+        EventBus.getDefault().post(new StopRouteEvent());
     }
 }
