@@ -14,17 +14,24 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     public static final int LOCATION_REQUEST_CODE = 99;
+    private GoogleMap mMap;
 
-    @BindView(R.id.counterContainer) FrameLayout counterContainer;
+    @BindView(R.id.counterContainer)
+    FrameLayout counterContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (savedInstanceState == null) {
+
+            SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            supportMapFragment.getMapAsync(this);
+            supportMapFragment.setRetainInstance(true);
+
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.counterContainer, new CounterFragment())
@@ -61,9 +73,22 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        initMap();
+    }
+
     private void initMap() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
-            Toast.makeText(this, "Разрешения получены!", Toast.LENGTH_SHORT).show();
+            mMap.setMyLocationEnabled(true);
+            mMap.setOnMyLocationButtonClickListener(this);
         } else {
             new AlertDialog.Builder(this)
                     .setTitle("Запрос разрешений на получение местоположения")
@@ -88,4 +113,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
