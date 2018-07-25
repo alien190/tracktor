@@ -26,6 +26,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
     public static final int UPDATE_MIN_DIASTANCE = 10;
     public static final int DEFAULT_ZOOM = 15;
 
+    private Location mLastLocation;
+
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest = new LocationRequest();
@@ -48,10 +51,16 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult != null && mMap != null) {
-                mMap.clear();
-                Location location = locationResult.getLastLocation();
-                LatLng position = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(position).title(getString(R.string.position)));
+                if (mLastLocation != null) {
+                   Location newLocation = locationResult.getLastLocation();
+                   mMap.addPolyline(new PolylineOptions().add(
+                           new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()),
+                           new LatLng(newLocation.getLatitude(), newLocation.getLongitude())));
+                }
+                 //   mMap.clear();
+                mLastLocation = locationResult.getLastLocation();
+                LatLng position = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                //mMap.addMarker(new MarkerOptions().position(position).title(getString(R.string.position)));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM));
             }
         }
