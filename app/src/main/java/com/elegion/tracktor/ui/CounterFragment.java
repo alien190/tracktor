@@ -1,9 +1,6 @@
 package com.elegion.tracktor.ui;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,9 +15,12 @@ import android.widget.TextView;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.event.StartRouteEvent;
 import com.elegion.tracktor.event.StopRouteEvent;
+import com.elegion.tracktor.utils.StringUtils;
 import com.elegion.tracktor.viewmodel.CounterViewModel;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,10 +28,14 @@ import butterknife.OnClick;
 
 public class CounterFragment extends Fragment {
 
-    @BindView(R.id.tvTime) TextView tvTime;
-    @BindView(R.id.tvDistance) TextView tvDistance;
-    @BindView(R.id.buttonStart) Button buttonStart;
-    @BindView(R.id.buttonStop) Button buttonStop;
+    @BindView(R.id.tvTime)
+    TextView tvTime;
+    @BindView(R.id.tvDistance)
+    TextView tvDistance;
+    @BindView(R.id.buttonStart)
+    Button buttonStart;
+    @BindView(R.id.buttonStop)
+    Button buttonStop;
 
     private CounterViewModel viewModel;
 
@@ -46,6 +50,7 @@ public class CounterFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
+        viewModel.getDistance().observe(this, (d) -> tvDistance.setText(StringUtils.convertDistance(d)));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         viewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
 
@@ -62,6 +67,6 @@ public class CounterFragment extends Fragment {
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         viewModel.stopTimer();
-        EventBus.getDefault().post(new StopRouteEvent());
+        EventBus.getDefault().post(new StopRouteEvent(viewModel.getTimeText().getValue(), viewModel.getDistance().getValue()));
     }
 }

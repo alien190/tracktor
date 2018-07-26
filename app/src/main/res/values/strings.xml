@@ -7,4 +7,5 @@
     <string name="statistic">Статистика</string>
     <string name="settings">Настройки</string>
     <string name="position">Текущее местоположение</string>
+    <string name="distance_meters">м</string>
 </resources>

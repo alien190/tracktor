@@ -1,6 +1,7 @@
 package com.elegion.tracktor.ui;
 
 import android.Manifest;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.event.AddPointToRouteEvent;
 import com.elegion.tracktor.event.StartRouteEvent;
 import com.elegion.tracktor.event.StopRouteEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,9 +49,10 @@ public class MainActivity extends AppCompatActivity implements
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;
     public static final int DEFAULT_ZOOM = 15;
+    public static final String STOP_ROUTE_EVENT = "StopRouteEvent";
 
-    private Location mLastLocation;
-    private List<LatLng> mRoute = new ArrayList<>();
+    private LatLng mLastPosition;
+    //private List<LatLng> mRoute = new ArrayList<>();
     private boolean isRouteStarted;
 
     private GoogleMap mMap;
@@ -59,17 +62,21 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult != null && mMap != null) {
-                if (mLastLocation != null && isRouteStarted) {
+                if (mLastPosition != null && isRouteStarted) {
                     Location newLocation = locationResult.getLastLocation();
-                    LatLng newPosition = new LatLng(newLocation.getLatitude(), newLocation.getLongitude());
-                    mMap.addPolyline(new PolylineOptions().add(
-                            new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), newPosition));
-                    mRoute.add(newPosition);
+                    LatLng newPosition = new LatLng(newLocation.getLatitude(),
+                            newLocation.getLongitude());
+                    mMap.addPolyline(new PolylineOptions().add(mLastPosition, newPosition)
+                            .color(ContextCompat.getColor(getApplicationContext(),
+                                    R.color.colorRouteLine)));
+                    //mRoute.add(newPosition);
+                    EventBus.getDefault().post(new AddPointToRouteEvent(newPosition));
                 }
-                //   mMap.clear();
-                mLastLocation = locationResult.getLastLocation();
-                LatLng position = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(position, DEFAULT_ZOOM));
+                Location lastLocation = locationResult.getLastLocation();
+                mLastPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+                //LatLng position = new LatLng(mLastPosition.getLatitude(), mLastPosition.getLongitude());
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLastPosition, DEFAULT_ZOOM));
+
             }
         }
     };
@@ -142,14 +149,20 @@ public class MainActivity extends AppCompatActivity implements
         if (mMap != null) {
             mMap.clear();
         }
-        mRoute.clear();
+        //mRoute.clear();
         isRouteStarted = true;
+        EventBus.getDefault().post(new AddPointToRouteEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStopRoute(StopRouteEvent event) {
         isRouteStarted = false;
         Toast.makeText(this, "В будущем Ваш маршрут будет сохранен", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ResultActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(STOP_ROUTE_EVENT, event);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     @Override
