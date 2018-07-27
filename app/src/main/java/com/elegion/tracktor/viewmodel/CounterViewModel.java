@@ -30,6 +30,7 @@ public class CounterViewModel extends ViewModel {
     private MutableLiveData<Double> mDistance = new MutableLiveData<>();
     private Disposable timerDisposable;
     private List<LatLng> mRoute = new ArrayList<>();
+    private LatLng mLastPoint;
 
 
     public CounterViewModel() {
@@ -65,17 +66,19 @@ public class CounterViewModel extends ViewModel {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddPointToRouteEvent(NewPointFromLocationClientEvent event) {
+    public void onNewPointFromLocationClientEvent(NewPointFromLocationClientEvent event) {
+        mLastPoint = event.location;
+
         //mDistanceText.postValue(event.location.toString());
-        mRoute.add(event.location);
-        if (mRoute.size() >= 2) {
-            Double distance = mDistance.getValue();
-//            distance = SphericalUtil.computeLength(mRoute);
-            distance = distance +
-                    SphericalUtil.computeDistanceBetween(mRoute.get(mRoute.size() - 1),
-                            mRoute.get(mRoute.size() - 2));
-            mDistance.postValue(distance);
-        }
+//        mRoute.add(event.location);
+//        if (mRoute.size() >= 2) {
+//            Double distance = mDistance.getValue();
+////            distance = SphericalUtil.computeLength(mRoute);
+//            distance = distance +
+//                    SphericalUtil.computeDistanceBetween(mRoute.get(mRoute.size() - 1),
+//                            mRoute.get(mRoute.size() - 2));
+//            mDistance.postValue(distance);
+//        }
     }
 
     public MutableLiveData<String> getTimeText() {
