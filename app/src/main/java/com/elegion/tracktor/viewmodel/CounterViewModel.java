@@ -3,8 +3,7 @@ package com.elegion.tracktor.viewmodel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.elegion.tracktor.R;
-import com.elegion.tracktor.event.AddPointToRouteEvent;
+import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -61,7 +60,7 @@ public class CounterViewModel extends ViewModel {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAddPointToRouteEvent(AddPointToRouteEvent event) {
+    public void onAddPointToRouteEvent(NewPointFromLocationClientEvent event) {
         //mDistanceText.postValue(event.location.toString());
         mRoute.add(event.location);
         if(mRoute.size() >= 2) {

@@ -14,7 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.event.AddPointToRouteEvent;
+import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.event.StartRouteEvent;
 import com.elegion.tracktor.event.StopRouteEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -22,19 +22,14 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,23 +56,30 @@ public class MainActivity extends AppCompatActivity implements
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if (locationResult != null && mMap != null) {
-                if (mLastPosition != null && isRouteStarted) {
-                    Location newLocation = locationResult.getLastLocation();
-                    LatLng newPosition = new LatLng(newLocation.getLatitude(),
-                            newLocation.getLongitude());
-                    mMap.addPolyline(new PolylineOptions().add(mLastPosition, newPosition)
-                            .color(ContextCompat.getColor(getApplicationContext(),
-                                    R.color.colorRouteLine)));
-                    //mRoute.add(newPosition);
-                    EventBus.getDefault().post(new AddPointToRouteEvent(newPosition));
-                }
-                Location lastLocation = locationResult.getLastLocation();
-                mLastPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                //LatLng position = new LatLng(mLastPosition.getLatitude(), mLastPosition.getLongitude());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLastPosition, DEFAULT_ZOOM));
-
+            if(locationResult!= null) {
+                Location location = locationResult.getLastLocation();
+                LatLng latLng = new LatLng(location.getLatitude(),
+                        location.getLongitude());
+                EventBus.getDefault().post(new NewPointFromLocationClientEvent(latLng));
             }
+
+//            if (locationResult != null && mMap != null) {
+//                if (mLastPosition != null && isRouteStarted) {
+//                    Location newLocation = locationResult.getLastLocation();
+//                    LatLng newPosition = new LatLng(newLocation.getLatitude(),
+//                            newLocation.getLongitude());
+//                    mMap.addPolyline(new PolylineOptions().add(mLastPosition, newPosition)
+//                            .color(ContextCompat.getColor(getApplicationContext(),
+//                                    R.color.colorRouteLine)));
+//                    //mRoute.add(newPosition);
+//                    EventBus.getDefault().post(new NewPointFromLocationClientEvent(newPosition));
+//                }
+//                Location lastLocation = locationResult.getLastLocation();
+//                mLastPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                //LatLng position = new LatLng(mLastPosition.getLatitude(), mLastPosition.getLongitude());
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLastPosition, DEFAULT_ZOOM));
+//
+//            }
         }
     };
 
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         //mRoute.clear();
         isRouteStarted = true;
-        EventBus.getDefault().post(new AddPointToRouteEvent(mLastPosition));
+        EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
