@@ -80,9 +80,11 @@ public class CounterViewModel extends ViewModel {
             mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
                     totalSeconds));
             SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
-            mDistance += newSegment.getSegmentDistance();
-            mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
-            EventBus.getDefault().post(newSegment);
+            if (newSegment != null) {
+                mDistance += newSegment.getSegmentDistance();
+                mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
+                EventBus.getDefault().post(newSegment);
+            }
         }
     }
 
