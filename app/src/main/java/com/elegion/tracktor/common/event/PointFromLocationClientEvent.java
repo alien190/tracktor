@@ -2,10 +2,10 @@ package com.elegion.tracktor.common.event;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class NewPointFromLocationClientEvent {
+public class PointFromLocationClientEvent {
     public LatLng location;
 
-    public NewPointFromLocationClientEvent(LatLng location) {
+    public PointFromLocationClientEvent(LatLng location) {
         this.location = location;
     }
 }

@@ -14,7 +14,8 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
+import com.elegion.tracktor.common.event.PointFromLocationClientEvent;
+import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.ui.result.ResultActivity;
@@ -23,10 +24,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final String STOP_ROUTE_EVENT = "StopRouteEvent";
 
     private LatLng mLastPosition;
-    //private List<LatLng> mRoute = new ArrayList<>();
     private boolean isRouteStarted;
 
     private GoogleMap mMap;
@@ -57,35 +59,29 @@ public class MainActivity extends AppCompatActivity implements
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if(locationResult!= null) {
+            if (locationResult != null) {
                 Location location = locationResult.getLastLocation();
                 mLastPosition = new LatLng(location.getLatitude(),
                         location.getLongitude());
-                if(isRouteStarted) {
-                    EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
+                if (isRouteStarted) {
+                    EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
                 }
             }
-
-//            if (locationResult != null && mMap != null) {
-//                if (mLastPosition != null && isRouteStarted) {
-//                    Location newLocation = locationResult.getLastLocation();
-//                    LatLng newPosition = new LatLng(newLocation.getLatitude(),
-//                            newLocation.getLongitude());
-//                    mMap.addPolyline(new PolylineOptions().add(mLastPosition, newPosition)
-//                            .color(ContextCompat.getColor(getApplicationContext(),
-//                                    R.color.colorRouteLine)));
-//                    //mRoute.add(newPosition);
-//                    EventBus.getDefault().post(new NewPointFromLocationClientEvent(newPosition));
-//                }
-//                Location lastLocation = locationResult.getLastLocation();
-//                mLastPosition = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-//                //LatLng position = new LatLng(mLastPosition.getLatitude(), mLastPosition.getLongitude());
-//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLastPosition, DEFAULT_ZOOM));
-//
-//            }
         }
     };
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAddSegmentToMap(SegmentForRouteEvent segmentForRouteEvent) {
+        if (mMap != null) {
+            mMap.addPolyline(new PolylineOptions().add(segmentForRouteEvent.points.first.point,
+                    segmentForRouteEvent.points.second.point)
+                    .color(ContextCompat.getColor(getApplicationContext(),
+                            R.color.colorRouteLine)));
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(segmentForRouteEvent.points.second.point,
+                    DEFAULT_ZOOM));
+        }
+    }
 
     @BindView(R.id.counterContainer)
     FrameLayout counterContainer;
@@ -155,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements
             mMap.clear();
         }
         isRouteStarted = true;
-        EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
+        EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

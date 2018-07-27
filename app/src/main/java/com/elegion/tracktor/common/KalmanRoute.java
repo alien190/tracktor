@@ -1,5 +1,8 @@
 package com.elegion.tracktor.common;
 
+import android.util.Pair;
+
+import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -40,4 +43,14 @@ public class KalmanRoute {
     public String toString() {
         return StringUtils.getLocationDataText(mRoutePoints);
     }
+
+    public SegmentForRouteEvent getLastSegment() {
+        int size = mRoutePoints.size();
+        if (size > 1) {
+            return new SegmentForRouteEvent(new Pair<>(mRoutePoints.get(size - 2),
+                    mRoutePoints.get(size - 1)));
+        } else return null;
+    }
+
+
 }

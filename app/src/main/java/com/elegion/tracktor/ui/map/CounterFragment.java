@@ -44,7 +44,7 @@ public class CounterFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
-        viewModel.getDistance().observe(this, (d) -> tvDistance.setText(StringUtils.getDistanceText(d)));
+        viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         viewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
 
