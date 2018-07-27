@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui;
+package com.elegion.tracktor.ui.map;
 
 import android.Manifest;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.ui.result.ResultActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

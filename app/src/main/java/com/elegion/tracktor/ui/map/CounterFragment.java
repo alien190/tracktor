@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui;
+package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.utils.StringUtils;
-import com.elegion.tracktor.viewmodel.CounterViewModel;
+import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

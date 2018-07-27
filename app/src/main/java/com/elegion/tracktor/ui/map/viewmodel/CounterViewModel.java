@@ -1,8 +1,7 @@
-package com.elegion.tracktor.viewmodel;
+package com.elegion.tracktor.ui.map.viewmodel;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.widget.LinearLayout;
 
 import com.elegion.tracktor.common.RawLocationData;
 import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
