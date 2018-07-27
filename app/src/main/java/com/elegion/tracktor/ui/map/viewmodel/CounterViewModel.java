@@ -34,7 +34,7 @@ public class CounterViewModel extends ViewModel {
     //private LatLng mLastPoint;
     private List<LocationData> mRawLocationData = new ArrayList<>();
     private int mTotalSecond;
-    private KalmanRoute mKalmanRoute = new KalmanRoute();
+    private KalmanRoute mKalmanRoute;
 
 
     public CounterViewModel() {
@@ -48,6 +48,7 @@ public class CounterViewModel extends ViewModel {
 
         mRawLocationData.clear();
         mRoute.clear();
+        mKalmanRoute = new KalmanRoute();
         mDistance.postValue(0.0);
         mTotalSecond = 0;
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
