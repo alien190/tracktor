@@ -8,4 +8,6 @@
     <string name="settings">Настройки</string>
     <string name="position">Текущее местоположение</string>
     <string name="distance_meters">м</string>
+    <string name="shareRawData">Поделиться сырыми данными</string>
+    <string name="noRawData">Список с сырыми данными пуст</string>
 </resources>

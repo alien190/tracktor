@@ -1,5 +1,8 @@
 package com.elegion.tracktor.utils;
 
+import com.elegion.tracktor.common.RawLocationData;
+
+import java.util.List;
 import java.util.Locale;
 
 public class StringUtils {
@@ -13,5 +16,16 @@ public class StringUtils {
         long seconds = totalSeconds % 60;
 
         return String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    public static String getLocationDataText(List<RawLocationData> rawLocationData) {
+        StringBuilder resultBuilder = new StringBuilder();
+        for (RawLocationData locationData:rawLocationData) {
+            resultBuilder.append(locationData.timeSeconds).append(',')
+                    .append(locationData.point.latitude).append(',')
+                    .append(locationData.point.longitude).append('\n');
+        }
+
+        return resultBuilder.toString();
     }
 }
