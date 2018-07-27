@@ -58,8 +58,15 @@ public class CounterViewModel extends ViewModel {
     }
 
     public void stopTimer() {
+        StringBuilder locationDataBuilder = new StringBuilder();
+
+        locationDataBuilder.append("Сырые данные:\n");
+        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
+        locationDataBuilder.append("Отфильтрованные данные:\n");
+        locationDataBuilder.append(mKalmanRoute.toString());
+
         EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(),
-                StringUtils.getLocationDataText(mRawLocationData)));
+                locationDataBuilder.toString()));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
         timerDisposable.dispose();
