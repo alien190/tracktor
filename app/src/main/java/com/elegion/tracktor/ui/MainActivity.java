@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if(locationResult!= null) {
+            if(locationResult!= null && isRouteStarted) {
                 Location location = locationResult.getLastLocation();
                 LatLng latLng = new LatLng(location.getLatitude(),
                         location.getLongitude());
