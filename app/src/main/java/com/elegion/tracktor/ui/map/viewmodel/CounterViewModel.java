@@ -3,6 +3,7 @@ package com.elegion.tracktor.ui.map.viewmodel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.RawLocationData;
 import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
@@ -33,6 +34,7 @@ public class CounterViewModel extends ViewModel {
     //private LatLng mLastPoint;
     private List<RawLocationData> mRawLocationData = new ArrayList<>();
     private int mTotalSecond;
+    private KalmanRoute mKalmanRoute = new KalmanRoute();
 
 
     public CounterViewModel() {
@@ -65,6 +67,13 @@ public class CounterViewModel extends ViewModel {
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
         timeText.setValue(StringUtils.getTimerText(totalSeconds));
+        onRouteUpdate();
+    }
+
+    private void onRouteUpdate() {
+        if(mRawLocationData.size()!=0) {
+            mKalmanRoute.onRouteUpdate(mRawLocationData.get(mRawLocationData.size()-1).point);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
