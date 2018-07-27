@@ -151,9 +151,7 @@ public class MainActivity extends AppCompatActivity implements
         if (mMap != null) {
             mMap.clear();
         }
-        //mRoute.clear();
         isRouteStarted = true;
-        EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

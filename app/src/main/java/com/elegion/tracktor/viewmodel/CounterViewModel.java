@@ -4,6 +4,8 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
+import com.elegion.tracktor.event.StartRouteEvent;
+import com.elegion.tracktor.event.StopRouteEvent;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -35,6 +37,7 @@ public class CounterViewModel extends ViewModel {
     }
 
     public void startTimer() {
+        EventBus.getDefault().post(new StartRouteEvent());
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
         mRoute.clear();
@@ -43,9 +46,11 @@ public class CounterViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(seconds -> onTimerUpdate(seconds.intValue()));
+
     }
 
     public void stopTimer() {
+        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue()));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
         timerDisposable.dispose();
@@ -63,12 +68,12 @@ public class CounterViewModel extends ViewModel {
     public void onAddPointToRouteEvent(NewPointFromLocationClientEvent event) {
         //mDistanceText.postValue(event.location.toString());
         mRoute.add(event.location);
-        if(mRoute.size() >= 2) {
+        if (mRoute.size() >= 2) {
             Double distance = mDistance.getValue();
 //            distance = SphericalUtil.computeLength(mRoute);
             distance = distance +
-                    SphericalUtil.computeDistanceBetween(mRoute.get(mRoute.size()-1),
-                            mRoute.get(mRoute.size()-2));
+                    SphericalUtil.computeDistanceBetween(mRoute.get(mRoute.size() - 1),
+                            mRoute.get(mRoute.size() - 2));
             mDistance.postValue(distance);
         }
     }

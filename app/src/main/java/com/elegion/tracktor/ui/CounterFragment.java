@@ -61,12 +61,10 @@ public class CounterFragment extends Fragment {
     @OnClick(R.id.buttonStart)
     void onStartClick() {
         viewModel.startTimer();
-        EventBus.getDefault().post(new StartRouteEvent());
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         viewModel.stopTimer();
-        EventBus.getDefault().post(new StopRouteEvent(viewModel.getTimeText().getValue(), viewModel.getDistance().getValue()));
     }
 }
