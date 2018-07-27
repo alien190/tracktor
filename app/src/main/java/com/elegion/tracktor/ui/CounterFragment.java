@@ -13,14 +13,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.event.StartRouteEvent;
-import com.elegion.tracktor.event.StopRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
 import com.elegion.tracktor.viewmodel.CounterViewModel;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +44,7 @@ public class CounterFragment extends Fragment {
 
         viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
-        viewModel.getDistance().observe(this, (d) -> tvDistance.setText(StringUtils.convertDistance(d)));
+        viewModel.getDistance().observe(this, (d) -> tvDistance.setText(StringUtils.getDistanceText(d)));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         viewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
 

@@ -49,7 +49,7 @@ public class ResultFragment extends Fragment {
 
         if(stopRouteEvent != null) {
             tvTime.setText(stopRouteEvent.routeTime);
-            tvDistance.setText(StringUtils.convertDistance(stopRouteEvent.routeDistance));
+            tvDistance.setText(StringUtils.getDistanceText(stopRouteEvent.routeDistance));
         }
 
         return view;

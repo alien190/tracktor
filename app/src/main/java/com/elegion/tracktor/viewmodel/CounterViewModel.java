@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.event.StartRouteEvent;
 import com.elegion.tracktor.event.StopRouteEvent;
+import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
@@ -58,11 +59,7 @@ public class CounterViewModel extends ViewModel {
     }
 
     private void onTimerUpdate(int totalSeconds) {
-        long hours = totalSeconds / 3600;
-        long minutes = (totalSeconds % 3600) / 60;
-        long seconds = totalSeconds % 60;
-
-        timeText.setValue(String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes, seconds));
+        timeText.setValue(StringUtils.getTimerText(totalSeconds));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

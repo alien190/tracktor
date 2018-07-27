@@ -3,7 +3,15 @@ package com.elegion.tracktor.utils;
 import java.util.Locale;
 
 public class StringUtils {
-    public static String convertDistance(Double distance) {
+    public static String getDistanceText(Double distance) {
         return String.format(Locale.ENGLISH, "%.1f m", distance);
+    }
+
+    public static String getTimerText(int totalSeconds) {
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        return String.format(Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes, seconds);
     }
 }
