@@ -36,11 +36,12 @@ public class CounterViewModel extends ViewModel {
     private List<LocationData> mRawLocationData = new ArrayList<>();
     private int mTotalSecond;
     private KalmanRoute mKalmanRoute;
-    private double mDistance;
+    private MutableLiveData<Double> mDistance = new MutableLiveData<>();
 
 
     public CounterViewModel() {
         EventBus.getDefault().register(this);
+        mDistance.observeForever(d -> mDistanceText.postValue(StringUtils.getDistanceText(d)));
     }
 
     public void startTimer() {
@@ -49,7 +50,7 @@ public class CounterViewModel extends ViewModel {
         stopEnabled.postValue(true);
         mRawLocationData.clear();
         mKalmanRoute = new KalmanRoute();
-        mDistance = 0.0;
+        mDistance.setValue(0.0);
         mTotalSecond = 0;
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
@@ -66,7 +67,7 @@ public class CounterViewModel extends ViewModel {
         locationDataBuilder.append("Отфильтрованные данные:\n");
         locationDataBuilder.append(mKalmanRoute.toString());
 
-        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance,
+        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(),
                 locationDataBuilder.toString()));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
@@ -81,8 +82,9 @@ public class CounterViewModel extends ViewModel {
                     totalSeconds));
             SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
             if (newSegment != null) {
-                mDistance += newSegment.getSegmentDistance();
-                mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
+                double distance = mDistance.getValue();
+                distance += newSegment.getSegmentDistance();
+                mDistance.postValue(distance);
                 EventBus.getDefault().post(newSegment);
             }
         }
