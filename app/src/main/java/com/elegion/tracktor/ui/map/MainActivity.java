@@ -61,8 +61,11 @@ public class MainActivity extends AppCompatActivity implements
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult != null) {
                 Location location = locationResult.getLastLocation();
-                mLastPosition = new LatLng(location.getLatitude(),
-                        location.getLongitude());
+                LatLng newPosition = new LatLng(location.getLatitude(),location.getLongitude());
+                if (mLastPosition == null || !isRouteStarted) {
+                    animateCamera(newPosition);
+                }
+                mLastPosition = newPosition;
                 if (isRouteStarted) {
                     EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
                 }
@@ -78,8 +81,7 @@ public class MainActivity extends AppCompatActivity implements
                     .color(ContextCompat.getColor(getApplicationContext(),
                             R.color.colorRouteLine)));
 
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(segmentForRouteEvent.points.second.point,
-                    DEFAULT_ZOOM));
+            animateCamera(segmentForRouteEvent.points.second.point);
         }
     }
 
@@ -206,4 +208,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void animateCamera(LatLng latLng) {
+        if (mMap != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+        }
+    }
 }
