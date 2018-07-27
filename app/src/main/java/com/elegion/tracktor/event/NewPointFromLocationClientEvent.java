@@ -4,10 +4,10 @@ import android.location.Location;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class AddPointToRouteEvent {
+public class NewPointFromLocationClientEvent {
     public LatLng location;
 
-    public AddPointToRouteEvent(LatLng location) {
+    public NewPointFromLocationClientEvent(LatLng location) {
         this.location = location;
     }
 }
