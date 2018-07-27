@@ -1,21 +1,43 @@
 package com.elegion.tracktor.common;
 
-import android.util.Log;
-
+import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class KalmanRoute {
     private static String TAG = "KalmanRouteTAG";
-    private LatLng mLastRawPoint;
+    private double mKoeff;
+    private List<LocationData> mRoutePoints = new ArrayList<>();
 
-    public void onRouteUpdate(LatLng newPoint) {
-        if (mLastRawPoint == null || !mLastRawPoint.equals(newPoint))
-        {
-            mLastRawPoint = newPoint;
-            Log.d(TAG, "onRouteUpdate: " + newPoint.toString());
+    public KalmanRoute(double koeff) {
+        mKoeff = koeff;
+    }
+
+    public KalmanRoute() {
+        mKoeff = 0.1;
+    }
+
+    public void onRouteUpdate(LocationData newPoint) {
+        if (mRoutePoints.size() == 0) {
+            mRoutePoints.add(newPoint);
+        } else {
+            LocationData lastPoint = mRoutePoints.get(mRoutePoints.size() - 1);
+
+            double newPointLat = mKoeff * newPoint.point.latitude
+                    + (1 - mKoeff) * lastPoint.point.latitude;
+
+            double newPointLng = mKoeff * newPoint.point.longitude
+                    + (1 - mKoeff) * lastPoint.point.longitude;
+
+            mRoutePoints.add(new LocationData(new LatLng(newPointLat, newPointLng),
+                    newPoint.timeSeconds));
         }
-        else {
-            Log.d(TAG, "onRouteUpdate: same point");
-        }
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.getLocationDataText(mRoutePoints);
     }
 }

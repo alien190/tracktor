@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.elegion.tracktor.common.KalmanRoute;
-import com.elegion.tracktor.common.RawLocationData;
+import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
@@ -32,7 +32,7 @@ public class CounterViewModel extends ViewModel {
     private Disposable timerDisposable;
     private List<LatLng> mRoute = new ArrayList<>();
     //private LatLng mLastPoint;
-    private List<RawLocationData> mRawLocationData = new ArrayList<>();
+    private List<LocationData> mRawLocationData = new ArrayList<>();
     private int mTotalSecond;
     private KalmanRoute mKalmanRoute = new KalmanRoute();
 
@@ -49,6 +49,7 @@ public class CounterViewModel extends ViewModel {
         mRawLocationData.clear();
         mRoute.clear();
         mDistance.postValue(0.0);
+        mTotalSecond = 0;
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -67,19 +68,20 @@ public class CounterViewModel extends ViewModel {
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
         timeText.setValue(StringUtils.getTimerText(totalSeconds));
-        onRouteUpdate();
+        if (mRawLocationData.size() != 0) {
+            mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
+                    totalSeconds));
+        }
     }
 
     private void onRouteUpdate() {
-        if(mRawLocationData.size()!=0) {
-            mKalmanRoute.onRouteUpdate(mRawLocationData.get(mRawLocationData.size()-1).point);
-        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNewPointFromLocationClientEvent(NewPointFromLocationClientEvent event) {
         //mLastPoint = event.location;
-        mRawLocationData.add(new RawLocationData(event.location, mTotalSecond));
+        mRawLocationData.add(new LocationData(event.location, mTotalSecond));
 
         //mDistanceText.postValue(event.location.toString());
 //        mRoute.add(event.location);
