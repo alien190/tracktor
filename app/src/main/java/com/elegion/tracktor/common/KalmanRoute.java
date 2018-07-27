@@ -16,6 +16,7 @@ public class KalmanRoute {
     private double mKoeff;
     private List<LocationData> mRoutePoints = new ArrayList<>();
     private LocationData lastRawPoint;
+    private LocationData lastPointForSegment;
 
     public KalmanRoute(double koeff) {
         mKoeff = koeff;
@@ -52,12 +53,20 @@ public class KalmanRoute {
 
     public SegmentForRouteEvent getLastSegment() {
         int size = mRoutePoints.size();
-        if (size > 1 && SphericalUtil.computeDistanceBetween(mRoutePoints.get(size - 1).point,
-                lastRawPoint.point) > ROUTE_ACCURACY_IN_METERS) {
-            return new SegmentForRouteEvent(new Pair<>(mRoutePoints.get(size - 2),
-                    mRoutePoints.get(size - 1)));
-        } else return null;
+        if (size > 1) {
+            if (lastPointForSegment == null) {
+                lastPointForSegment = mRoutePoints.get(size - 2);
+            }
+
+            if (SphericalUtil.computeDistanceBetween(lastPointForSegment.point,
+                    lastRawPoint.point) > ROUTE_ACCURACY_IN_METERS) {
+                SegmentForRouteEvent segmentForRouteEvent = new SegmentForRouteEvent(
+                        new Pair<>(lastPointForSegment, mRoutePoints.get(size - 1)));
+                lastPointForSegment = mRoutePoints.get(size - 1);
+                return segmentForRouteEvent;
+            }
+        }
+
+        return null;
     }
-
-
 }
