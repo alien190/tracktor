@@ -1,4 +1,4 @@
-package com.elegion.tracktor.event;
+package com.elegion.tracktor.common.event;
 
 import java.io.Serializable;
 

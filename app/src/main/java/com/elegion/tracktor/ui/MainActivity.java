@@ -14,9 +14,9 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
-import com.elegion.tracktor.event.StartRouteEvent;
-import com.elegion.tracktor.event.StopRouteEvent;
+import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
+import com.elegion.tracktor.common.event.StartRouteEvent;
+import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;

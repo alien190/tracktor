@@ -1,6 +1,4 @@
-package com.elegion.tracktor.event;
-
-import android.location.Location;
+package com.elegion.tracktor.common.event;
 
 import com.google.android.gms.maps.model.LatLng;
 

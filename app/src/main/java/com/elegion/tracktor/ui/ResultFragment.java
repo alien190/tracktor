@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.event.StopRouteEvent;
+import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
 
 import butterknife.BindView;

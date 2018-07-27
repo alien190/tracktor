@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui;
+package com.elegion.tracktor.common;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

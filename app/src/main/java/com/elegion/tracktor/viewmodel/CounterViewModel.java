@@ -3,12 +3,11 @@ package com.elegion.tracktor.viewmodel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
-import com.elegion.tracktor.event.NewPointFromLocationClientEvent;
-import com.elegion.tracktor.event.StartRouteEvent;
-import com.elegion.tracktor.event.StopRouteEvent;
+import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
+import com.elegion.tracktor.common.event.StartRouteEvent;
+import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.SphericalUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -16,7 +15,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
