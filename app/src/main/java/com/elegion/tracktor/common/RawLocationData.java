@@ -2,7 +2,9 @@ package com.elegion.tracktor.common;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class RawLocationData {
+import java.io.Serializable;
+
+public class RawLocationData implements Serializable {
     public LatLng point;
     public int timeSeconds;
 

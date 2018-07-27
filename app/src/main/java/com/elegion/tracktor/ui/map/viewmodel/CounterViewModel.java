@@ -55,7 +55,8 @@ public class CounterViewModel extends ViewModel {
     }
 
     public void stopTimer() {
-        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(), mRawLocationData));
+        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(),
+                StringUtils.getLocationDataText(mRawLocationData)));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
         timerDisposable.dispose();

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.RawLocationData;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
-
-import org.greenrobot.eventbus.Subscribe;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +31,7 @@ public class ResultFragment extends Fragment {
     Button btShareRaw;
 
     public static final String STOP_ROUTE_EVENT = "StopRouteEvent";
-    private List<RawLocationData> mRawLocationData;
+    private String mRawLocationDataText;
 
 
     public static ResultFragment newInstance(Bundle args) {
@@ -60,21 +54,21 @@ public class ResultFragment extends Fragment {
         Bundle args = getArguments();
         StopRouteEvent stopRouteEvent = (StopRouteEvent) args.getSerializable(STOP_ROUTE_EVENT);
 
-        if(stopRouteEvent != null) {
+        if (stopRouteEvent != null) {
             tvTime.setText(stopRouteEvent.routeTime);
             tvDistance.setText(StringUtils.getDistanceText(stopRouteEvent.routeDistance));
-            mRawLocationData = stopRouteEvent.mRawLocationDataList;
+            mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
         }
 
         return view;
     }
 
     @OnClick(R.id.btShareRaw)
-    public void onShareRawData(){
-        if(mRawLocationData != null) {
+    public void onShareRawData() {
+        if (mRawLocationDataText != null && !mRawLocationDataText.isEmpty()) {
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, StringUtils.getLocationDataText(mRawLocationData));
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mRawLocationDataText);
             shareIntent.setType("text/plain");
             startActivity(shareIntent);
         } else {

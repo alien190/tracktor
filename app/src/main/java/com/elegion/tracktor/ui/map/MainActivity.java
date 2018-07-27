@@ -57,11 +57,13 @@ public class MainActivity extends AppCompatActivity implements
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if(locationResult!= null && isRouteStarted) {
+            if(locationResult!= null) {
                 Location location = locationResult.getLastLocation();
-                LatLng latLng = new LatLng(location.getLatitude(),
+                mLastPosition = new LatLng(location.getLatitude(),
                         location.getLongitude());
-                EventBus.getDefault().post(new NewPointFromLocationClientEvent(latLng));
+                if(isRouteStarted) {
+                    EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
+                }
             }
 
 //            if (locationResult != null && mMap != null) {
@@ -153,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements
             mMap.clear();
         }
         isRouteStarted = true;
+        EventBus.getDefault().post(new NewPointFromLocationClientEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

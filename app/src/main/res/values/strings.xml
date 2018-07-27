@@ -10,4 +10,5 @@
     <string name="distance_meters">м</string>
     <string name="shareRawData">Поделиться сырыми данными</string>
     <string name="noRawData">Список с сырыми данными пуст</string>
+    <string name="my_google_maps_key">AIzaSyC6g6NJzdvDMGurKsjGsGqx1x2rLWz6cIo</string>
 </resources>
