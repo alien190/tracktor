@@ -2,7 +2,9 @@ package com.elegion.tracktor.viewmodel;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.widget.LinearLayout;
 
+import com.elegion.tracktor.common.RawLocationData;
 import com.elegion.tracktor.common.event.NewPointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
@@ -29,7 +31,9 @@ public class CounterViewModel extends ViewModel {
     private MutableLiveData<Double> mDistance = new MutableLiveData<>();
     private Disposable timerDisposable;
     private List<LatLng> mRoute = new ArrayList<>();
-    private LatLng mLastPoint;
+    //private LatLng mLastPoint;
+    private List<RawLocationData> mRawLocationData = new ArrayList<>();
+    private int mTotalSecond;
 
 
     public CounterViewModel() {
@@ -37,32 +41,36 @@ public class CounterViewModel extends ViewModel {
     }
 
     public void startTimer() {
-        EventBus.getDefault().post(new StartRouteEvent());
+
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
+
+        mRawLocationData.clear();
         mRoute.clear();
         mDistance.postValue(0.0);
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(seconds -> onTimerUpdate(seconds.intValue()));
-
+        EventBus.getDefault().post(new StartRouteEvent());
     }
 
     public void stopTimer() {
-        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue()));
+        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(), mRawLocationData));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
         timerDisposable.dispose();
     }
 
     private void onTimerUpdate(int totalSeconds) {
+        mTotalSecond = totalSeconds;
         timeText.setValue(StringUtils.getTimerText(totalSeconds));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNewPointFromLocationClientEvent(NewPointFromLocationClientEvent event) {
-        mLastPoint = event.location;
+        //mLastPoint = event.location;
+        mRawLocationData.add(new RawLocationData(event.location, mTotalSecond));
 
         //mDistanceText.postValue(event.location.toString());
 //        mRoute.add(event.location);
