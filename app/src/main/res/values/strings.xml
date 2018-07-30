@@ -11,4 +11,6 @@
     <string name="shareRawData">Поделиться сырыми данными</string>
     <string name="noRawData">Список с сырыми данными пуст</string>
     <string name="my_google_maps_key">AIzaSyC6g6NJzdvDMGurKsjGsGqx1x2rLWz6cIo</string>
+    <string name="routeStart">Начало</string>
+    <string name="routeStop">Конец</string>
 </resources>

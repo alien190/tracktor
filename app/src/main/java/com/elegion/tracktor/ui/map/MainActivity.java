@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.greenrobot.eventbus.EventBus;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onStartRoute(StartRouteEvent event) {
         if (mMap != null) {
             mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(mLastPosition).title(getString(R.string.routeStart)));
         }
         isRouteStarted = true;
         EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
@@ -158,13 +160,18 @@ public class MainActivity extends AppCompatActivity implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStopRoute(StopRouteEvent event) {
+        if (mMap != null) {
+            mMap.addMarker(new MarkerOptions().position(mLastPosition).title(getString(R.string.routeStop)));
+        }
+
         isRouteStarted = false;
+
         Toast.makeText(this, "В будущем Ваш маршрут будет сохранен", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, ResultActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(STOP_ROUTE_EVENT, event);
         intent.putExtras(bundle);
-        startActivity(intent);
+        //startActivity(intent);
     }
 
     @Override
