@@ -47,35 +47,15 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
-    public static final int LOCATION_REQUEST_CODE = 99;
-    public static final int UPDATE_INTERVAL = 5000;
-    public static final int UPDATE_FASTEST_INTERVAL = 2000;
-    public static final int UPDATE_MIN_DISTANCE = 10;
-    public static final int DEFAULT_ZOOM = 15;
 
+    public static final int DEFAULT_ZOOM = 15;
+    public static final int LOCATION_REQUEST_CODE = 99;
 
     private LatLng mLastPosition;
     private boolean isRouteStarted;
 
     private GoogleMap mMap;  //todo сделать сохранение состояния при изменении конфигурации
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private LocationRequest mLocationRequest = new LocationRequest();
-    private LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            if (locationResult != null) {
-                Location location = locationResult.getLastLocation();
-                LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                if (mLastPosition == null || !isRouteStarted) {
-                    animateCamera(newPosition);
-                }
-                mLastPosition = newPosition;
-                if (isRouteStarted) {
-                    EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
-                }
-            }
-        }
-    };
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAddSegmentToMap(SegmentForRouteEvent segmentForRouteEvent) {
@@ -110,11 +90,7 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
         }
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        mLocationRequest.setFastestInterval(UPDATE_FASTEST_INTERVAL);
-        mLocationRequest.setSmallestDisplacement(UPDATE_MIN_DISTANCE);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
 
     }
 
@@ -216,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
             mMap.setOnMyLocationButtonClickListener(this);
-            mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+
         } else {
             new AlertDialog.Builder(this)
                     .setTitle("Запрос разрешений на получение местоположения")

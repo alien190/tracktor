@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.result.ResultActivity"/>
+        <service android:name=".service.CounterService"/>
     </application>
 
 </manifest>

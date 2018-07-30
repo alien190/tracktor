@@ -2,6 +2,7 @@ package com.elegion.tracktor.ui.map.viewmodel;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Intent;
 import android.util.Pair;
 
 import com.elegion.tracktor.common.KalmanRoute;
@@ -10,6 +11,7 @@ import com.elegion.tracktor.common.event.PointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -31,11 +33,8 @@ public class CounterViewModel extends ViewModel {
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
-    private Disposable timerDisposable;
 
-    private List<LocationData> mRawLocationData = new ArrayList<>();
-    private int mTotalSecond;
-    private KalmanRoute mKalmanRoute;
+
     private MutableLiveData<Double> mDistance = new MutableLiveData<>();
 
 
@@ -48,52 +47,47 @@ public class CounterViewModel extends ViewModel {
 
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
-        mRawLocationData.clear();
-        mKalmanRoute = new KalmanRoute();
         mDistance.setValue(0.0);
-        mTotalSecond = 0;
-        timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(seconds -> onTimerUpdate(seconds.intValue()));
         EventBus.getDefault().post(new StartRouteEvent());
+
+
     }
 
     public void stopTimer() {
-        StringBuilder locationDataBuilder = new StringBuilder();
-
-        locationDataBuilder.append("Сырые данные:\n");
-        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
-        locationDataBuilder.append("Отфильтрованные данные:\n");
-        locationDataBuilder.append(mKalmanRoute.toString());
-
-        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), timeText.getValue(),
-                mDistance.getValue(), locationDataBuilder.toString()));
-        startEnabled.postValue(true);
-        stopEnabled.postValue(false);
-        timerDisposable.dispose();
+//        StringBuilder locationDataBuilder = new StringBuilder();
+//
+//        locationDataBuilder.append("Сырые данные:\n");
+//        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
+//        locationDataBuilder.append("Отфильтрованные данные:\n");
+//        locationDataBuilder.append(mKalmanRoute.toString());
+//
+//        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), timeText.getValue(),
+//                mDistance.getValue(), locationDataBuilder.toString()));
+//        startEnabled.postValue(true);
+//        stopEnabled.postValue(false);
+//        timerDisposable.dispose();
     }
 
     private void onTimerUpdate(int totalSeconds) {
-        mTotalSecond = totalSeconds;
-        timeText.setValue(StringUtils.getTimerText(totalSeconds));
-        if (mRawLocationData.size() != 0) {
-            mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
-                    totalSeconds));
-            SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
-            if (newSegment != null) {
-                double distance = mDistance.getValue();
-                distance += newSegment.getSegmentDistance();
-                mDistance.postValue(distance);
-                EventBus.getDefault().post(newSegment);
-            }
-        }
+//        mTotalSecond = totalSeconds;
+//        timeText.setValue(StringUtils.getTimerText(totalSeconds));
+//        if (mRawLocationData.size() != 0) {
+//            mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
+//                    totalSeconds));
+//            SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
+//            if (newSegment != null) {
+//                double distance = mDistance.getValue();
+//                distance += newSegment.getSegmentDistance();
+//                mDistance.postValue(distance);
+//                EventBus.getDefault().post(newSegment);
+//            }
+//        }
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNewPointFromLocationClientEvent(PointFromLocationClientEvent event) {
-        mRawLocationData.add(new LocationData(event.location, mTotalSecond));
+       // mRawLocationData.add(new LocationData(event.location, mTotalSecond));
     }
 
     public MutableLiveData<String> getTimeText() {
@@ -116,9 +110,6 @@ public class CounterViewModel extends ViewModel {
     protected void onCleared() {
 
         EventBus.getDefault().unregister(this);
-
-        timerDisposable.dispose();
-        timerDisposable = null;
         super.onCleared();
     }
 

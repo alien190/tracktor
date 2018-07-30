@@ -2,6 +2,7 @@ package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.utils.StringUtils;
 import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 
@@ -54,11 +56,17 @@ public class CounterFragment extends Fragment {
     @SuppressLint("CheckResult")
     @OnClick(R.id.buttonStart)
     void onStartClick() {
+
         viewModel.startTimer();
+        Intent serviceIntent = new Intent(getContext(), CounterService.class);
+        getActivity().startService(serviceIntent);
+
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         viewModel.stopTimer();
+        Intent serviceIntent = new Intent(getContext(), CounterService.class);
+        getActivity().stopService(serviceIntent);
     }
 }
