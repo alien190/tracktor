@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements
     private LatLng mLastPosition;
     private boolean isRouteStarted;
 
-    private GoogleMap mMap;
+    private GoogleMap mMap;  //todo сделать сохранение состояния при изменении конфигурации
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest = new LocationRequest();
     private LocationCallback mLocationCallback = new LocationCallback() {
