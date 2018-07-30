@@ -19,16 +19,19 @@ import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.ui.result.ResultActivity;
+import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;
     public static final int DEFAULT_ZOOM = 15;
-    public static final String STOP_ROUTE_EVENT = "StopRouteEvent";
+
 
     private LatLng mLastPosition;
     private boolean isRouteStarted;
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult != null) {
                 Location location = locationResult.getLastLocation();
-                LatLng newPosition = new LatLng(location.getLatitude(),location.getLongitude());
+                LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mLastPosition == null || !isRouteStarted) {
                     animateCamera(newPosition);
                 }
@@ -167,11 +170,35 @@ public class MainActivity extends AppCompatActivity implements
         isRouteStarted = false;
 
         Toast.makeText(this, "В будущем Ваш маршрут будет сохранен", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, ResultActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(STOP_ROUTE_EVENT, event);
-        intent.putExtras(bundle);
-        startActivity(intent);
+
+        takeScreenshot(event, bitmap -> ResultActivity.start(this, event, bitmap));
+
+    }
+
+    private void takeScreenshot(StopRouteEvent event, GoogleMap.SnapshotReadyCallback snapshotReadyCallback) {
+
+        if (event.route != null && event.route.size() > 0) {
+
+            LatLngBounds.Builder latLngBounds = LatLngBounds.builder();
+            for (LatLng latLng : event.route) {
+                latLngBounds.include(latLng);
+            }
+            int padding = 100;
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding);
+            mMap.animateCamera(cu, 1, new GoogleMap.CancelableCallback() {
+                @Override
+                public void onFinish() {
+                    mMap.snapshot(snapshotReadyCallback);
+                }
+
+                @Override
+                public void onCancel() {
+                }
+            });
+
+        } else {
+            Toast.makeText(this, R.string.emptyRoute, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -23,7 +23,7 @@ public class KalmanRoute {
     }
 
     public KalmanRoute() {
-        mKoeff = 0.8;
+        mKoeff = 1;
     }
 
     public void onRouteUpdate(LocationData newPoint) {
