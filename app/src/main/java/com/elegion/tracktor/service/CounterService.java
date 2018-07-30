@@ -136,7 +136,7 @@ public class CounterService extends Service {
 
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
-        mNotificationBuilder.setContentText(String.valueOf(mTotalSecond));
+        mNotificationBuilder.setContentText(String.valueOf(mTotalSecond) + " " + String.valueOf(mDistance));
         mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
 
         if (mRawLocationData.size() != 0) {
