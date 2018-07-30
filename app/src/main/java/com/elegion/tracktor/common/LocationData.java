@@ -17,4 +17,5 @@ public class LocationData implements Serializable {
         this.point = locationData.point;
         this.timeSeconds = timeSeconds;
     }
+
 }

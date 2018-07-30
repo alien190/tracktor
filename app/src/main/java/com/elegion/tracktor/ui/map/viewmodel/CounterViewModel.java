@@ -67,8 +67,8 @@ public class CounterViewModel extends ViewModel {
         locationDataBuilder.append("Отфильтрованные данные:\n");
         locationDataBuilder.append(mKalmanRoute.toString());
 
-        EventBus.getDefault().post(new StopRouteEvent(timeText.getValue(), mDistance.getValue(),
-                locationDataBuilder.toString()));
+        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), timeText.getValue(),
+                mDistance.getValue(), locationDataBuilder.toString()));
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
         timerDisposable.dispose();

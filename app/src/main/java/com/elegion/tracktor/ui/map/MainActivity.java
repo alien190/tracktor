@@ -169,9 +169,9 @@ public class MainActivity extends AppCompatActivity implements
         Toast.makeText(this, "В будущем Ваш маршрут будет сохранен", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, ResultActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putSerializable(STOP_ROUTE_EVENT, event);
+        bundle.putParcelable(STOP_ROUTE_EVENT, event);
         intent.putExtras(bundle);
-        //startActivity(intent);
+        startActivity(intent);
     }
 
     @Override

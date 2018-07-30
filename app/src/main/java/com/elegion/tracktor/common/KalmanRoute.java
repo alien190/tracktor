@@ -69,4 +69,14 @@ public class KalmanRoute {
 
         return null;
     }
+
+    public List<LatLng> getRoute(){
+        List<LatLng> route = new ArrayList<>();
+
+        for(LocationData locationData : mRoutePoints) {
+            route.add(locationData.point);
+        }
+
+        return route;
+    }
 }
