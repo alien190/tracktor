@@ -1,6 +1,7 @@
 package com.elegion.tracktor.ui.map;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -10,18 +11,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_REQUEST_CODE = 99;
+    CounterViewModel viewModel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.counterContainer, new CounterFragment())
+                    .commit();
+        }
+
+        viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
+
         requestPermissions();
     }
 
@@ -50,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
             // mMap.setMyLocationEnabled(true);
             // mMap.setOnMyLocationButtonClickListener(this);
-            //todo - инициализация карты
+
+            viewModel.onPermissionGranted();
 
         } else {
             new AlertDialog.Builder(this)

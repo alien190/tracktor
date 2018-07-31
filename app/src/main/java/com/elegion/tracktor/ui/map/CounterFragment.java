@@ -40,7 +40,7 @@ public class CounterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_counter, container, false);
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(CounterViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
         viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);

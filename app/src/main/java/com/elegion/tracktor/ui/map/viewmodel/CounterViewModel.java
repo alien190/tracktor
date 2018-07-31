@@ -10,15 +10,22 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Observable;
+import java.util.concurrent.Callable;
+
+import io.reactivex.Single;
+
 public class CounterViewModel extends ViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsPermissionGranted = new MutableLiveData<>();
     private boolean isRouteStart;
 
 
     public CounterViewModel() {
+        mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
     }
 
@@ -26,8 +33,11 @@ public class CounterViewModel extends ViewModel {
     public void onTimerUpdate(TimerUpdateEvent event) {
         timeText.postValue(StringUtils.getTimerText(event.seconds));
         mDistanceText.postValue(StringUtils.getDistanceText(event.distance));
-        if(!isRouteStart) {startRoute();}
+        if (!isRouteStart) {
+            startRoute();
+        }
     }
+
     public void startRoute() {
         isRouteStart = true;
         startEnabled.postValue(false);
@@ -40,7 +50,9 @@ public class CounterViewModel extends ViewModel {
         stopEnabled.postValue(false);
     }
 
-
+    public void onPermissionGranted() {
+        mIsPermissionGranted.setValue(true);
+    }
 
     public MutableLiveData<String> getTimeText() {
         return timeText;
@@ -64,4 +76,7 @@ public class CounterViewModel extends ViewModel {
         super.onCleared();
     }
 
+    public MutableLiveData<Boolean> getIsPermissionGranted() {
+        return mIsPermissionGranted;
+    }
 }

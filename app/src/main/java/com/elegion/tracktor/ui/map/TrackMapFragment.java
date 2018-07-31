@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.map;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,9 +33,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 public class TrackMapFragment extends SupportMapFragment implements
-        OnMapReadyCallback,GoogleMap.OnMyLocationButtonClickListener {
+        OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private static final int DEFAULT_ZOOM = 15;
+    private CounterViewModel viewModel;
 
     private GoogleMap mMap;
 
@@ -46,28 +49,30 @@ public class TrackMapFragment extends SupportMapFragment implements
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-
-
-
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(savedInstanceState == null) {
+        viewModel = ViewModelProviders.of(getActivity()).get(CounterViewModel.class);
+        viewModel.getIsPermissionGranted().observe(this, (isGranted) -> {
+            if (isGranted && mMap != null) {
+                mMap.setMyLocationEnabled(true);
+                mMap.setOnMyLocationButtonClickListener(this);
+            }
+        });
+
+        if (savedInstanceState == null) {
             getMapAsync(this);
             setRetainInstance(true);
-
         }
+
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+        mMap = googleMap;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
