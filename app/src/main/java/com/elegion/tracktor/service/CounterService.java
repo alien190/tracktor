@@ -98,7 +98,7 @@ public class CounterService extends Service {
     }
 
     private NotificationCompat.Builder getNotificationBuilder() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             return new NotificationCompat.Builder(this);
         } else {
             if (mNotificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {
