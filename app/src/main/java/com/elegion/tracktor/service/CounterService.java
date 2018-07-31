@@ -18,6 +18,8 @@ import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.common.event.StartRouteEvent;
+import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.StringUtils;
@@ -52,6 +54,7 @@ public class CounterService extends Service {
     private KalmanRoute mKalmanRoute;
     private Disposable timerDisposable;
     private double mDistance;
+    private boolean isStartPointSend;
 
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
@@ -149,12 +152,18 @@ public class CounterService extends Service {
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
 
+        if(!isStartPointSend && mRawLocationData.size()!=0) {
+            EventBus.getDefault().post(new StartRouteEvent(mRawLocationData.get(0)));
+            isStartPointSend = true;
+        }
+
         if (mRawLocationData.size() != 0) {
             mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
                     totalSeconds));
             SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
             if (newSegment != null) {
                 mDistance += newSegment.getSegmentDistance();
+                EventBus.getDefault().post(new SegmentForRouteEvent(newSegment.points));
             }
         }
 
@@ -178,6 +187,18 @@ public class CounterService extends Service {
     }
     @Override
     public void onDestroy() {
+
+        StringBuilder locationDataBuilder = new StringBuilder();
+
+        locationDataBuilder.append("Сырые данные:\n");
+        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
+        locationDataBuilder.append("Отфильтрованные данные:\n");
+        locationDataBuilder.append(mKalmanRoute.toString());
+
+        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), mTotalSecond,
+                mDistance, locationDataBuilder.toString()));
+
+
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         timerDisposable.dispose();
         timerDisposable = null;

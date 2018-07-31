@@ -41,9 +41,6 @@ public class CounterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_counter, container, false);
         ButterKnife.bind(this, view);
 
-        /*tvTime.setText("Временный текст");
-        tvDistance.setText("Временный текст");*/
-
         viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
         viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
@@ -56,7 +53,6 @@ public class CounterFragment extends Fragment {
     @SuppressLint("CheckResult")
     @OnClick(R.id.buttonStart)
     void onStartClick() {
-
         viewModel.startTimer();
         Intent serviceIntent = new Intent(getContext(), CounterService.class);
         getActivity().startService(serviceIntent);

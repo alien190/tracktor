@@ -42,14 +42,9 @@ public class ResultFragment extends Fragment {
     public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
     public static final String SCREENSHOT_KEY = "ScreenShotKey";
     private String mRawLocationDataText;
-    GoogleMap mMap;
-    List<LatLng> mRoute;
 
 
     public static ResultFragment newInstance(Bundle args) {
-
-        //Bundle args = new Bundle();
-
         ResultFragment fragment = new ResultFragment();
         fragment.setArguments(args);
         return fragment;
@@ -69,10 +64,9 @@ public class ResultFragment extends Fragment {
         ivScreenshot.setImageBitmap(screenShot);
 
         if (stopRouteEvent != null) {
-            tvTime.setText(stopRouteEvent.routeTime);
+            tvTime.setText(StringUtils.getTimerText(stopRouteEvent.routeTime));
             tvDistance.setText(StringUtils.getDistanceText(stopRouteEvent.routeDistance));
             mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
-            mRoute = stopRouteEvent.route;
         }
 
         return view;

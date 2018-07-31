@@ -48,45 +48,14 @@ public class CounterViewModel extends ViewModel {
     public void startTimer() {
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
-        EventBus.getDefault().post(new StartRouteEvent());
     }
 
     public void stopTimer() {
-//        StringBuilder locationDataBuilder = new StringBuilder();
-//
-//        locationDataBuilder.append("Сырые данные:\n");
-//        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
-//        locationDataBuilder.append("Отфильтрованные данные:\n");
-//        locationDataBuilder.append(mKalmanRoute.toString());
-//
-//        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), timeText.getValue(),
-//                mDistance.getValue(), locationDataBuilder.toString()));
-//        startEnabled.postValue(true);
-//        stopEnabled.postValue(false);
-//        timerDisposable.dispose();
-    }
-
-    private void onTimerUpdate(int totalSeconds) {
-//        mTotalSecond = totalSeconds;
-//        timeText.setValue(StringUtils.getTimerText(totalSeconds));
-//        if (mRawLocationData.size() != 0) {
-//            mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
-//                    totalSeconds));
-//            SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
-//            if (newSegment != null) {
-//                double distance = mDistance.getValue();
-//                distance += newSegment.getSegmentDistance();
-//                mDistance.postValue(distance);
-//                EventBus.getDefault().post(newSegment);
-//            }
-//        }
+        startEnabled.postValue(true);
+        stopEnabled.postValue(false);
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNewPointFromLocationClientEvent(PointFromLocationClientEvent event) {
-       // mRawLocationData.add(new LocationData(event.location, mTotalSecond));
-    }
 
     public MutableLiveData<String> getTimeText() {
         return timeText;
@@ -106,7 +75,6 @@ public class CounterViewModel extends ViewModel {
 
     @Override
     protected void onCleared() {
-
         EventBus.getDefault().unregister(this);
         super.onCleared();
     }

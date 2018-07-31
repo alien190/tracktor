@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StopRouteEvent implements Parcelable{
-    public String routeTime;
+    public int routeTime;
     public Double routeDistance;
     public String mRawLocationDataText;
     public List<LatLng> route;
 
-    public StopRouteEvent(List<LatLng> route, String routeTime, Double routeDistance, String rawLocationData) {
+    public StopRouteEvent(List<LatLng> route, int routeTime, Double routeDistance, String rawLocationData) {
         this.route = route;
         this.routeTime = routeTime;
         this.routeDistance = routeDistance;
@@ -30,7 +30,7 @@ public class StopRouteEvent implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(routeTime);
+        parcel.writeInt(routeTime);
         parcel.writeDouble(routeDistance);
         parcel.writeString(mRawLocationDataText);
         parcel.writeList(route);
@@ -49,7 +49,7 @@ public class StopRouteEvent implements Parcelable{
         }
     };
     private StopRouteEvent(Parcel parcel){
-        routeTime = parcel.readString();
+        routeTime = parcel.readInt();
         routeDistance = parcel.readDouble();
         mRawLocationDataText = parcel.readString();
         route = new ArrayList<>();

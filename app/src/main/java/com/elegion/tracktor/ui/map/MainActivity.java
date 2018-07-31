@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final int DEFAULT_ZOOM = 15;
     public static final int LOCATION_REQUEST_CODE = 99;
 
-    private LatLng mLastPosition;
-    private boolean isRouteStarted;
-
     private GoogleMap mMap;  //todo сделать сохранение состояния при изменении конфигурации
 
 
@@ -89,7 +86,6 @@ public class MainActivity extends AppCompatActivity implements
                     .replace(R.id.counterContainer, new CounterFragment())
                     .commit();
         }
-
 
 
     }
@@ -131,24 +127,18 @@ public class MainActivity extends AppCompatActivity implements
     public void onStartRoute(StartRouteEvent event) {
         if (mMap != null) {
             mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(mLastPosition).title(getString(R.string.routeStart)));
+            mMap.addMarker(new MarkerOptions().position(event.firstPoint.point).title(getString(R.string.routeStart)));
+            animateCamera(event.firstPoint.point);
         }
-        isRouteStarted = true;
-        EventBus.getDefault().post(new PointFromLocationClientEvent(mLastPosition));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStopRoute(StopRouteEvent event) {
-        if (mMap != null) {
-            mMap.addMarker(new MarkerOptions().position(mLastPosition).title(getString(R.string.routeStop)));
+        if (mMap != null && event.route.size() != 0) {
+            mMap.addMarker(new MarkerOptions().position(event.route.get(event.route.size() - 1))
+                    .title(getString(R.string.routeStop)));
         }
-
-        isRouteStarted = false;
-
-        Toast.makeText(this, "В будущем Ваш маршрут будет сохранен", Toast.LENGTH_SHORT).show();
-
         takeScreenshot(event, bitmap -> ResultActivity.start(this, event, bitmap));
-
     }
 
     private void takeScreenshot(StopRouteEvent event, GoogleMap.SnapshotReadyCallback snapshotReadyCallback) {
