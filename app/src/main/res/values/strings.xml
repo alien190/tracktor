@@ -17,4 +17,7 @@
     <string name="notificationTitle">Tracktor</string>
     <string name="notificationText">Маршрут активен</string>
     <string name="notifChannelLabel">Канал уведомлений Tacktor</string>
+    <string name="permDialogTitle">Запрос разрешений на получение местоположения</string>
+    <string name="notGrantedPermMessage">Вы не дали разрешения на определение местополжения. Приложение завершает работу.</string>
+    <string name="OkLabel">OK</string>
 </resources>
