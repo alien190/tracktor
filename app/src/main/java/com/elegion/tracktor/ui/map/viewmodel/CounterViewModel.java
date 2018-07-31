@@ -15,6 +15,7 @@ public class CounterViewModel extends ViewModel {
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
+    private boolean isRouteStart;
 
 
     public CounterViewModel() {
@@ -25,13 +26,16 @@ public class CounterViewModel extends ViewModel {
     public void onTimerUpdate(TimerUpdateEvent event) {
         timeText.postValue(StringUtils.getTimerText(event.seconds));
         mDistanceText.postValue(StringUtils.getDistanceText(event.distance));
+        if(!isRouteStart) {startRoute();}
     }
-    public void startTimer() {
+    public void startRoute() {
+        isRouteStart = true;
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
     }
 
-    public void stopTimer() {
+    public void stopRoute() {
+        isRouteStart = false;
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
     }

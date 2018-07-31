@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.service.CounterService;
-import com.elegion.tracktor.utils.StringUtils;
 import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 
 import butterknife.BindView;
@@ -53,7 +52,7 @@ public class CounterFragment extends Fragment {
     @SuppressLint("CheckResult")
     @OnClick(R.id.buttonStart)
     void onStartClick() {
-        viewModel.startTimer();
+        viewModel.startRoute();
         Intent serviceIntent = new Intent(getContext(), CounterService.class);
         getActivity().startService(serviceIntent);
 
@@ -61,7 +60,7 @@ public class CounterFragment extends Fragment {
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
-        viewModel.stopTimer();
+        viewModel.stopRoute();
         Intent serviceIntent = new Intent(getContext(), CounterService.class);
         getActivity().stopService(serviceIntent);
     }

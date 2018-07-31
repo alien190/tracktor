@@ -46,7 +46,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CounterService extends Service {
 
-
     public static final int UPDATE_INTERVAL = 5000;
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;

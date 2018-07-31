@@ -16,10 +16,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/my_google_maps_key" />
 
-        <activity android:name=".ui.map.MainActivity">
+        <activity android:name=".ui.map.MainActivity" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
