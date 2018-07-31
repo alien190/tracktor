@@ -17,6 +17,8 @@ import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
+import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
@@ -31,6 +33,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +116,7 @@ public class CounterService extends Service {
 
         }
 
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -185,9 +190,15 @@ public class CounterService extends Service {
 //todo сделать текст уведомления мультистрчным
 
     }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void postRouterUpdates(RequestRouteUpdateEvent request) {
+       EventBus.getDefault().post(new RouteUpdateEvent(mKalmanRoute.getRoute()));
+    }
     @Override
     public void onDestroy() {
 
+        EventBus.getDefault().unregister(this);
         StringBuilder locationDataBuilder = new StringBuilder();
 
         locationDataBuilder.append("Сырые данные:\n");

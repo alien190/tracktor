@@ -12,6 +12,8 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
+import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
@@ -30,6 +32,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,8 +44,9 @@ public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
 
-    public static final int DEFAULT_ZOOM = 15;
-    public static final int LOCATION_REQUEST_CODE = 99;
+    private static final int DEFAULT_ZOOM = 15;
+    private static final int LOCATION_REQUEST_CODE = 99;
+    private List<Integer> mTimes = new ArrayList<>();
 
     private GoogleMap mMap;  //todo сделать сохранение состояния при изменении конфигурации
 
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
                             R.color.colorRouteLine)));
 
             animateCamera(segmentForRouteEvent.points.second.point);
+            mTimes.add(segmentForRouteEvent.points.second.timeSeconds);
         }
     }
 
@@ -106,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        EventBus.getDefault().post(new RequestRouteUpdateEvent(mTimes));
     }
 
     @Override
@@ -118,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onStartRoute(StartRouteEvent event) {
         if (mMap != null) {
             mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(event.firstPoint.point).title(getString(R.string.routeStart)));
+            mTimes.clear();
+            addMarker(event.firstPoint.point, getString(R.string.routeStart));
             animateCamera(event.firstPoint.point);
         }
     }
@@ -126,8 +135,7 @@ public class MainActivity extends AppCompatActivity implements
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onStopRoute(StopRouteEvent event) {
         if (mMap != null && event.route.size() != 0) {
-            mMap.addMarker(new MarkerOptions().position(event.route.get(event.route.size() - 1))
-                    .title(getString(R.string.routeStop)));
+            addMarker(event.route.get(event.route.size() - 1), getString(R.string.routeStop));
         }
         takeScreenshot(event, bitmap -> ResultActivity.start(this, event, bitmap));
     }
@@ -202,6 +210,24 @@ public class MainActivity extends AppCompatActivity implements
     private void animateCamera(LatLng latLng) {
         if (mMap != null) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRouteUpdate(RouteUpdateEvent event) {
+        if (mMap != null && event.points.size() != 0) {
+            mMap.clear();
+            mMap.addPolyline(new PolylineOptions().addAll(event.points)
+                    .color(ContextCompat.getColor(getApplicationContext(),
+                            R.color.colorRouteLine)));
+            addMarker(event.points.get(0), getString(R.string.routeStart));
+            animateCamera(event.points.get(event.points.size() - 1));
+        }
+    }
+
+    private void addMarker(LatLng position, String text) {
+        if (mMap != null) {
+            mMap.addMarker(new MarkerOptions().position(position).title(text));
         }
     }
 }

@@ -2,6 +2,7 @@ package com.elegion.tracktor.common;
 
 import android.util.Pair;
 
+import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
@@ -78,5 +79,14 @@ public class KalmanRoute {
         }
 
         return route;
+    }
+    public List<Pair<LatLng,LatLng>> getRouteUpdates(RequestRouteUpdateEvent request){
+        if (request == null) {
+            request = new RequestRouteUpdateEvent(new ArrayList<>());
+        }
+
+        //for()
+
+        return null;
     }
 }
