@@ -1,26 +1,34 @@
 package com.elegion.tracktor.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.ui.map.MainActivity;
+import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +44,7 @@ public class CounterService extends Service {
     public static final int UPDATE_INTERVAL = 5000;
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;
+    public static final String NOTIFICATION_CHANNEL_ID = "TRACKTOR_CHANNEL_ID";
     private List<LocationData> mRawLocationData = new ArrayList<>();
 
     private int mTotalSecond;
@@ -46,6 +55,7 @@ public class CounterService extends Service {
 
     private NotificationManagerCompat mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationChannel mNotificationChannel;
 
     public static final int DEFAULT_NOTIFICATION_ID = 101;
 
@@ -74,7 +84,13 @@ public class CounterService extends Service {
         mKalmanRoute = new KalmanRoute();
         mTotalSecond = 0;
         mDistance = 0;
-        mNotificationBuilder = new NotificationCompat.Builder(this);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            mNotificationBuilder = new NotificationCompat.Builder(this);
+        } else {
+            mNotificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, BuildConfig.APPLICATION_ID,
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            mNotificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        }
         mNotificationManager = NotificationManagerCompat.from(this);
 
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
@@ -98,15 +114,14 @@ public class CounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //Send Foreground Notification
-        sendNotification("Ticker", "Title", "Text");
+        startForeground();
 
         //return Service.START_STICKY;
         return START_REDELIVER_INTENT;
     }
 
-    public void sendNotification(String Ticker, String Title, String Text) {
+    public void startForeground() {
 
-        //These three lines makes Notification to open main activity after clicking on it
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -115,29 +130,24 @@ public class CounterService extends Service {
 
 
         mNotificationBuilder.setContentIntent(contentIntent)
-                .setOngoing(true)   //Can't be swiped out
-                .setSmallIcon(R.mipmap.ic_launcher)
-                //.setLargeIcon(BitmapFactory.decodeResource(res, R.drawable.large))   // большая картинка
-                .setTicker(Ticker)
-                .setContentTitle(Title) //Заголовок
-                .setContentText(Text) // Текст уведомления
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_tracktor)
+                //.setTicker(Ticker)
+                .setContentTitle(getString(R.string.notificationTitle))
+                .setContentText(getString(R.string.notificationText))
                 .setWhen(System.currentTimeMillis());
 
         Notification notification;
-        if (android.os.Build.VERSION.SDK_INT <= 15) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             notification = mNotificationBuilder.getNotification(); // API-15 and lower
         } else {
             notification = mNotificationBuilder.build();
         }
-
         startForeground(DEFAULT_NOTIFICATION_ID, notification);
-
     }
 
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
-        mNotificationBuilder.setContentText(String.valueOf(mTotalSecond) + " " + String.valueOf(mDistance));
-        mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
 
         if (mRawLocationData.size() != 0) {
             mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
@@ -147,8 +157,25 @@ public class CounterService extends Service {
                 mDistance += newSegment.getSegmentDistance();
             }
         }
+
+        updateNotification();
+        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond));
     }
 
+    private void updateNotification() {
+        StringBuilder contentText = new StringBuilder();
+        contentText.append(getString(R.string.notificationText)).append('\n')
+                //.append(getString(R.string.timeLabel))
+                .append(StringUtils.getTimerText(mTotalSecond))
+                .append(" ")
+                //.append(getString(R.string.distanceLabel))
+                .append(StringUtils.getDistanceText(mDistance));
+
+        mNotificationBuilder.setContentText(contentText.toString());
+        mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
+//todo сделать текст уведомления мультистрчным
+
+    }
     @Override
     public void onDestroy() {
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);

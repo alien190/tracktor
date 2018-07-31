@@ -11,6 +11,7 @@ import com.elegion.tracktor.common.event.PointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
@@ -35,22 +36,19 @@ public class CounterViewModel extends ViewModel {
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
 
 
-    private MutableLiveData<Double> mDistance = new MutableLiveData<>();
-
-
     public CounterViewModel() {
         EventBus.getDefault().register(this);
-        mDistance.observeForever(d -> mDistanceText.postValue(StringUtils.getDistanceText(d)));
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onTimerUpdate(TimerUpdateEvent event) {
+        timeText.postValue(StringUtils.getTimerText(event.seconds));
+        mDistanceText.postValue(StringUtils.getDistanceText(event.distance));
+    }
     public void startTimer() {
-
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
-        mDistance.setValue(0.0);
         EventBus.getDefault().post(new StartRouteEvent());
-
-
     }
 
     public void stopTimer() {
