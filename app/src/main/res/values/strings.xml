@@ -16,4 +16,5 @@
     <string name="emptyRoute">Маршрут пуст</string>
     <string name="notificationTitle">Tracktor</string>
     <string name="notificationText">Маршрут активен</string>
+    <string name="notifChannelLabel">Канал уведомлений Tacktor</string>
 </resources>

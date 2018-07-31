@@ -60,7 +60,7 @@ public class CounterService extends Service {
     private double mDistance;
     private boolean isStartPointSend;
 
-    private NotificationManagerCompat mNotificationManager;
+    private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
     private NotificationChannel mNotificationChannel;
 
@@ -91,14 +91,31 @@ public class CounterService extends Service {
         mKalmanRoute = new KalmanRoute();
         mTotalSecond = 0;
         mDistance = 0;
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            mNotificationBuilder = new NotificationCompat.Builder(this);
+
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        mNotificationBuilder = getNotificationBuilder();
+
+        EventBus.getDefault().register(this);
+    }
+
+    private NotificationCompat.Builder getNotificationBuilder() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+            return new NotificationCompat.Builder(this);
         } else {
-            mNotificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, BuildConfig.APPLICATION_ID,
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            mNotificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+            if (mNotificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {
+                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                        getString(R.string.notifChannelLabel),
+                        NotificationManager.IMPORTANCE_LOW);
+                mNotificationManager.createNotificationChannel(notificationChannel);
+            }
+            return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
         }
-        mNotificationManager = NotificationManagerCompat.from(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        startForeground();
 
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
@@ -116,15 +133,6 @@ public class CounterService extends Service {
 
         }
 
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        //Send Foreground Notification
-        startForeground();
-
-        //return Service.START_STICKY;
         return START_REDELIVER_INTENT;
     }
 
@@ -136,7 +144,6 @@ public class CounterService extends Service {
 
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
         mNotificationBuilder.setContentIntent(contentIntent)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_tracktor)
@@ -145,19 +152,13 @@ public class CounterService extends Service {
                 .setContentText(getString(R.string.notificationText))
                 .setWhen(System.currentTimeMillis());
 
-        Notification notification;
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            notification = mNotificationBuilder.getNotification(); // API-15 and lower
-        } else {
-            notification = mNotificationBuilder.build();
-        }
-        startForeground(DEFAULT_NOTIFICATION_ID, notification);
+        startForeground(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
     private void onTimerUpdate(int totalSeconds) {
         mTotalSecond = totalSeconds;
 
-        if(!isStartPointSend && mRawLocationData.size()!=0) {
+        if (!isStartPointSend && mRawLocationData.size() != 0) {
             EventBus.getDefault().post(new StartRouteEvent(mRawLocationData.get(0)));
             isStartPointSend = true;
         }
@@ -193,8 +194,9 @@ public class CounterService extends Service {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void postRouterUpdates(RequestRouteUpdateEvent request) {
-       EventBus.getDefault().post(new RouteUpdateEvent(mKalmanRoute.getRoute()));
+        EventBus.getDefault().post(new RouteUpdateEvent(mKalmanRoute.getRoute()));
     }
+
     @Override
     public void onDestroy() {
 
@@ -202,9 +204,9 @@ public class CounterService extends Service {
         StringBuilder locationDataBuilder = new StringBuilder();
 
         locationDataBuilder.append("Сырые данные:\n");
-        locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
+       // locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
         locationDataBuilder.append("Отфильтрованные данные:\n");
-        locationDataBuilder.append(mKalmanRoute.toString());
+       // locationDataBuilder.append(mKalmanRoute.toString());
 
         EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), mTotalSecond,
                 mDistance, locationDataBuilder.toString()));
