@@ -1,8 +1,6 @@
 package com.elegion.tracktor.ui.map;
 
 import android.Manifest;
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -14,17 +12,10 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.event.PointFromLocationClientEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.ui.result.ResultActivity;
-import com.elegion.tracktor.utils.ScreenshotMaker;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

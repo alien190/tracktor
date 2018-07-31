@@ -2,32 +2,13 @@ package com.elegion.tracktor.ui.map.viewmodel;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.Intent;
-import android.util.Pair;
 
-import com.elegion.tracktor.common.KalmanRoute;
-import com.elegion.tracktor.common.LocationData;
-import com.elegion.tracktor.common.event.PointFromLocationClientEvent;
-import com.elegion.tracktor.common.event.SegmentForRouteEvent;
-import com.elegion.tracktor.common.event.StartRouteEvent;
-import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
-import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.utils.StringUtils;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class CounterViewModel extends ViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
