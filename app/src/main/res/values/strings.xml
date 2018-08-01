@@ -21,4 +21,5 @@
     <string name="notGrantedPermMessage">Вы не дали необходимых разрешений. Приложение завершает работу.</string>
     <string name="OkLabel">OK</string>
     <string name="requestPermissionMessage">Нам необходимо знать Ваше местоположение, чтобы приложение работало. Доступ к хранилищу необходим для сохранения скриншотов.</string>
+    <string name="share">Поделиться</string>
 </resources>

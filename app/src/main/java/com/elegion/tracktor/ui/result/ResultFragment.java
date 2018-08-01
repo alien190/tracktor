@@ -2,11 +2,17 @@ package com.elegion.tracktor.ui.result;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,6 +48,7 @@ public class ResultFragment extends Fragment {
     public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
     public static final String SCREENSHOT_KEY = "ScreenShotKey";
     private String mRawLocationDataText;
+    Bitmap mScreenShot;
 
 
     public static ResultFragment newInstance(Bundle args) {
@@ -60,8 +67,8 @@ public class ResultFragment extends Fragment {
 
         Bundle args = getArguments();
         StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);
-        Bitmap screenShot = ScreenshotMaker.fromBase64(args.getString(SCREENSHOT_KEY));
-        ivScreenshot.setImageBitmap(screenShot);
+        mScreenShot = ScreenshotMaker.fromBase64(args.getString(SCREENSHOT_KEY));
+        ivScreenshot.setImageBitmap(mScreenShot);
 
         if (stopRouteEvent != null) {
             tvTime.setText(StringUtils.getTimerText(stopRouteEvent.routeTime));
@@ -85,4 +92,24 @@ public class ResultFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_result, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.actionShare) {
+            String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
+            Uri uri = Uri.parse(path);
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvTime.getText() + "\nРасстояние: " + tvDistance.getText());
+            startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
