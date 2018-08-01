@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
-
         requestPermissions();
     }
 
@@ -61,16 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
-            // mMap.setMyLocationEnabled(true);
-            // mMap.setOnMyLocationButtonClickListener(this);
-
-            viewModel.onPermissionGranted();
-
+           viewModel.onPermissionGranted();
         } else {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.permDialogTitle)
-                    .setMessage("Нам необходимо знать Ваше местоположение, чтобы приложение работало")
-                    .setPositiveButton(getString(R.string.OkLabel), (dialogInterface, i) ->
+                    .setMessage(R.string.requestPermissionMessage)
+                    .setPositiveButton(R.string.OkLabel, (dialogInterface, i) ->
                             ActivityCompat.requestPermissions(MainActivity.this,
                                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE))
                     .create()
@@ -89,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle(R.string.permDialogTitle)
                         .setMessage(R.string.notGrantedPermMessage)
-                        .setPositiveButton(getString(R.string.OkLabel), (dialogInterface, i) -> finish())
+                        .setPositiveButton(R.string.OkLabel, (dialogInterface, i) -> finish())
                         .create()
                         .show();
             }
