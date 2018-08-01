@@ -1,16 +1,12 @@
 package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.text.BoringLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
@@ -19,7 +15,6 @@ import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
-import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,14 +32,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
-import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
 
 public class TrackMapFragment extends SupportMapFragment implements
         OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private static final int DEFAULT_ZOOM = 15;
-    private CounterViewModel viewModel;
+    private MainViewModel viewModel;
 
     private GoogleMap mMap;
     private SingleObserver mMapSet;
@@ -70,7 +63,7 @@ public class TrackMapFragment extends SupportMapFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(CounterViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
 
         TrackMapFragment fragment = this;
 

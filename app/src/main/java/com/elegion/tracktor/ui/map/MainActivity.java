@@ -11,15 +11,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
-import com.google.android.gms.maps.SupportMapFragment;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_REQUEST_CODE = 99;
-    CounterViewModel viewModel;
+    MainViewModel viewModel;
 
 
     @Override
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
 
-        viewModel = ViewModelProviders.of(this).get(CounterViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         requestPermissions();
     }
 

@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui.map.viewmodel;
+package com.elegion.tracktor.ui.map;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -15,7 +15,7 @@ import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 
-public class CounterViewModel extends ViewModel {
+public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
@@ -38,7 +38,7 @@ public class CounterViewModel extends ViewModel {
     private boolean isRouteStart;
 
 
-    public CounterViewModel() {
+    public MainViewModel() {
        // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
     }

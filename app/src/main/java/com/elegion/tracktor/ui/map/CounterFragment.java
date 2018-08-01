@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.service.CounterService;
-import com.elegion.tracktor.ui.map.viewmodel.CounterViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +31,7 @@ public class CounterFragment extends Fragment {
     @BindView(R.id.buttonStop)
     Button buttonStop;
 
-    private CounterViewModel viewModel;
+    private MainViewModel viewModel;
 
     @Nullable
     @Override
@@ -40,7 +39,7 @@ public class CounterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_counter, container, false);
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(CounterViewModel.class);
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
         viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
