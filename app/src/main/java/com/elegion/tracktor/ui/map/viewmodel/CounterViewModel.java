@@ -10,22 +10,36 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Observable;
-import java.util.concurrent.Callable;
-
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 
 public class CounterViewModel extends ViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mIsPermissionGranted = new MutableLiveData<>();
+    private SingleObserver mPermissionObserver;
+    private Single<Boolean> mIsPermissionGranted = new Single<Boolean>() {
+        @Override
+        protected void subscribeActual(SingleObserver<? super Boolean> observer) {
+            mPermissionObserver = observer;
+        }
+    };
+
+//    {
+//        @Override
+//        protected void subscribeActual(Observer<? super Boolean> observer) {
+//            mPermissionObserver = observer;
+//        }
+//    };
+
     private boolean isRouteStart;
 
 
     public CounterViewModel() {
-        mIsPermissionGranted.setValue(false);
+       // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
     }
 
@@ -51,7 +65,9 @@ public class CounterViewModel extends ViewModel {
     }
 
     public void onPermissionGranted() {
-        mIsPermissionGranted.setValue(true);
+        //mIsPermissionGranted.setValue(true);
+        mPermissionObserver.onSuccess(true);
+       // mIsPermissionGranted.first(true);
     }
 
     public MutableLiveData<String> getTimeText() {
@@ -76,7 +92,7 @@ public class CounterViewModel extends ViewModel {
         super.onCleared();
     }
 
-    public MutableLiveData<Boolean> getIsPermissionGranted() {
+    public Single<Boolean> getIsPermissionGranted() {
         return mIsPermissionGranted;
     }
 }
