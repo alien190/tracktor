@@ -76,6 +76,7 @@ public class ResultFragment extends Fragment {
             mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
         }
 
+        setHasOptionsMenu(true);
         return view;
     }
 
