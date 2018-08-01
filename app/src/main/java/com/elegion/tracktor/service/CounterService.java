@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
@@ -105,6 +106,8 @@ public class CounterService extends Service {
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                         getString(R.string.notifChannelLabel),
                         NotificationManager.IMPORTANCE_LOW);
+                mNotificationChannel.setLightColor(Color.CYAN);
+                mNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 mNotificationManager.createNotificationChannel(notificationChannel);
             }
             return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
@@ -179,14 +182,14 @@ public class CounterService extends Service {
 
     private void updateNotification() {
         StringBuilder contentText = new StringBuilder();
-        contentText.append(getString(R.string.notificationText)).append('\n')
-                //.append(getString(R.string.timeLabel))
+        contentText//.append(getString(R.string.notificationText)).append('\n')
+                .append(getString(R.string.timeLabel))
                 .append(StringUtils.getTimerText(mTotalSecond))
                 .append(" ")
-                //.append(getString(R.string.distanceLabel))
+                .append(getString(R.string.distanceLabel))
                 .append(StringUtils.getDistanceText(mDistance));
 
-        mNotificationBuilder.setContentText(contentText.toString())
+        mNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))
                 .setWhen(System.currentTimeMillis());
         mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
 //todo сделать текст уведомления мультистрчным
