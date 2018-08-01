@@ -149,7 +149,8 @@ public class CounterService extends Service {
                 //.setTicker(Ticker)
                 .setContentTitle(getString(R.string.notificationTitle))
                 .setContentText(getString(R.string.notificationText))
-                .setWhen(System.currentTimeMillis());
+                .setWhen(System.currentTimeMillis())
+                .setColor(getApplicationContext().getResources().getColor(R.color.colorRouteLine));
 
         startForeground(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
     }
@@ -185,7 +186,8 @@ public class CounterService extends Service {
                 //.append(getString(R.string.distanceLabel))
                 .append(StringUtils.getDistanceText(mDistance));
 
-        mNotificationBuilder.setContentText(contentText.toString());
+        mNotificationBuilder.setContentText(contentText.toString())
+                .setWhen(System.currentTimeMillis());
         mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
 //todo сделать текст уведомления мультистрчным
 
