@@ -107,8 +107,8 @@ public class CounterService extends Service {
                         getString(R.string.notifChannelLabel),
                         NotificationManager.IMPORTANCE_LOW);
 
-                mNotificationChannel.setLightColor(Color.CYAN);
-                mNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                //mNotificationChannel.setLightColor(Color.CYAN);
+                //mNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 mNotificationManager.createNotificationChannel(notificationChannel);
             }
             return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
