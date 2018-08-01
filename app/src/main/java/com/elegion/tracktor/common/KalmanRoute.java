@@ -13,7 +13,7 @@ import java.util.List;
 
 public class KalmanRoute {
     private static String TAG = "KalmanRouteTAG";
-    private static double ROUTE_ACCURACY_IN_METERS = 10;
+    private static double ROUTE_ACCURACY_METERS = 10;
     private double mKoeff;
     private List<LocationData> mRoutePoints = new ArrayList<>();
     private LocationData lastRawPoint;
@@ -60,7 +60,7 @@ public class KalmanRoute {
             }
 
             if (SphericalUtil.computeDistanceBetween(lastPointForSegment.point,
-                    lastRawPoint.point) > ROUTE_ACCURACY_IN_METERS) {
+                    lastRawPoint.point) > ROUTE_ACCURACY_METERS) {
                 SegmentForRouteEvent segmentForRouteEvent = new SegmentForRouteEvent(
                         new Pair<>(lastPointForSegment, mRoutePoints.get(size - 1)));
                 lastPointForSegment = mRoutePoints.get(size - 1);

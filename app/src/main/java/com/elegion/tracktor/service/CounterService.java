@@ -129,7 +129,7 @@ public class CounterService extends Service {
         try {
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
         } catch (SecurityException e) {
-
+            e.printStackTrace();
         }
 
         return START_REDELIVER_INTENT;
@@ -203,9 +203,9 @@ public class CounterService extends Service {
         StringBuilder locationDataBuilder = new StringBuilder();
 
         locationDataBuilder.append("Сырые данные:\n");
-       // locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
+        // locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
         locationDataBuilder.append("Отфильтрованные данные:\n");
-       // locationDataBuilder.append(mKalmanRoute.toString());
+        // locationDataBuilder.append(mKalmanRoute.toString());
 
         EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), mTotalSecond,
                 mDistance, locationDataBuilder.toString()));
@@ -215,5 +215,6 @@ public class CounterService extends Service {
         timerDisposable.dispose();
         timerDisposable = null;
         mKalmanRoute = null;
+        stopForeground(true);
     }
 }
