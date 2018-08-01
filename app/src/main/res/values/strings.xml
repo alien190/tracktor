@@ -14,8 +14,7 @@
     <string name="routeStart">Начало</string>
     <string name="routeStop">Конец</string>
     <string name="emptyRoute">Маршрут пуст</string>
-    <string name="notificationTitle">Tracktor</string>
-    <string name="notificationText">Маршрут активен</string>
+    <string name="notificationTitle">Маршрут активен</string>
     <string name="notifChannelLabel">Канал уведомлений Tacktor</string>
     <string name="permDialogTitle">Запрос разрешений</string>
     <string name="notGrantedPermMessage">Вы не дали необходимых разрешений. Приложение завершает работу.</string>

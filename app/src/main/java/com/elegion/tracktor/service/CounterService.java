@@ -106,6 +106,7 @@ public class CounterService extends Service {
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                         getString(R.string.notifChannelLabel),
                         NotificationManager.IMPORTANCE_LOW);
+
                 mNotificationChannel.setLightColor(Color.CYAN);
                 mNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
                 mNotificationManager.createNotificationChannel(notificationChannel);
@@ -151,7 +152,6 @@ public class CounterService extends Service {
                 .setSmallIcon(R.drawable.ic_tracktor)
                 //.setTicker(Ticker)
                 .setContentTitle(getString(R.string.notificationTitle))
-                .setContentText(getString(R.string.notificationText))
                 .setWhen(System.currentTimeMillis())
                 .setColor(getApplicationContext().getResources().getColor(R.color.colorRouteLine));
 
@@ -189,7 +189,8 @@ public class CounterService extends Service {
                 .append(getString(R.string.distanceLabel))
                 .append(StringUtils.getDistanceText(mDistance));
 
-        mNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))
+        mNotificationBuilder.setContentText(contentText.toString())
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))
                 .setWhen(System.currentTimeMillis());
         mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
 //todo сделать текст уведомления мультистрчным
