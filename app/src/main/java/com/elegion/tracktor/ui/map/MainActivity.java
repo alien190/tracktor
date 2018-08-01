@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == LOCATION_REQUEST_CODE) {
-            if (permissions.length == 1 &&
+            if (permissions.length == 2 &&
                     permissions[0].equalsIgnoreCase(Manifest.permission.ACCESS_FINE_LOCATION) &&
                     grantResults[0] == PERMISSION_GRANTED) {
                 requestPermissions();
