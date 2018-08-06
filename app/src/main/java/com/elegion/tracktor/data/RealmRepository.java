@@ -27,33 +27,45 @@ public class RealmRepository implements IRepository<Track> {
     @Override
     public long insertItem(Track track) {
         track.setId(currentId.getAndIncrement());
-        mRealm.insert(track);
+        mRealm.beginTransaction();
+        mRealm.copyToRealm(track);
+        mRealm.commitTransaction();
         return track.getId();
     }
 
     @Override
     public Track getItem(long id) {
-        return mRealm.where(Track.class).equalTo("Id", id).findFirst();
+        Track track = getTrackById(id);
+        return track != null ? mRealm.copyFromRealm(track) : null;
     }
 
     @Override
     public boolean deleteItem(long id) {
-        Track track = mRealm.where(Track.class).equalTo("Id", id).findFirst();
+        boolean isSuccessful = false;
+        Track track = getTrackById(id);
+        mRealm.beginTransaction();
         if (track != null) {
             track.deleteFromRealm();
-            return true;
+            isSuccessful = true;
         }
-        return false;
+        mRealm.commitTransaction();
+        return isSuccessful;
     }
 
     @Override
     public List<Track> getAll() {
         RealmResults<Track> tracks = mRealm.where(Track.class).findAll();
-        return mRealm.copyFromRealm(tracks);
+        return tracks != null ? mRealm.copyFromRealm(tracks) : null;
     }
 
     @Override
     public void updateItem(Track track) {
-        mRealm.insertOrUpdate(track);
+        mRealm.beginTransaction();
+        mRealm.copyToRealmOrUpdate(track);
+        mRealm.commitTransaction();
+    }
+
+    private Track getTrackById(long id) {
+        return mRealm.where(Track.class).equalTo("Id", id).findFirst();
     }
 }
