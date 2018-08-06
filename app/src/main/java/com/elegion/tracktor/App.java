@@ -2,6 +2,7 @@ package com.elegion.tracktor;
 
 import android.app.Application;
 
+import io.realm.Realm;
 import toothpick.Scope;
 import toothpick.Toothpick;
 import toothpick.configuration.Configuration;
@@ -24,6 +25,8 @@ public class App extends Application {
 
         //sAppScope = Toothpick.openScope(App.class);
         //sAppScope.installModules(new SmoothieApplicationModule(this), new NetworkModule(), new AppModule(this));
+
+        Realm.init(this);
     }
 
     public static Scope getAppScope() {
