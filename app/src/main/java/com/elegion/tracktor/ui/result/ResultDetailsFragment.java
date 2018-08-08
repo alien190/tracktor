@@ -60,7 +60,7 @@ public class ResultDetailsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fr_result, container, false);
+        View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
         Bundle args = getArguments();
         //StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);

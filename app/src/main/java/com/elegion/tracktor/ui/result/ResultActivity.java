@@ -21,7 +21,7 @@ public class ResultActivity extends SingleFragmentActivity {
         long id = args != null ? args.getLong(ID_KEY, ID_LIST) : ID_LIST;
 
         if (id == ID_LIST) {
-            return null;
+            return ResultFragment.newInstance();
         } else {
             return ResultDetailsFragment.newInstance(id);
         }
