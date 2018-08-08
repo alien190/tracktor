@@ -8,7 +8,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,22 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class ResultFragment extends Fragment {
+public class ResultDetailsFragment extends Fragment {
 
     @BindView(R.id.tvTime)
     TextView tvTime;
@@ -54,8 +48,8 @@ public class ResultFragment extends Fragment {
     Bitmap mScreenShot;
 
 
-    public static ResultFragment newInstance(Bundle args) {
-        ResultFragment fragment = new ResultFragment();
+    public static ResultDetailsFragment newInstance(Bundle args) {
+        ResultDetailsFragment fragment = new ResultDetailsFragment();
         fragment.setArguments(args);
         return fragment;
     }
