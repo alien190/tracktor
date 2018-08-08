@@ -16,13 +16,13 @@ import butterknife.ButterKnife;
 
 public class ResultViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.ivPreview)
-    private ImageView mIvPreview;
+    public ImageView mIvPreview;
     @BindView(R.id.tvId)
-    private TextView mTvId;
+    public TextView mTvId;
     @BindView(R.id.tvDuration)
-    private TextView mTvDuration;
+    public TextView mTvDuration;
     @BindView(R.id.tvDistance)
-    private TextView mTvDistance;
+    public TextView mTvDistance;
 
     private View view;
     private long mId;
