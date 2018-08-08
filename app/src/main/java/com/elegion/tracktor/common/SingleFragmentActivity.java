@@ -15,11 +15,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ac_single_fragment);
         if (savedInstanceState == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainer, getFragment())
-                    .addToBackStack(getFragment().getClass().getSimpleName())
-                    .commit();
+            changeFragment(getFragment());
         }
     }
 
@@ -33,5 +29,13 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         } else {
             fragmentManager.popBackStack();
         }
+    }
+
+    protected void changeFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(getFragment().getClass().getSimpleName())
+                .commit();
     }
 }
