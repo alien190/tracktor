@@ -22,6 +22,6 @@
     <string name="requestPermissionMessage">Нам необходимо знать Ваше местоположение, чтобы приложение работало. Доступ к хранилищу необходим для сохранения скриншотов.</string>
     <string name="share">Поделиться</string>
     <string name="label_id">Id элемента:</string>
-    <string name="label_duration">Продолжительность:</string>
-    <string name="label_distance">Дистанция:</string>
+    <string name="label_duration">Время:</string>
+    <string name="label_distance">Расстояние:</string>
 </resources>
