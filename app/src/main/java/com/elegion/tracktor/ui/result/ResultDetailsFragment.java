@@ -41,8 +41,7 @@ public class ResultDetailsFragment extends Fragment {
     @BindView(R.id.ivScreenshot)
     ImageView ivScreenshot;
 
-    //public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
-    //public static final String SCREENSHOT_KEY = "ScreenShotKey";
+
     public static final String ID_KEY = "IdKey";
     private String mRawLocationDataText;
     Bitmap mScreenShot;
@@ -63,8 +62,7 @@ public class ResultDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
         Bundle args = getArguments();
-        //StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);
-        //
+
         if (args != null) {
             long id = args.getLong(ID_KEY, 0);
             RealmRepository realmRepository = new RealmRepository();
@@ -74,7 +72,6 @@ public class ResultDetailsFragment extends Fragment {
                 ivScreenshot.setImageBitmap(mScreenShot);
                 tvTime.setText(StringUtils.getTimerText(track.getDuration()));
                 tvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
-                //mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
             }
 
         }
