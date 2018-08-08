@@ -48,8 +48,10 @@ public class ResultDetailsFragment extends Fragment {
     Bitmap mScreenShot;
 
 
-    public static ResultDetailsFragment newInstance(Bundle args) {
+    public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
+        Bundle args = new Bundle();
+        args.putLong(ID_KEY, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,9 +61,7 @@ public class ResultDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fr_result, container, false);
-
         ButterKnife.bind(this, view);
-
         Bundle args = getArguments();
         //StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);
         //
