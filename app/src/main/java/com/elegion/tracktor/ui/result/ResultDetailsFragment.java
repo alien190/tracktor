@@ -45,6 +45,8 @@ public class ResultDetailsFragment extends Fragment {
     public static final String ID_KEY = "IdKey";
     private String mRawLocationDataText;
     Bitmap mScreenShot;
+    private RealmRepository mRealmRepository;
+    private long mId;
 
 
     public static ResultDetailsFragment newInstance(long id) {
@@ -64,9 +66,9 @@ public class ResultDetailsFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            long id = args.getLong(ID_KEY, 0);
-            RealmRepository realmRepository = new RealmRepository();
-            Track track = realmRepository.getItem(id);
+            mId = args.getLong(ID_KEY, 0);
+            mRealmRepository = new RealmRepository();
+            Track track = mRealmRepository.getItem(mId);
             if (track != null) {
                 mScreenShot = ScreenshotMaker.fromBase64(track.getImage());
                 ivScreenshot.setImageBitmap(mScreenShot);
@@ -95,22 +97,32 @@ public class ResultDetailsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_result, menu);
+        inflater.inflate(R.menu.menu_result_detail, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.actionShare) {
-            String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
-            Uri uri = Uri.parse(path);
+        switch (item.getItemId()) {
+            case R.id.actionShare: {
+                String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
+                Uri uri = Uri.parse(path);
 
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("image/jpeg");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-            intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvTime.getText() + "\nРасстояние: " + tvDistance.getText());
-            startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvTime.getText() + "\nРасстояние: " + tvDistance.getText());
+                startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+                return true;
+            }
+            case R.id.actionDelete: {
+                mRealmRepository.deleteItem(mId);
+                getActivity().onBackPressed();
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
+
 }

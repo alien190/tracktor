@@ -7,4 +7,10 @@
         app:showAsAction="never">
 
     </item>
+    <item
+        android:id="@+id/actionDelete"
+        android:title="@string/delete"
+        app:showAsAction="never">
+
+    </item>
 </menu>
