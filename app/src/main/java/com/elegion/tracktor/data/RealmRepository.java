@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class RealmRepository implements IRepository<Track> {
 
@@ -54,8 +55,7 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public List<Track> getAll() {
-        RealmResults<Track> tracks = mRealm.where(Track.class).findAll();
-        return tracks != null ? mRealm.copyFromRealm(tracks) : null;
+        return mRealm.where(Track.class).findAll().sort("id",Sort.ASCENDING);
     }
 
     @Override
