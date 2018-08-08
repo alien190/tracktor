@@ -65,6 +65,14 @@ public class Track extends RealmObject {
         this.route = mRoute;
     }
 
-
-
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Track) {
+            Track newTrack = (Track) obj;
+            return this.getDistance() == newTrack.getDistance() &&
+                    this.getDuration() == newTrack.getDuration() &&
+                    this.getDate() == newTrack.getDate();
+        }
+        return false;
+    }
 }

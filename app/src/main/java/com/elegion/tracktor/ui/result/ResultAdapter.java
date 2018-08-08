@@ -23,9 +23,7 @@ public class ResultAdapter extends ListAdapter<Track, ResultViewHolder> {
 
         @Override
         public boolean areContentsTheSame(Track oldItem, Track newItem) {
-            return oldItem.getDate() == newItem.getDate() &&
-                    oldItem.getDuration() == newItem.getDuration() &&
-                    oldItem.getDistance() == newItem.getDistance();
+            return oldItem.equals(newItem);
         }
     };
 
