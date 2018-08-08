@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView android:layout_height="@dimen/map_preview_size"
+        android:layout_width="@dimen/map_preview_size"
+        android:scaleType="centerCrop"
+        android:id="@+id/ivPreview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="@dimen/margin"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_id"
+        android:layout_toRightOf="@+id/ivPreview"
+        android:layout_toEndOf="@+id/ivPreview"
+        android:id="@+id/tvLabelId"
+        tools:text = "Id элемента:"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tvLabelId"
+        android:layout_toRightOf="@+id/tvLabelId"
+        android:id="@+id/tvId"
+        tools:text="1"
+        />
+    <TextView
+        tools:text="Продолжительность:"
+        android:text="@string/label_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvLabelId"
+        android:layout_toRightOf="@+id/ivPreview"
+        android:layout_toEndOf="@+id/ivPreview"
+        android:id="@+id/tvLabelDuration"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="00:00:10"
+        android:id="@+id/tvDuration"
+        android:layout_toEndOf="@+id/tvLabelDuration"
+        android:layout_toRightOf="@+id/tvLabelDuration"
+        android:layout_alignTop="@+id/tvLabelDuration"
+     />
+
+    <TextView
+        tools:text="Дистанция:"
+        android:text="@string/label_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvLabelDuration"
+        android:layout_toRightOf="@+id/ivPreview"
+        android:layout_toEndOf="@+id/ivPreview"
+        android:id="@+id/tvLabelDistance"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="100500 м"
+        android:id="@+id/tvDistance"
+        android:layout_toEndOf="@+id/tvLabelDistance"
+        android:layout_toRightOf="@+id/tvLabelDistance"
+        android:layout_alignTop="@+id/tvLabelDistance"
+        />
+
+</RelativeLayout>
