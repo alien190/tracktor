@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.result.ResultActivity;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.actionStatistic:
                 //todo add logic
+                ResultActivity.start(this, ResultActivity.ID_LIST);
                 break;
             case R.id.actionSettings:
                 //todo add logic
