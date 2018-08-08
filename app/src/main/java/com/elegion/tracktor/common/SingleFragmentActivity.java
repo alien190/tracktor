@@ -37,7 +37,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
-                .addToBackStack(getFragment().getClass().getSimpleName())
+                .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
     }
 }
