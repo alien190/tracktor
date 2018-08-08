@@ -13,8 +13,9 @@ import com.elegion.tracktor.utils.ScreenshotMaker;
 
 public class ResultActivity extends SingleFragmentActivity {
 
-    public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
-    public static final String SCREENSHOT_KEY = "ScreenShotKey";
+//    public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
+//    public static final String SCREENSHOT_KEY = "ScreenShotKey";
+     public static final String ID_KEY = "IdKey";
 
     @Override
     protected Fragment getFragment() {
@@ -22,12 +23,13 @@ public class ResultActivity extends SingleFragmentActivity {
         return ResultFragment.newInstance(args);
     }
 
-    public static void start(Context context, StopRouteEvent event, Bitmap bitmap){
+    public static void start(Context context, long id){
         Intent intent = new Intent(context, ResultActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(STOP_ROUTE_EVENT_KEY, event);
-        bundle.putString(SCREENSHOT_KEY, ScreenshotMaker.toBase64(bitmap));
-        intent.putExtras(bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable(STOP_ROUTE_EVENT_KEY, event);
+//        bundle.putString(SCREENSHOT_KEY, ScreenshotMaker.toBase64(bitmap));
+//        intent.putExtras(bundle);
+        intent.putExtra(ID_KEY, id);
         context.startActivity(intent);
     }
 

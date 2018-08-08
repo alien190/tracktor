@@ -16,6 +16,7 @@ import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.ui.result.ResultActivity;
+import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,7 +38,7 @@ public class TrackMapFragment extends SupportMapFragment implements
         OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private static final int DEFAULT_ZOOM = 15;
-    private MainViewModel viewModel;
+    private MainViewModel mViewModel;
 
     private GoogleMap mMap;
     private SingleObserver mMapSet;
@@ -63,11 +64,11 @@ public class TrackMapFragment extends SupportMapFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
 
         TrackMapFragment fragment = this;
 
-        viewModel.getIsPermissionGranted()
+        mViewModel.getIsPermissionGranted()
                 .zipWith(mIsMapSet, (first, second) -> true)
                 .subscribe(aBoolean -> {
                     mMap.setMyLocationEnabled(true);
@@ -128,7 +129,14 @@ public class TrackMapFragment extends SupportMapFragment implements
         if (mMap != null && event.route.size() != 0) {
             addMarker(event.route.get(event.route.size() - 1), getString(R.string.routeStop));
         }
-        takeScreenshot(event, bitmap -> ResultActivity.start(getContext(), event, bitmap));
+        //takeScreenshot(event, bitmap -> ResultActivity.start(getContext(), event, bitmap));
+        takeScreenshot(event, bitmap ->
+        {
+            String imageBase64 = ScreenshotMaker.toBase64(bitmap);
+            long id = mViewModel.saveResults(imageBase64);
+            ResultActivity.start(getContext(), id);
+        }
+        );
     }
 
     private void takeScreenshot(StopRouteEvent event, GoogleMap.SnapshotReadyCallback snapshotReadyCallback) {

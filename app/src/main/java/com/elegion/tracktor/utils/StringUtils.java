@@ -10,7 +10,7 @@ public class StringUtils {
         return String.format(Locale.ENGLISH, "%.1f m", distance);
     }
 
-    public static String getTimerText(int totalSeconds) {
+    public static String getTimerText(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
         long seconds = totalSeconds % 60;

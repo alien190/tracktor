@@ -9,60 +9,60 @@ import io.realm.annotations.PrimaryKey;
 public class Track extends RealmObject {
 
     @PrimaryKey
-    private long mId;
-    private Date mDate;
-    private long mDuration;
-    private double mDistance;
-    private String mImage;
-    private RealmList<Location> mRoute;
+    private long id;
+    private Date date;
+    private long duration;
+    private double distance;
+    private String image;
+    private RealmList<Location> route;
 
 
     public long getId() {
-        return mId;
+        return id;
     }
 
     public void setId(long mId) {
-        this.mId = mId;
+        this.id = mId;
     }
 
     public Date getDate() {
-        return mDate;
+        return date;
     }
 
     public void setDate(Date mDate) {
-        this.mDate = mDate;
+        this.date = mDate;
     }
 
     public long getDuration() {
-        return mDuration;
+        return duration;
     }
 
     public void setDuration(long mDuration) {
-        this.mDuration = mDuration;
+        this.duration = mDuration;
     }
 
     public double getDistance() {
-        return mDistance;
+        return distance;
     }
 
     public void setDistance(double mDistance) {
-        this.mDistance = mDistance;
+        this.distance = mDistance;
     }
 
     public String getImage() {
-        return mImage;
+        return image;
     }
 
     public void setImage(String mImage) {
-        this.mImage = mImage;
+        this.image = mImage;
     }
 
     public RealmList<Location> getRoute() {
-        return mRoute;
+        return route;
     }
 
     public void setRoute(RealmList<Location> mRoute) {
-        this.mRoute = mRoute;
+        this.route = mRoute;
     }
 
 

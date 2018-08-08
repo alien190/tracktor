@@ -26,7 +26,7 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public long insertItem(Track track) {
-        track.setId(currentId.getAndIncrement());
+        track.setId(currentId.incrementAndGet());
         mRealm.beginTransaction();
         mRealm.copyToRealm(track);
         mRealm.commitTransaction();
@@ -66,6 +66,16 @@ public class RealmRepository implements IRepository<Track> {
     }
 
     private Track getTrackById(long id) {
-        return mRealm.where(Track.class).equalTo("Id", id).findFirst();
+        return mRealm.where(Track.class).equalTo("id", id).findFirst();
+    }
+
+    public long createTrackAndSave(long duration, double distance, String imageBase64) {
+
+        Track track = new Track();
+
+        track.setDuration(duration);
+        track.setDistance(distance);
+        track.setImage(imageBase64);
+        return insertItem(track);
     }
 }

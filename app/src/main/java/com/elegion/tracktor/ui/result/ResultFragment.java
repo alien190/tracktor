@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.data.RealmRepository;
+import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,8 +47,9 @@ public class ResultFragment extends Fragment {
     @BindView(R.id.ivScreenshot)
     ImageView ivScreenshot;
 
-    public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
-    public static final String SCREENSHOT_KEY = "ScreenShotKey";
+    //public static final String STOP_ROUTE_EVENT_KEY = "StopRouteEventKey";
+    //public static final String SCREENSHOT_KEY = "ScreenShotKey";
+    public static final String ID_KEY = "IdKey";
     private String mRawLocationDataText;
     Bitmap mScreenShot;
 
@@ -66,14 +69,20 @@ public class ResultFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         Bundle args = getArguments();
-        StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);
-        mScreenShot = ScreenshotMaker.fromBase64(args.getString(SCREENSHOT_KEY));
-        ivScreenshot.setImageBitmap(mScreenShot);
+        //StopRouteEvent stopRouteEvent = args.getParcelable(STOP_ROUTE_EVENT_KEY);
+        //
+        if (args != null) {
+            long id = args.getLong(ID_KEY, 0);
+            RealmRepository realmRepository = new RealmRepository();
+            Track track = realmRepository.getItem(id);
+            if (track != null) {
+                mScreenShot = ScreenshotMaker.fromBase64(track.getImage());
+                ivScreenshot.setImageBitmap(mScreenShot);
+                tvTime.setText(StringUtils.getTimerText(track.getDuration()));
+                tvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
+                //mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
+            }
 
-        if (stopRouteEvent != null) {
-            tvTime.setText(StringUtils.getTimerText(stopRouteEvent.routeTime));
-            tvDistance.setText(StringUtils.getDistanceText(stopRouteEvent.routeDistance));
-            mRawLocationDataText = stopRouteEvent.mRawLocationDataText;
         }
 
         setHasOptionsMenu(true);
