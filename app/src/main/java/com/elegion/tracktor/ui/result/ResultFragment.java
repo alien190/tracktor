@@ -12,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.ShowResultDetailEvent;
 import com.elegion.tracktor.data.RealmRepository;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +27,6 @@ public class ResultFragment extends Fragment {
 
     private ResultViewModel mResultViewModel;
     private ResultAdapter mAdapter;
-    private ResultAdapter.OnItemClickListener mOnItemClickListener = id -> ResultActivity.start(getContext(), id);
 
 
     public static ResultFragment newInstance() {
@@ -47,12 +49,13 @@ public class ResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        mAdapter = new ResultAdapter(mOnItemClickListener);
+        mAdapter = new ResultAdapter();
         CustomViewModelFactory factory = new CustomViewModelFactory(new RealmRepository());
         mResultViewModel = ViewModelProviders.of(this, factory).get(ResultViewModel.class);
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTrackList.setAdapter(mAdapter);
     }
+
 
 }

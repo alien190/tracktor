@@ -43,12 +43,9 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setOnClickListener(ResultAdapter.OnItemClickListener listener) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(listener != null) {
-                    listener.onItemClick(mId);
-                }
+        view.setOnClickListener(view -> {
+            if(listener != null) {
+                listener.onItemClick(mId);
             }
         });
     }

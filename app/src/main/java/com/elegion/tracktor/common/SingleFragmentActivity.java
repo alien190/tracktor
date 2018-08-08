@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.elegion.tracktor.R;
 
+import org.greenrobot.eventbus.EventBus;
+
 public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     @Override

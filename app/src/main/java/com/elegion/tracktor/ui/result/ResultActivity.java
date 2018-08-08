@@ -3,10 +3,14 @@ package com.elegion.tracktor.ui.result;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.elegion.tracktor.common.SingleFragmentActivity;
+import com.elegion.tracktor.common.event.ShowResultDetailEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class ResultActivity extends SingleFragmentActivity {
 
@@ -30,4 +34,20 @@ public class ResultActivity extends SingleFragmentActivity {
         context.startActivity(intent);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showResultDetailsFragment(ShowResultDetailEvent event) {
+        changeFragment(ResultDetailsFragment.newInstance(event.id));
+    }
 }
