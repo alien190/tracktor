@@ -28,6 +28,7 @@
         <service android:name=".service.CounterService"
             android:enabled="true"
             android:exported="false"/>
+        <activity android:name=".ui.prefs.PreferenceActivity"/>
     </application>
 
 </manifest>

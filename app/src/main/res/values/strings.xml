@@ -25,4 +25,8 @@
     <string name="label_duration">Время:</string>
     <string name="label_distance">Расстояние:</string>
     <string name="delete">Удалить</string>
+    <string name="pref_title">Настройки</string>
+    <string name="unit_dialog_title">Выберите единицу измерения</string>
+    <string name="unit_key">unit</string>
+    <string name="unit_title">Единица измерения</string>
 </resources>

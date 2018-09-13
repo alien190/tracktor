@@ -10,7 +10,7 @@ public class PreferenceActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment getFragment() {
-        return null;
+        return MainPreferenceFragment.newInstance();
     }
 
     public static void start(Context context) {
