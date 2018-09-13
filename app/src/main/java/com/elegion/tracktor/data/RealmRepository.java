@@ -69,6 +69,7 @@ public class RealmRepository implements IRepository<Track> {
         return mRealm.where(Track.class).equalTo("id", id).findFirst();
     }
 
+    @Override
     public long createTrackAndSave(long duration, double distance, String imageBase64) {
 
         Track track = new Track();

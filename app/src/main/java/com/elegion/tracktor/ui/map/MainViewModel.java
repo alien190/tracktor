@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 
 import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
+import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,13 +34,13 @@ public class MainViewModel extends ViewModel {
         }
     };
     private boolean isRouteStart;
-    RealmRepository mRealmRepository;
+    IRepository mRealmRepository;
 
 
-    public MainViewModel() {
+    public MainViewModel(IRepository repository) {
        // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
-        mRealmRepository = new RealmRepository();
+        mRealmRepository = repository;
         mIsShutdown.postValue(false);
     }
 

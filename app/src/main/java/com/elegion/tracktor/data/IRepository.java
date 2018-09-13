@@ -13,4 +13,6 @@ public interface IRepository<T> {
     List<T> getAll();
 
     void updateItem(T t);
+
+    long createTrackAndSave(long duration, double distance, String imageBase64);
 }

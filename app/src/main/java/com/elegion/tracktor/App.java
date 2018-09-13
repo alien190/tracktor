@@ -23,7 +23,7 @@ public class App extends Application {
         //MemberInjectorRegistryLocator.setRootRegistry(new com.elegion.tracktor.MemberInjectorRegistry());
         //FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 
-        //sAppScope = Toothpick.openScope(App.class);
+        sAppScope = Toothpick.openScope("Application");
         //sAppScope.installModules(new SmoothieApplicationModule(this), new NetworkModule(), new AppModule(this));
 
         Realm.init(this);
