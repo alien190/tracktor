@@ -52,6 +52,7 @@ public class ResultFragment extends Fragment {
         mAdapter = new ResultAdapter();
         CustomViewModelFactory factory = new CustomViewModelFactory(new RealmRepository());
         mResultViewModel = ViewModelProviders.of(this, factory).get(ResultViewModel.class);
+        mResultViewModel.loadTracks();
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTrackList.setAdapter(mAdapter);

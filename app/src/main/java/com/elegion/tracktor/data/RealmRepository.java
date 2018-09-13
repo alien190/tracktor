@@ -55,7 +55,7 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public List<Track> getAll() {
-        return mRealm.where(Track.class).findAll().sort("id",Sort.ASCENDING);
+        return mRealm.copyFromRealm(mRealm.where(Track.class).findAll().sort("id",Sort.ASCENDING));
     }
 
     @Override
