@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -46,12 +47,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionStatistic:
-                //todo add logic
                 ResultActivity.start(this, ResultActivity.ID_LIST);
-                break;
+                return true;
             case R.id.actionSettings:
-                //todo add logic
-                break;
+                PreferenceActivity.start(this);
+                return true;
             default:
                 break;
         }
