@@ -13,17 +13,23 @@ import android.view.ViewGroup;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.data.RealmRepository;
+import com.elegion.tracktor.di.result.ResultModule;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class ResultFragment extends Fragment {
 
     @BindView(R.id.rvTrackList)
     public RecyclerView mRvTrackList;
 
-    private ResultViewModel mResultViewModel;
+    @Inject
+    protected ResultViewModel mResultViewModel;
     private ResultAdapter mAdapter;
 
 
@@ -39,6 +45,9 @@ public class ResultFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Scope scope = Toothpick.openScope("Result");
+        Toothpick.inject(this, scope);
+
         View view = inflater.inflate(R.layout.fr_result, container, false);
         return view;
     }
@@ -48,8 +57,6 @@ public class ResultFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         mAdapter = new ResultAdapter();
-        CustomViewModelFactory factory = new CustomViewModelFactory(new RealmRepository());
-        mResultViewModel = ViewModelProviders.of(this, factory).get(ResultViewModel.class);
         mResultViewModel.loadTracks();
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));

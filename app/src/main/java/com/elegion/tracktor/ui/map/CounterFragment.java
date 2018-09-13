@@ -1,6 +1,5 @@
 package com.elegion.tracktor.ui.map;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.service.CounterService;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class CounterFragment extends Fragment {
 
@@ -31,34 +35,46 @@ public class CounterFragment extends Fragment {
     @BindView(R.id.buttonStop)
     Button buttonStop;
 
-    private MainViewModel viewModel;
+    @Inject
+    protected MainViewModel mViewModel;
+
+    public static CounterFragment newInstance() {
+        
+        Bundle args = new Bundle();
+        
+        CounterFragment fragment = new CounterFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Scope scope = Toothpick.openScope("Main");
+        Toothpick.inject(this, scope);
+
         View view = inflater.inflate(R.layout.fr_counter, container, false);
         ButterKnife.bind(this, view);
 
-        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        viewModel.getTimeText().observe(this, s -> tvTime.setText(s));
-        viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
-        viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
-        viewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
-        viewModel.getIsShutdown().observe(this, this::stopService);
+        mViewModel.getTimeText().observe(this, s -> tvTime.setText(s));
+        mViewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
+        mViewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
+        mViewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
+        mViewModel.getIsShutdown().observe(this, this::stopService);
 
         return view;
     }
 
     @OnClick(R.id.buttonStart)
     void onStartClick() {
-        viewModel.startRoute();
+        mViewModel.startRoute();
         Intent serviceIntent = new Intent(getContext(), CounterService.class);
         getActivity().startService(serviceIntent);
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
-        viewModel.stopRoute();
+        mViewModel.stopRoute();
         stopService(true);
     }
 

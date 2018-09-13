@@ -25,9 +25,13 @@ import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 
 public class ResultDetailsFragment extends Fragment {
@@ -45,9 +49,10 @@ public class ResultDetailsFragment extends Fragment {
     public static final String ID_KEY = "IdKey";
     private String mRawLocationDataText;
     Bitmap mScreenShot;
-    private RealmRepository mRealmRepository;
     private long mId;
 
+    @Inject
+    ResultViewModel mViewModel;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -60,6 +65,8 @@ public class ResultDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Scope scope = Toothpick.openScope("Result");
+        Toothpick.inject(this, scope);
 
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
@@ -67,8 +74,7 @@ public class ResultDetailsFragment extends Fragment {
 
         if (args != null) {
             mId = args.getLong(ID_KEY, 0);
-            mRealmRepository = new RealmRepository();
-            Track track = mRealmRepository.getItem(mId);
+            Track track = mViewModel.getItem(mId);
             if (track != null) {
                 mScreenShot = ScreenshotMaker.fromBase64(track.getImage());
                 ivScreenshot.setImageBitmap(mScreenShot);
@@ -115,7 +121,7 @@ public class ResultDetailsFragment extends Fragment {
                 return true;
             }
             case R.id.actionDelete: {
-                mRealmRepository.deleteItem(mId);
+                mViewModel.deleteItem(mId);
                 getActivity().onBackPressed();
             }
             default: {

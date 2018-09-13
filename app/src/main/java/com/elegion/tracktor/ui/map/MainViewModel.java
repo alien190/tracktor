@@ -38,7 +38,7 @@ public class MainViewModel extends ViewModel {
 
 
     public MainViewModel(IRepository repository) {
-       // mIsPermissionGranted.setValue(false);
+        // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
         mRealmRepository = repository;
         mIsShutdown.postValue(false);
@@ -75,9 +75,12 @@ public class MainViewModel extends ViewModel {
     }
 
     public void onPermissionGranted() {
-        //mIsPermissionGranted.setValue(true);
-        mPermissionObserver.onSuccess(true);
-       // mIsPermissionGranted.first(true);
+        if (mPermissionObserver != null) {
+            mPermissionObserver.onSuccess(true);
+        }
+        else {
+            mIsPermissionGranted = Single.just(true);
+        }
     }
 
     public MutableLiveData<String> getTimeText() {
@@ -105,7 +108,8 @@ public class MainViewModel extends ViewModel {
     public Single<Boolean> getIsPermissionGranted() {
         return mIsPermissionGranted;
     }
-    public long saveResults(String imageBase64){
+
+    public long saveResults(String imageBase64) {
         return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, imageBase64);
     }
 

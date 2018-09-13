@@ -7,10 +7,17 @@ import android.support.v4.app.Fragment;
 
 import com.elegion.tracktor.common.SingleFragmentActivity;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
+import com.elegion.tracktor.di.main.MainModule;
+import com.elegion.tracktor.di.result.ResultModule;
+import com.elegion.tracktor.ui.map.CounterFragment;
+import com.elegion.tracktor.ui.map.TrackMapFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class ResultActivity extends SingleFragmentActivity {
 
@@ -20,6 +27,10 @@ public class ResultActivity extends SingleFragmentActivity {
     @Override
     protected Fragment getFragment() {
         long id = getIntent().getLongExtra(ID_KEY, ID_LIST);
+
+        Scope scope = Toothpick.openScopes("Application", "Result");
+        scope.installModules(new ResultModule(this));
+        Toothpick.inject(this, scope);
 
         if (id == ID_LIST) {
             return ResultFragment.newInstance();

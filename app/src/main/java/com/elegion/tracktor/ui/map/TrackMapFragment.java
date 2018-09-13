@@ -31,14 +31,19 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import javax.inject.Inject;
+
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class TrackMapFragment extends SupportMapFragment implements
         OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
 
     private static final int DEFAULT_ZOOM = 15;
-    private MainViewModel mViewModel;
+    @Inject
+    protected MainViewModel mViewModel;
 
     private GoogleMap mMap;
     private SingleObserver mMapSet;
@@ -64,7 +69,8 @@ public class TrackMapFragment extends SupportMapFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        Scope scope = Toothpick.openScope("Main");
+        Toothpick.inject(this, scope);
 
         TrackMapFragment fragment = this;
 

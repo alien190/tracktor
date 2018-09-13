@@ -1,9 +1,9 @@
 package com.elegion.tracktor.ui.map;
 
 import android.Manifest;
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,29 +11,43 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
+
+import javax.inject.Inject;
+
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_REQUEST_CODE = 99;
-    MainViewModel viewModel;
+
+    @Inject
+    MainViewModel mViewModel;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Scope scope = Toothpick.openScopes("Application", "Main");
+        scope.installModules(new MainModule(this));
+        Toothpick.inject(this, scope);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.counterContainer, new CounterFragment())
+                    .replace(R.id.counterContainer, CounterFragment.newInstance())
+                    .replace(R.id.mapContainer, TrackMapFragment.newInstance())
                     .commit();
         }
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         requestPermissions();
     }
 
@@ -60,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
-           viewModel.onPermissionGranted();
+            mViewModel.onPermissionGranted();
         } else {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.permDialogTitle)

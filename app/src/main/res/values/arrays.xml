@@ -18,7 +18,7 @@
     </string-array>
 
     <string-array name="entryvalues_shutdown">
-        <item>10</item>
+        <item>-1</item>
         <item>600</item>
         <item>1800</item>
         <item>3600</item>

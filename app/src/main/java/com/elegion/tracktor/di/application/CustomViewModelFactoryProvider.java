@@ -1,4 +1,4 @@
-package com.elegion.tracktor.di.main;
+package com.elegion.tracktor.di.application;
 
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;

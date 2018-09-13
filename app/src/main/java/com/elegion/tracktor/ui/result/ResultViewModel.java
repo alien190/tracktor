@@ -23,4 +23,12 @@ public class ResultViewModel extends ViewModel {
     public MutableLiveData<List<Track>> getTracks() {
         return mTracks;
     }
+
+    public Track getItem(long id) {
+        return mRepository.getItem(id);
+    }
+
+    public void deleteItem(long id) {
+        mRepository.deleteItem(id);
+    }
 }

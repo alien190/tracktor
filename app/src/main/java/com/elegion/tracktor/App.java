@@ -20,15 +20,14 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
+        Realm.init(this);
+
         Toothpick.setConfiguration(Configuration.forProduction().disableReflection());
-        //will generate after one @Inject
-        //MemberInjectorRegistryLocator.setRootRegistry(new com.elegion.tracktor.MemberInjectorRegistry());
-        //FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
+        MemberInjectorRegistryLocator.setRootRegistry(new com.elegion.tracktor.MemberInjectorRegistry());
+        FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 
         sAppScope = Toothpick.openScope("Application");
         sAppScope.installModules(new ApplicationModule());
-
-        Realm.init(this);
     }
 
     public static Scope getAppScope() {
