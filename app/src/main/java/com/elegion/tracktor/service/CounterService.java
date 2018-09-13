@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
@@ -178,6 +179,7 @@ public class CounterService extends Service {
 
         updateNotification();
         EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond));
+
     }
 
     private void updateNotification() {
