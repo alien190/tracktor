@@ -1,7 +1,7 @@
 package com.elegion.tracktor.di.main;
 
 import com.elegion.tracktor.data.IRepository;
-import com.elegion.tracktor.ui.result.CustomViewModelFactory;
+import com.elegion.tracktor.ui.common.CustomViewModelFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

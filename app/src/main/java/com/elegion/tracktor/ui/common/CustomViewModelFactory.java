@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui.result;
+package com.elegion.tracktor.ui.common;
 
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.map.MainViewModel;
+import com.elegion.tracktor.ui.result.ResultViewModel;
 
 public class CustomViewModelFactory implements ViewModelProvider.Factory {
     private IRepository mRepository;

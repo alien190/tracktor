@@ -2,6 +2,8 @@ package com.elegion.tracktor;
 
 import android.app.Application;
 
+import com.elegion.tracktor.di.application.ApplicationModule;
+
 import io.realm.Realm;
 import toothpick.Scope;
 import toothpick.Toothpick;
@@ -24,7 +26,7 @@ public class App extends Application {
         //FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 
         sAppScope = Toothpick.openScope("Application");
-        //sAppScope.installModules(new SmoothieApplicationModule(this), new NetworkModule(), new AppModule(this));
+        sAppScope.installModules(new ApplicationModule());
 
         Realm.init(this);
     }

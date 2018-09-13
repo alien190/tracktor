@@ -12,10 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.event.ShowResultDetailEvent;
 import com.elegion.tracktor.data.RealmRepository;
-
-import org.greenrobot.eventbus.EventBus;
+import com.elegion.tracktor.ui.common.CustomViewModelFactory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
