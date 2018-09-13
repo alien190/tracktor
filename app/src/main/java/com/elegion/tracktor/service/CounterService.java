@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.R;
@@ -22,6 +23,7 @@ import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
@@ -67,6 +69,8 @@ public class CounterService extends Service {
 
     public static final int DEFAULT_NOTIFICATION_ID = 101;
 
+    private Long mShutdownInterval = -1L;
+
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest = new LocationRequest();
 
@@ -95,6 +99,9 @@ public class CounterService extends Service {
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationBuilder = getNotificationBuilder();
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mShutdownInterval = Long.valueOf(sharedPreferences.getString(getString(R.string.shutdown_key), "-1"));
 
         EventBus.getDefault().register(this);
     }
@@ -180,6 +187,9 @@ public class CounterService extends Service {
         updateNotification();
         EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond));
 
+        if(mShutdownInterval!=-1L && mTotalSecond >= mShutdownInterval) {
+            EventBus.getDefault().postSticky(new ShutdownEvent());
+        }
     }
 
     private void updateNotification() {

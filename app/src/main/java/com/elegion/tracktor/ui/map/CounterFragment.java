@@ -44,23 +44,29 @@ public class CounterFragment extends Fragment {
         viewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
         viewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         viewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
+        viewModel.getIsShutdown().observe(this, this::stopService);
 
         return view;
     }
 
-    @SuppressLint("CheckResult")
     @OnClick(R.id.buttonStart)
     void onStartClick() {
         viewModel.startRoute();
         Intent serviceIntent = new Intent(getContext(), CounterService.class);
         getActivity().startService(serviceIntent);
-
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         viewModel.stopRoute();
-        Intent serviceIntent = new Intent(getContext(), CounterService.class);
-        getActivity().stopService(serviceIntent);
+        stopService(true);
+    }
+
+    private void stopService(boolean stop) {
+        if (stop) {
+            Intent serviceIntent = new Intent(getContext(), CounterService.class);
+            getActivity().stopService(serviceIntent);
+        }
+
     }
 }

@@ -2,7 +2,9 @@ package com.elegion.tracktor.ui.map;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.SharedPreferences;
 
+import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.utils.StringUtils;
@@ -17,6 +19,7 @@ import io.reactivex.SingleObserver;
 public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsShutdown = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private long mTotalTime;
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
@@ -36,6 +39,7 @@ public class MainViewModel extends ViewModel {
        // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
         mRealmRepository = new RealmRepository();
+        mIsShutdown.postValue(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -48,6 +52,12 @@ public class MainViewModel extends ViewModel {
         if (!isRouteStart) {
             startRoute();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onShutdown(ShutdownEvent event) {
+        mIsShutdown.postValue(true);
+        stopRoute();
     }
 
     public void startRoute() {
@@ -95,5 +105,9 @@ public class MainViewModel extends ViewModel {
     }
     public long saveResults(String imageBase64){
         return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, imageBase64);
+    }
+
+    public MutableLiveData<Boolean> getIsShutdown() {
+        return mIsShutdown;
     }
 }
