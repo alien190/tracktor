@@ -11,6 +11,7 @@ public class StringUtils {
     }
 
     public static String getSpeedText(Double speed) {
+        speed = speed * 3.6;
         return String.format(Locale.ENGLISH, "%.1f км/ч", speed);
     }
     public static String getTimerText(long totalSeconds) {

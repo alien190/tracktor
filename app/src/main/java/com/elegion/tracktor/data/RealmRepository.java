@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -15,7 +16,12 @@ public class RealmRepository implements IRepository<Track> {
     private Realm mRealm;
 
     public RealmRepository() {
-        mRealm = Realm.getDefaultInstance();
+
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
+
+        mRealm = Realm.getInstance(config);
         Number number = mRealm.where(Track.class).max("id");
         if (number != null) {
             currentId.set(number.longValue());
@@ -55,7 +61,7 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public List<Track> getAll() {
-        return mRealm.copyFromRealm(mRealm.where(Track.class).findAll().sort("id",Sort.ASCENDING));
+        return mRealm.copyFromRealm(mRealm.where(Track.class).findAll().sort("id", Sort.ASCENDING));
     }
 
     @Override
