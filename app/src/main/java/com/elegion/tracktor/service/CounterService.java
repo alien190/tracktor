@@ -41,6 +41,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -57,6 +59,7 @@ public class CounterService extends Service {
     private List<LocationData> mRawLocationData = new ArrayList<>();
 
     private int mTotalSecond;
+    private Date mStartDate;
 
     private KalmanRoute mKalmanRoute;
     private Disposable timerDisposable;
@@ -128,6 +131,7 @@ public class CounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        mStartDate = Calendar.getInstance().getTime();
         startForeground();
 
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
@@ -188,7 +192,7 @@ public class CounterService extends Service {
 
         mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
         updateNotification();
-        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed));
+        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed, mStartDate));
 
         if (mShutdownInterval != -1L && mTotalSecond >= mShutdownInterval) {
             EventBus.getDefault().postSticky(new ShutdownEvent());

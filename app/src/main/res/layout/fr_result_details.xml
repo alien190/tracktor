@@ -6,6 +6,29 @@
     android:orientation="vertical"
     android:layout_margin="@dimen/margin">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dateLabel"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="0dp"
+            android:paddingStart="4dp"
+            android:textSize="16sp"
+            tools:text="10.10.2018 10:10:24"
+            android:textColor="@color/colorBlack"/>
+
+    </LinearLayout>
+
     <include layout="@layout/track_info" />
 
     <LinearLayout

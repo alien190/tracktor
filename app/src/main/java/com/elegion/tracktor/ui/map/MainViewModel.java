@@ -15,6 +15,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Date;
+
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 
@@ -28,6 +30,7 @@ public class MainViewModel extends ViewModel {
     private long mTotalTime;
     private double mDistance;
     private double mAverageSpeed;
+    private Date mStartDate;
     private SingleObserver mPermissionObserver;
     private Single<Boolean> mIsPermissionGranted = new Single<Boolean>() {
         @Override
@@ -51,6 +54,7 @@ public class MainViewModel extends ViewModel {
         mTotalTime = event.seconds;
         mDistance = event.distance;
         mAverageSpeed = event.averageSpeed;
+        mStartDate = event.startDate;
 
         timeText.postValue(StringUtils.getTimerText(mTotalTime));
         mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
@@ -113,7 +117,7 @@ public class MainViewModel extends ViewModel {
     }
 
     public long saveResults(String imageBase64) {
-        return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, mAverageSpeed, imageBase64);
+        return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, mAverageSpeed, mStartDate, imageBase64);
     }
 
     public MutableLiveData<Boolean> getIsShutdown() {

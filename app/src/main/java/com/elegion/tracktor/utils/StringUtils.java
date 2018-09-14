@@ -2,6 +2,11 @@ package com.elegion.tracktor.utils;
 
 import com.elegion.tracktor.common.LocationData;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,5 +36,10 @@ public class StringUtils {
         }
 
         return resultBuilder.toString();
+    }
+
+    public static String getDateText(Date date) {
+        DateFormat dfOut = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        return dfOut.format(date);
     }
 }
