@@ -186,8 +186,8 @@ public class CounterService extends Service {
             }
         }
 
+        mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
         updateNotification();
-        mAverageSpeed = mDistance / mTotalSecond;
         EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed));
 
         if (mShutdownInterval != -1L && mTotalSecond >= mShutdownInterval) {
