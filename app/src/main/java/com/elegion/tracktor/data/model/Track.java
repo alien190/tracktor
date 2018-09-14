@@ -80,7 +80,8 @@ public class Track extends RealmObject {
             Track newTrack = (Track) obj;
             return this.getDistance() == newTrack.getDistance() &&
                     this.getDuration() == newTrack.getDuration() &&
-                    this.getDate() == newTrack.getDate();
+                    this.getDate() == newTrack.getDate() &&
+                    this.getAverageSpeed() == newTrack.getAverageSpeed();
         }
         return false;
     }

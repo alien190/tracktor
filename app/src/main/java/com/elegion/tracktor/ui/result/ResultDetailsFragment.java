@@ -40,6 +40,8 @@ public class ResultDetailsFragment extends Fragment {
     TextView tvTime;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
+    @BindView(R.id.tvSpeed)
+    TextView tvSpeed;
     @BindView(R.id.btShareRaw)
     Button btShareRaw;
     @BindView(R.id.ivScreenshot)
@@ -80,6 +82,7 @@ public class ResultDetailsFragment extends Fragment {
                 ivScreenshot.setImageBitmap(mScreenShot);
                 tvTime.setText(StringUtils.getTimerText(track.getDuration()));
                 tvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
+                tvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
             }
 
         }
