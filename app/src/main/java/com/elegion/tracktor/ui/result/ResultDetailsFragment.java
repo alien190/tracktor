@@ -20,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -59,6 +60,8 @@ public class ResultDetailsFragment extends Fragment {
 
     @Inject
     ResultViewModel mViewModel;
+    @Inject
+    CurrentPreferences mCurrentPreferences;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();

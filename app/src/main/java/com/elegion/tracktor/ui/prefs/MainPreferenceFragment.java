@@ -8,8 +8,17 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
+
+import javax.inject.Inject;
+
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class MainPreferenceFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    @Inject
+    CurrentPreferences mCurrentPreferences;
 
     public static MainPreferenceFragment newInstance() {
 
@@ -23,6 +32,8 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Scope scope = Toothpick.openScope("Application");
+        Toothpick.inject(this, scope);
         initSummary();
     }
 
@@ -48,7 +59,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
         setSummaryFor(findPreference(key));
     }
 
-    private void initSummary(){
+    private void initSummary() {
         setSummaryFor(findPreference(getString(R.string.unit_key)));
         setSummaryFor(findPreference(getString(R.string.shutdown_key)));
         setSummaryFor(findPreference(getString(R.string.weight_key)));
@@ -58,10 +69,14 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
     }
 
     private void setSummaryFor(Preference preference) {
+        String value = "";
         if (preference instanceof ListPreference) {
+            value = String.valueOf(((ListPreference) preference).getValue());
             preference.setSummary(((ListPreference) preference).getEntry());
         } else if (preference instanceof EditTextPreference) {
+            value = String.valueOf(((EditTextPreference) preference).getText());
             preference.setSummary(((EditTextPreference) preference).getText());
         }
+        mCurrentPreferences.setValueAndNotify(preference.getKey(), value);
     }
 }

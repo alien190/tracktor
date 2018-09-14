@@ -27,7 +27,7 @@ public class App extends Application {
         FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 
         sAppScope = Toothpick.openScope("Application");
-        sAppScope.installModules(new ApplicationModule());
+        sAppScope.installModules(new ApplicationModule(this));
     }
 
     public static Scope getAppScope() {
