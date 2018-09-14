@@ -31,4 +31,11 @@
         <item>1</item>
         <item>2</item>
     </string-array>
+
+    <string-array name="actions">
+        <item>Ходьба</item>
+        <item>Бег</item>
+        <item>Велосипед</item>
+        <item>Автомобиль</item>
+    </string-array>
 </resources>

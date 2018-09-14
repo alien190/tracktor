@@ -3,21 +3,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="@dimen/margin">
 
-    <include layout="@layout/track_info"/>
+    <include layout="@layout/track_info" />
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/shareRawData"
-        android:id="@+id/btShareRaw"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/actionLabel"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/spAction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 
     <ImageView
+        android:id="@+id/ivScreenshot"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/ivScreenshot"
-        android:scaleType="centerInside"
         android:layout_weight="1"
-        />
+        android:scaleType="centerInside" />
 </LinearLayout>

@@ -14,13 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -29,7 +28,6 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
@@ -42,10 +40,12 @@ public class ResultDetailsFragment extends Fragment {
     TextView tvDistance;
     @BindView(R.id.tvSpeed)
     TextView tvSpeed;
-    @BindView(R.id.btShareRaw)
-    Button btShareRaw;
+//    @BindView(R.id.btShareRaw)
+//    Button btShareRaw;
     @BindView(R.id.ivScreenshot)
     ImageView ivScreenshot;
+    @BindView(R.id.spAction)
+    Spinner spAction;
 
 
     public static final String ID_KEY = "IdKey";
@@ -84,25 +84,36 @@ public class ResultDetailsFragment extends Fragment {
                 tvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
                 tvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
             }
-
         }
 
         setHasOptionsMenu(true);
+        initSpinner();
         return view;
     }
 
-    @OnClick(R.id.btShareRaw)
-    public void onShareRawData() {
-        if (mRawLocationDataText != null && !mRawLocationDataText.isEmpty()) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, mRawLocationDataText);
-            shareIntent.setType("text/plain");
-            startActivity(shareIntent);
-        } else {
-            Toast.makeText(getActivity(), R.string.noRawData, Toast.LENGTH_SHORT).show();
-        }
+    private void initSpinner(){
+        String[] actions = getResources().getStringArray(R.array.actions);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                actions);
+        arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spAction.setAdapter(arrayAdapter);
+
     }
+
+//    @OnClick(R.id.btShareRaw)
+//    public void onShareRawData() {
+//        if (mRawLocationDataText != null && !mRawLocationDataText.isEmpty()) {
+//            Intent shareIntent = new Intent();
+//            shareIntent.setAction(Intent.ACTION_SEND);
+//            shareIntent.putExtra(Intent.EXTRA_TEXT, mRawLocationDataText);
+//            shareIntent.setType("text/plain");
+//            startActivity(shareIntent);
+//        } else {
+//            Toast.makeText(getActivity(), R.string.noRawData, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
