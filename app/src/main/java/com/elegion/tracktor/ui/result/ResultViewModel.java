@@ -31,4 +31,6 @@ public class ResultViewModel extends ViewModel {
     public void deleteItem(long id) {
         mRepository.deleteItem(id);
     }
+
+    public void updateItem(Track track) {mRepository.updateItem(track);}
 }

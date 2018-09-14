@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnItemSelected;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
@@ -42,7 +43,7 @@ public class ResultDetailsFragment extends Fragment {
     TextView tvSpeed;
     @BindView(R.id.tvStartDate)
     TextView tvStartDate;
-//    @BindView(R.id.btShareRaw)
+    //    @BindView(R.id.btShareRaw)
 //    Button btShareRaw;
     @BindView(R.id.ivScreenshot)
     ImageView ivScreenshot;
@@ -54,6 +55,7 @@ public class ResultDetailsFragment extends Fragment {
     private String mRawLocationDataText;
     Bitmap mScreenShot;
     private long mId;
+    private Track mTrack;
 
     @Inject
     ResultViewModel mViewModel;
@@ -76,25 +78,27 @@ public class ResultDetailsFragment extends Fragment {
         ButterKnife.bind(this, view);
         Bundle args = getArguments();
 
+        initSpinner();
+
         if (args != null) {
             mId = args.getLong(ID_KEY, 0);
-            Track track = mViewModel.getItem(mId);
-            if (track != null) {
-                mScreenShot = ScreenshotMaker.fromBase64(track.getImage());
+            mTrack = mViewModel.getItem(mId);
+            if (mTrack != null) {
+                mScreenShot = ScreenshotMaker.fromBase64(mTrack.getImage());
                 ivScreenshot.setImageBitmap(mScreenShot);
-                tvTime.setText(StringUtils.getTimerText(track.getDuration()));
-                tvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
-                tvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
-                tvStartDate.setText(StringUtils.getDateText(track.getDate()));
+                tvTime.setText(StringUtils.getTimerText(mTrack.getDuration()));
+                tvDistance.setText(StringUtils.getDistanceText(mTrack.getDistance()));
+                tvSpeed.setText(StringUtils.getSpeedText(mTrack.getAverageSpeed()));
+                tvStartDate.setText(StringUtils.getDateText(mTrack.getDate()));
+                spAction.setSelection(mTrack.getAction());
             }
         }
 
         setHasOptionsMenu(true);
-        initSpinner();
         return view;
     }
 
-    private void initSpinner(){
+    private void initSpinner() {
         String[] actions = getResources().getStringArray(R.array.actions);
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(),
@@ -103,6 +107,16 @@ public class ResultDetailsFragment extends Fragment {
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spAction.setAdapter(arrayAdapter);
 
+    }
+
+    @OnItemSelected(R.id.spAction)
+    public void spinnerItemSelected(Spinner spinner, int position) {
+        mTrack.setAction(position);
+        updateTrack();
+    }
+
+    private void updateTrack() {
+        mViewModel.updateItem(mTrack);
     }
 
 //    @OnClick(R.id.btShareRaw)

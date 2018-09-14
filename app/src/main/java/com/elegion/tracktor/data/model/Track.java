@@ -16,6 +16,7 @@ public class Track extends RealmObject {
     private String image;
     private RealmList<Location> route;
     private double averageSpeed;
+    private int action;
 
 
     public long getId() {
@@ -72,6 +73,14 @@ public class Track extends RealmObject {
 
     public void setAverageSpeed(double averageSpeed) {
         this.averageSpeed = averageSpeed;
+    }
+
+    public int getAction() {
+        return action;
+    }
+
+    public void setAction(int action) {
+        this.action = action;
     }
 
     @Override
