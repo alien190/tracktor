@@ -36,4 +36,5 @@
     <string name="weight_dialog_title">Введите вес пользователя</string>
     <string name="weight_key">weight</string>
     <string name="about_title">О приложении</string>
+    <string name="speedLabel">Средняя скорость:</string>
 </resources>

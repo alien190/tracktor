@@ -10,6 +10,9 @@ public class StringUtils {
         return String.format(Locale.ENGLISH, "%.1f m", distance);
     }
 
+    public static String getSpeedText(Double speed) {
+        return String.format(Locale.ENGLISH, "%.1f км/ч", speed);
+    }
     public static String getTimerText(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;

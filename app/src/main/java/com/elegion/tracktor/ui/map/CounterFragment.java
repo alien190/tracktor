@@ -30,6 +30,8 @@ public class CounterFragment extends Fragment {
     TextView tvTime;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
+    @BindView(R.id.tvSpeed)
+    TextView tvSpeed;
     @BindView(R.id.buttonStart)
     Button buttonStart;
     @BindView(R.id.buttonStop)
@@ -56,8 +58,9 @@ public class CounterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_counter, container, false);
         ButterKnife.bind(this, view);
 
-        mViewModel.getTimeText().observe(this, s -> tvTime.setText(s));
-        mViewModel.getDistanceText().observe(this, s -> tvDistance.setText(s));
+        mViewModel.getTimeText().observe(this, tvTime::setText);
+        mViewModel.getDistanceText().observe(this, tvDistance::setText);
+        mViewModel.getAverageSpeedText().observe(this, tvSpeed::setText);
         mViewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         mViewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
         mViewModel.getIsShutdown().observe(this, this::stopService);

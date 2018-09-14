@@ -23,9 +23,11 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsShutdown = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
-    private long mTotalTime;
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
+    private MutableLiveData<String> mAverageSpeedText = new MutableLiveData<>();
+    private long mTotalTime;
     private double mDistance;
+    private double mAverageSpeed;
     private SingleObserver mPermissionObserver;
     private Single<Boolean> mIsPermissionGranted = new Single<Boolean>() {
         @Override
@@ -48,9 +50,11 @@ public class MainViewModel extends ViewModel {
     public void onTimerUpdate(TimerUpdateEvent event) {
         mTotalTime = event.seconds;
         mDistance = event.distance;
+        mAverageSpeed = event.averageSpeed;
 
         timeText.postValue(StringUtils.getTimerText(mTotalTime));
         mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
+        mAverageSpeedText.postValue(StringUtils.getSpeedText(mAverageSpeed));
         if (!isRouteStart) {
             startRoute();
         }
@@ -77,8 +81,7 @@ public class MainViewModel extends ViewModel {
     public void onPermissionGranted() {
         if (mPermissionObserver != null) {
             mPermissionObserver.onSuccess(true);
-        }
-        else {
+        } else {
             mIsPermissionGranted = Single.just(true);
         }
     }
@@ -115,5 +118,9 @@ public class MainViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getIsShutdown() {
         return mIsShutdown;
+    }
+
+    public MutableLiveData<String> getAverageSpeedText() {
+        return mAverageSpeedText;
     }
 }

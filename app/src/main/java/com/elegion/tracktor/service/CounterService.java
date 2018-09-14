@@ -62,6 +62,7 @@ public class CounterService extends Service {
     private Disposable timerDisposable;
     private double mDistance;
     private boolean isStartPointSend;
+    private double mAverageSpeed;
 
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
@@ -96,6 +97,7 @@ public class CounterService extends Service {
         mKalmanRoute = new KalmanRoute();
         mTotalSecond = 0;
         mDistance = 0;
+        mAverageSpeed = 0;
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mNotificationBuilder = getNotificationBuilder();
@@ -185,9 +187,10 @@ public class CounterService extends Service {
         }
 
         updateNotification();
-        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond));
+        mAverageSpeed = mDistance / mTotalSecond;
+        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed));
 
-        if(mShutdownInterval!=-1L && mTotalSecond >= mShutdownInterval) {
+        if (mShutdownInterval != -1L && mTotalSecond >= mShutdownInterval) {
             EventBus.getDefault().postSticky(new ShutdownEvent());
         }
     }
@@ -199,7 +202,10 @@ public class CounterService extends Service {
                 .append(StringUtils.getTimerText(mTotalSecond))
                 .append(" ")
                 .append(getString(R.string.distanceLabel))
-                .append(StringUtils.getDistanceText(mDistance));
+                .append(StringUtils.getDistanceText(mDistance))
+                .append(" ")
+                .append(getString(R.string.speedLabel))
+                .append(StringUtils.getSpeedText(mAverageSpeed));
 
         mNotificationBuilder.setContentText(contentText.toString())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))
