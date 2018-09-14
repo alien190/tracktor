@@ -76,12 +76,13 @@ public class RealmRepository implements IRepository<Track> {
     }
 
     @Override
-    public long createTrackAndSave(long duration, double distance, String imageBase64) {
+    public long createTrackAndSave(long duration, double distance, double averageSpeed, String imageBase64) {
 
         Track track = new Track();
 
         track.setDuration(duration);
         track.setDistance(distance);
+        track.setAverageSpeed(averageSpeed);
         track.setImage(imageBase64);
         return insertItem(track);
     }

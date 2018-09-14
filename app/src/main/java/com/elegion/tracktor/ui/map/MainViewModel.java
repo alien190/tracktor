@@ -113,7 +113,7 @@ public class MainViewModel extends ViewModel {
     }
 
     public long saveResults(String imageBase64) {
-        return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, imageBase64);
+        return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, mAverageSpeed, imageBase64);
     }
 
     public MutableLiveData<Boolean> getIsShutdown() {
