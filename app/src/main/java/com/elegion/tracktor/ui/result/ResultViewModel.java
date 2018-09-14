@@ -9,7 +9,7 @@ import com.elegion.tracktor.data.model.Track;
 import java.util.List;
 
 public class ResultViewModel extends ViewModel {
-    IRepository<Track> mRepository;
+    private IRepository<Track> mRepository;
     private MutableLiveData<List<Track>> mTracks = new MutableLiveData<>();
 
     public ResultViewModel(IRepository<Track> repository) {
