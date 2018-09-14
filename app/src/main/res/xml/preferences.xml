@@ -2,34 +2,64 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/pref_title">
 
-    <ListPreference
-        android:defaultValue="1"
-        android:dialogTitle="@string/unit_dialog_title"
-        android:entries="@array/entries_unit"
-        android:entryValues="@array/entryvalues_unit"
-        android:key="@string/unit_key"
-        android:title="@string/unit_title" />
+    <PreferenceCategory android:title="@string/user_prop_label">
+        <EditTextPreference
+            android:defaultValue="60"
+            android:dialogTitle="@string/weight_dialog_title"
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="@string/weight_key"
+            android:lines="1"
+            android:title="@string/weight_title" />
 
-    <ListPreference
-        android:defaultValue="-1"
-        android:dialogTitle="@string/shutdown_dialog_title"
-        android:entries="@array/entries_shutdown"
-        android:entryValues="@array/entryvalues_shutdown"
-        android:key="@string/shutdown_key"
-        android:title="@string/shutdown_title" />
+        <EditTextPreference
+            android:defaultValue="175"
+            android:dialogTitle="@string/height_dialog_title"
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="@string/height_key"
+            android:lines="1"
+            android:title="@string/height_title" />
 
-    <EditTextPreference
-        android:defaultValue="60"
-        android:dialogTitle="@string/weight_dialog_title"
-        android:digits="0123456789"
-        android:inputType="numberDecimal"
-        android:key="@string/weight_key"
-        android:lines="1"
-        android:title="@string/weight_title" />
+        <EditTextPreference
+            android:defaultValue="30"
+            android:dialogTitle="@string/age_dialog_title"
+            android:digits="0123456789"
+            android:inputType="numberDecimal"
+            android:key="@string/age_key"
+            android:lines="1"
+            android:title="@string/age_title" />
 
-    <Preference android:title="@string/about_title">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="https://www.e-legion.com/" />
-    </Preference>
+        <ListPreference
+            android:defaultValue="1"
+            android:dialogTitle="@string/sex_dialog_title"
+            android:entries="@array/entries_sex"
+            android:entryValues="@array/entryvalues_sex"
+            android:key="@string/sex_key"
+            android:title="@string/sex_title" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/program_settings_label">
+        <ListPreference
+            android:defaultValue="1"
+            android:dialogTitle="@string/unit_dialog_title"
+            android:entries="@array/entries_unit"
+            android:entryValues="@array/entryvalues_unit"
+            android:key="@string/unit_key"
+            android:title="@string/unit_title" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:dialogTitle="@string/shutdown_dialog_title"
+            android:entries="@array/entries_shutdown"
+            android:entryValues="@array/entryvalues_shutdown"
+            android:key="@string/shutdown_key"
+            android:title="@string/shutdown_title" />
+
+        <Preference android:title="@string/about_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://www.e-legion.com/" />
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

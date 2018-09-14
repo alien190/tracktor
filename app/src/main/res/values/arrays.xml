@@ -23,4 +23,12 @@
         <item>1800</item>
         <item>3600</item>
     </string-array>
+    <string-array name="entries_sex">
+        <item>Мужской</item>
+        <item>Женский</item>
+    </string-array>
+    <string-array name="entryvalues_sex">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

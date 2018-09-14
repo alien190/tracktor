@@ -32,9 +32,20 @@
     <string name="shutdown_dialog_title">Выберите время отключения</string>
     <string name="shutdown_key">shutdown</string>
     <string name="shutdown_title">Время отключения</string>
-    <string name="weight_title">Вес пользователя</string>
+    <string name="weight_title">Вес</string>
     <string name="weight_dialog_title">Введите вес пользователя</string>
     <string name="weight_key">weight</string>
     <string name="about_title">О приложении</string>
     <string name="speedLabel">Средняя скорость:</string>
+    <string name="user_prop_label">Сведения о пользователе</string>
+    <string name="program_settings_label">Настройки программы</string>
+    <string name="height_dialog_title">Введите рост пользователя</string>
+    <string name="height_key">height</string>
+    <string name="height_title">Рост</string>
+    <string name="sex_dialog_title">Выберите пол пользователя</string>
+    <string name="sex_key">sex</string>
+    <string name="sex_title">Пол</string>
+    <string name="age_dialog_title">Введите возраст пользователя</string>
+    <string name="age_key">age</string>
+    <string name="age_title">Возраст</string>
 </resources>
