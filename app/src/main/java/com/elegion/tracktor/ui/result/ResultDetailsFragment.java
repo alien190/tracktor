@@ -50,6 +50,8 @@ public class ResultDetailsFragment extends Fragment {
     Spinner spAction;
     @BindView(R.id.tvCalories)
     TextView tvCalories;
+    @BindView(R.id.tvComment)
+    TextView tvComment;
 
 
     public static final String ID_KEY = "IdKey";
@@ -97,7 +99,15 @@ public class ResultDetailsFragment extends Fragment {
         mViewModel.getAverageSpeed().observe(this, tvAverageSpeed::setText);
         mViewModel.getStartDate().observe(this, tvStartDate::setText);
         mViewModel.getCalories().observe(this, tvCalories::setText);
+        mViewModel.getComment().observe(this, this::setComment);
         mViewModel.loadTrack();
+    }
+
+    private void setComment(String comment){
+        if(comment.isEmpty()) {
+            comment = getString(R.string.no_comment);
+        }
+        tvComment.setText(comment);
     }
     private void setScreenShot(String imageString) {
         mScreenShot = ScreenshotMaker.fromBase64(imageString);
