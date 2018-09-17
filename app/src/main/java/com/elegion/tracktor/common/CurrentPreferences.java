@@ -51,11 +51,13 @@ public class CurrentPreferences {
     }
 
     public double getWeight() {
-        return getDoubleValue(weightKey);
+        double value = getDoubleValue(weightKey);
+        return value != 0 ? value : 60;
     }
 
     public double getHeight() {
-        return getDoubleValue(heightKey);
+        double value = getDoubleValue(heightKey);
+        return value != 0 ? value : 175;
     }
 
     private double getDoubleValue(String key) {
