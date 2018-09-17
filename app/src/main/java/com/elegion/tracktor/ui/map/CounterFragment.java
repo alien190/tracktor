@@ -1,6 +1,5 @@
 package com.elegion.tracktor.ui.map;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.service.CounterService;
 
 import javax.inject.Inject;
@@ -30,7 +28,7 @@ public class CounterFragment extends Fragment {
     TextView tvTime;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
-    @BindView(R.id.tvSpeed)
+    @BindView(R.id.tvAverageSpeed)
     TextView tvSpeed;
     @BindView(R.id.buttonStart)
     Button buttonStart;

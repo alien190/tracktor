@@ -1,22 +1,18 @@
 package com.elegion.tracktor.service;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.preference.PreferenceManager;
 
-import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
@@ -203,7 +199,7 @@ public class CounterService extends Service {
         StringBuilder contentText = new StringBuilder();
         contentText//.append(getString(R.string.notificationText)).append('\n')
                 .append(getString(R.string.timeLabel))
-                .append(StringUtils.getTimerText(mTotalSecond))
+                .append(StringUtils.getDurationText(mTotalSecond))
                 .append(" ")
                 .append(getString(R.string.distanceLabel))
                 .append(StringUtils.getDistanceText(mDistance))

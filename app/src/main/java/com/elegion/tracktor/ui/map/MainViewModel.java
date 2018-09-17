@@ -2,13 +2,10 @@ package com.elegion.tracktor.ui.map;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.SharedPreferences;
 
 import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
-import com.elegion.tracktor.data.RealmRepository;
-import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,7 +53,7 @@ public class MainViewModel extends ViewModel {
         mAverageSpeed = event.averageSpeed;
         mStartDate = event.startDate;
 
-        timeText.postValue(StringUtils.getTimerText(mTotalTime));
+        timeText.postValue(StringUtils.getDurationText(mTotalTime));
         mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
         mAverageSpeedText.postValue(StringUtils.getSpeedText(mAverageSpeed));
         if (!isRouteStart) {

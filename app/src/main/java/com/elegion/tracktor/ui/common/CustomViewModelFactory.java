@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.map.MainViewModel;
+import com.elegion.tracktor.ui.result.ResultDetailsViewModel;
 import com.elegion.tracktor.ui.result.ResultViewModel;
 
 public class CustomViewModelFactory implements ViewModelProvider.Factory {

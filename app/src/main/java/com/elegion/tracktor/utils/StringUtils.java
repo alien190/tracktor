@@ -19,7 +19,7 @@ public class StringUtils {
         speed = speed * 3.6;
         return String.format(Locale.ENGLISH, "%.1f км/ч", speed);
     }
-    public static String getTimerText(long totalSeconds) {
+    public static String getDurationText(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
         long seconds = totalSeconds % 60;

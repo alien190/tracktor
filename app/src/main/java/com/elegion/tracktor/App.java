@@ -23,6 +23,7 @@ public class App extends Application {
         Realm.init(this);
 
         Toothpick.setConfiguration(Configuration.forProduction().disableReflection());
+        Toothpick.setConfiguration(Configuration.forProduction().preventMultipleRootScopes());
         MemberInjectorRegistryLocator.setRootRegistry(new com.elegion.tracktor.MemberInjectorRegistry());
         FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 

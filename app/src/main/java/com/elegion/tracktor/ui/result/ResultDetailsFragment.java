@@ -20,10 +20,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.CurrentPreferences;
-import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
 import com.elegion.tracktor.utils.ScreenshotMaker;
-import com.elegion.tracktor.utils.StringUtils;
 
 import javax.inject.Inject;
 
@@ -37,15 +35,13 @@ import toothpick.Toothpick;
 public class ResultDetailsFragment extends Fragment {
 
     @BindView(R.id.tvTime)
-    TextView tvTime;
+    TextView tvDuration;
     @BindView(R.id.tvDistance)
     TextView tvDistance;
-    @BindView(R.id.tvSpeed)
-    TextView tvSpeed;
+    @BindView(R.id.tvAverageSpeed)
+    TextView tvAverageSpeed;
     @BindView(R.id.tvStartDate)
     TextView tvStartDate;
-    //    @BindView(R.id.btShareRaw)
-//    Button btShareRaw;
     @BindView(R.id.ivScreenshot)
     ImageView ivScreenshot;
     @BindView(R.id.spAction)
@@ -53,15 +49,11 @@ public class ResultDetailsFragment extends Fragment {
 
 
     public static final String ID_KEY = "IdKey";
-    private String mRawLocationDataText;
     Bitmap mScreenShot;
     private long mId;
-    private Track mTrack;
 
     @Inject
-    ResultViewModel mViewModel;
-    @Inject
-    CurrentPreferences mCurrentPreferences;
+    ResultDetailsViewModel mViewModel;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -74,31 +66,35 @@ public class ResultDetailsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Scope scope = Toothpick.openScope("Result");
+        Bundle args = getArguments();
+        if (args != null) {
+            mId = args.getLong(ID_KEY, 0);
+        }
+        Toothpick.closeScope("ResultDetail");
+        Scope scope = Toothpick.openScopes("Application", "ResultDetail");
+        scope.installModules(new ResultDetailsModule(this, mId));
         Toothpick.inject(this, scope);
 
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
-        Bundle args = getArguments();
 
         initSpinner();
 
-        if (args != null) {
-            mId = args.getLong(ID_KEY, 0);
-            mTrack = mViewModel.getItem(mId);
-            if (mTrack != null) {
-                mScreenShot = ScreenshotMaker.fromBase64(mTrack.getImage());
-                ivScreenshot.setImageBitmap(mScreenShot);
-                tvTime.setText(StringUtils.getTimerText(mTrack.getDuration()));
-                tvDistance.setText(StringUtils.getDistanceText(mTrack.getDistance()));
-                tvSpeed.setText(StringUtils.getSpeedText(mTrack.getAverageSpeed()));
-                tvStartDate.setText(StringUtils.getDateText(mTrack.getDate()));
-                spAction.setSelection(mTrack.getAction());
-            }
-        }
+        mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
+        mViewModel.getDuration().observe(this, tvDuration::setText);
+        mViewModel.getDistance().observe(this, tvDistance::setText);
+        mViewModel.getAction().observe(this, spAction::setSelection);
+        mViewModel.getAverageSpeed().observe(this, tvAverageSpeed::setText);
+        mViewModel.getStartDate().observe(this, tvStartDate::setText);
+        mViewModel.loadTrack();
 
         setHasOptionsMenu(true);
         return view;
+    }
+
+    private void setScreenShot(String imageString) {
+        mScreenShot = ScreenshotMaker.fromBase64(imageString);
+        ivScreenshot.setImageBitmap(mScreenShot);
     }
 
     private void initSpinner() {
@@ -114,26 +110,8 @@ public class ResultDetailsFragment extends Fragment {
 
     @OnItemSelected(R.id.spAction)
     public void spinnerItemSelected(Spinner spinner, int position) {
-        mTrack.setAction(position);
-        updateTrack();
+        mViewModel.getAction().postValue(position);
     }
-
-    private void updateTrack() {
-        mViewModel.updateItem(mTrack);
-    }
-
-//    @OnClick(R.id.btShareRaw)
-//    public void onShareRawData() {
-//        if (mRawLocationDataText != null && !mRawLocationDataText.isEmpty()) {
-//            Intent shareIntent = new Intent();
-//            shareIntent.setAction(Intent.ACTION_SEND);
-//            shareIntent.putExtra(Intent.EXTRA_TEXT, mRawLocationDataText);
-//            shareIntent.setType("text/plain");
-//            startActivity(shareIntent);
-//        } else {
-//            Toast.makeText(getActivity(), R.string.noRawData, Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -150,12 +128,12 @@ public class ResultDetailsFragment extends Fragment {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
-                intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvTime.getText() + "\nРасстояние: " + tvDistance.getText());
+                intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvDuration.getText() + "\nРасстояние: " + tvDistance.getText());
                 startActivity(Intent.createChooser(intent, "Результаты маршрута"));
                 return true;
             }
             case R.id.actionDelete: {
-                mViewModel.deleteItem(mId);
+                mViewModel.deleteTrack();
                 getActivity().onBackPressed();
             }
             default: {

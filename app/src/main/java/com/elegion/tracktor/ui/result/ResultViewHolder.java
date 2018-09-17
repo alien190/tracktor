@@ -38,7 +38,7 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mIvPreview.setImageBitmap(ScreenshotMaker.fromBase64(track.getImage()));
         mId = track.getId();
         mTvId.setText(String.valueOf(track.getId()));
-        mTvDuration.setText(StringUtils.getTimerText(track.getDuration()));
+        mTvDuration.setText(StringUtils.getDurationText(track.getDuration()));
         mTvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
     }
 
