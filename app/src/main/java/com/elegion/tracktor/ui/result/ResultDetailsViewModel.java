@@ -53,6 +53,7 @@ public class ResultDetailsViewModel extends ViewModel {
         if (mTrack.getAction() != action) {
             mTrack.setAction(action);
             mRepository.updateItem(mTrack);
+            calculateCalories();
         }
     }
 
@@ -69,12 +70,15 @@ public class ResultDetailsViewModel extends ViewModel {
                 break;
             }
             case 1: { //бег
+                calories = mCurrentPreferences.getWeight() * mTrack.getDistance() / 1000;
                 break;
             }
             case 2: { //велосипед
+                calories = mCurrentPreferences.getWeight() / 70 * 300 * mTrack.getDuration() / 3600;
                 break;
             }
             default: { //автомобиль и др.
+                calories = mCurrentPreferences.getWeight() / 70 * 70 * mTrack.getDuration() / 3600;
                 break;
             }
         }
