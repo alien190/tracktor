@@ -60,6 +60,8 @@ public class ResultDetailsFragment extends Fragment {
 
     @Inject
     ResultDetailsViewModel mViewModel;
+    @Inject
+    CommentDialogFragment mCommentDialogFragment;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -161,7 +163,6 @@ public class ResultDetailsFragment extends Fragment {
 
     @OnClick(R.id.btnComment)
     void onAddCommentClickListener(){
-        CommentDialogFragment commentDialogFragment = CommentDialogFragment.newInstance();
-        commentDialogFragment.show(getActivity().getSupportFragmentManager(), "commentDialog");
+        mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "commentDialog");
     }
 }
