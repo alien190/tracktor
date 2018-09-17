@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
@@ -27,6 +28,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import toothpick.Scope;
 import toothpick.Toothpick;
@@ -80,8 +82,14 @@ public class ResultDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
 
-        initSpinner();
+        initUI();
 
+        setHasOptionsMenu(true);
+        return view;
+    }
+
+    private void initUI(){
+        initSpinner();
         mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
         mViewModel.getDuration().observe(this, tvDuration::setText);
         mViewModel.getDistance().observe(this, tvDistance::setText);
@@ -90,11 +98,7 @@ public class ResultDetailsFragment extends Fragment {
         mViewModel.getStartDate().observe(this, tvStartDate::setText);
         mViewModel.getCalories().observe(this, tvCalories::setText);
         mViewModel.loadTrack();
-
-        setHasOptionsMenu(true);
-        return view;
     }
-
     private void setScreenShot(String imageString) {
         mScreenShot = ScreenshotMaker.fromBase64(imageString);
         ivScreenshot.setImageBitmap(mScreenShot);
@@ -145,5 +149,9 @@ public class ResultDetailsFragment extends Fragment {
         }
     }
 
-
+    @OnClick(R.id.btnComment)
+    void onAddCommentClickListener(){
+        CommentDialogFragment commentDialogFragment = CommentDialogFragment.newInstance();
+        commentDialogFragment.show(getActivity().getSupportFragmentManager(), "commentDialog");
+    }
 }

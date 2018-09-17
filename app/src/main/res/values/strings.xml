@@ -51,4 +51,7 @@
     <string name="actionLabel">Вид деятельности:</string>
     <string name="dateLabel">Трек начат:</string>
     <string name="caloriesLabel">Затрачено калорий:</string>
+    <string name="btn_save_label">Сохранить</string>
+    <string name="btn_cancel_label">Отмена</string>
+    <string name="comment_dialog_title">Ваш комментарий</string>
 </resources>

@@ -1,5 +1,7 @@
 package com.elegion.tracktor.data.model;
 
+import com.elegion.tracktor.utils.StringUtils;
+
 import java.util.Date;
 
 import io.realm.RealmList;
@@ -17,6 +19,7 @@ public class Track extends RealmObject {
     private RealmList<Location> route;
     private double averageSpeed;
     private int action;
+    private String comment;
 
 
     public long getId() {
@@ -81,6 +84,14 @@ public class Track extends RealmObject {
 
     public void setAction(int action) {
         this.action = action;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override

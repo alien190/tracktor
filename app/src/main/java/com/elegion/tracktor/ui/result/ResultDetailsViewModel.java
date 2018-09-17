@@ -2,13 +2,16 @@ package com.elegion.tracktor.ui.result;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.text.TextUtils;
-import android.widget.TextView;
 
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.StringUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import toothpick.Toothpick;
 
@@ -20,6 +23,7 @@ public class ResultDetailsViewModel extends ViewModel {
     private MutableLiveData<String> mScreenShotBase64 = new MutableLiveData<>();
     private MutableLiveData<Integer> mAction = new MutableLiveData<>();
     private MutableLiveData<String> mCalories = new MutableLiveData<>();
+    private MutableLiveData<String> mComment = new MutableLiveData<>();
 
     private CurrentPreferences mCurrentPreferences;
     private IRepository<Track> mRepository;
@@ -32,6 +36,7 @@ public class ResultDetailsViewModel extends ViewModel {
         mCurrentPreferences = currentPreferences;
         mRepository = repository;
         mId = id;
+        EventBus.getDefault().register(this);
     }
 
     public void loadTrack() {
@@ -43,6 +48,8 @@ public class ResultDetailsViewModel extends ViewModel {
             mAverageSpeed.postValue(StringUtils.getSpeedText(mTrack.getAverageSpeed()));
             mAction.postValue(mTrack.getAction());
             mDistance.postValue(StringUtils.getDistanceText(mTrack.getDistance()));
+            mComment.postValue(mTrack.getComment());
+            mComment.observeForever(this::updateComment);
             mAction.observeForever(this::updateTrackAction);
             calculateCalories();
         }
@@ -57,9 +64,16 @@ public class ResultDetailsViewModel extends ViewModel {
         }
     }
 
+    public void updateComment(String comment) {
+        if (mTrack.getComment() == null || comment == null || !mTrack.getComment().equals(comment)) {
+            mTrack.setComment(comment);
+            mRepository.updateItem(mTrack);
+        }
+    }
+
     private void calculateCalories() {
 
-        double calories = 0;
+        double calories;
 
         switch (mTrack.getAction()) {
             case 0: { //ходьба
@@ -93,7 +107,13 @@ public class ResultDetailsViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         Toothpick.closeScope("ResultDetail");
+        EventBus.getDefault().unregister(this);
         super.onCleared();
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onCurentPreferencesChande(PreferencesChangeEvent preferencesChangeEvent) {
+        calculateCalories();
     }
 
     public MutableLiveData<String> getStartDate() {
@@ -122,5 +142,9 @@ public class ResultDetailsViewModel extends ViewModel {
 
     public MutableLiveData<String> getCalories() {
         return mCalories;
+    }
+
+    public MutableLiveData<String> getComment() {
+        return mComment;
     }
 }
