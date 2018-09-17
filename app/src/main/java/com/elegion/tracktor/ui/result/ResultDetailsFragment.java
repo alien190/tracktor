@@ -92,7 +92,7 @@ public class ResultDetailsFragment extends Fragment {
         return view;
     }
 
-    private void initUI(){
+    private void initUI() {
         initSpinner();
         mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
         mViewModel.getDuration().observe(this, tvDuration::setText);
@@ -105,12 +105,13 @@ public class ResultDetailsFragment extends Fragment {
         mViewModel.loadTrack();
     }
 
-    private void setComment(String comment){
-        if(comment.isEmpty()) {
+    private void setComment(String comment) {
+        if (comment == null || comment.isEmpty()) {
             comment = getString(R.string.no_comment);
         }
         tvComment.setText(comment);
     }
+
     private void setScreenShot(String imageString) {
         mScreenShot = ScreenshotMaker.fromBase64(imageString);
         ivScreenshot.setImageBitmap(mScreenShot);
@@ -141,14 +142,7 @@ public class ResultDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionShare: {
-                String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
-                Uri uri = Uri.parse(path);
-
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                intent.putExtra(Intent.EXTRA_TEXT, "Время: " + tvDuration.getText() + "\nРасстояние: " + tvDistance.getText());
-                startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+                doShare();
                 return true;
             }
             case R.id.actionDelete: {
@@ -162,7 +156,27 @@ public class ResultDetailsFragment extends Fragment {
     }
 
     @OnClick(R.id.btnComment)
-    void onAddCommentClickListener(){
+    void onAddCommentClickListener() {
         mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "commentDialog");
+    }
+
+    private void doShare() {
+        String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
+        Uri uri = Uri.parse(path);
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpeg");
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+        String extraText = "Начало трека :" + tvStartDate.getText()
+                + "\nВремя: " + tvDuration.getText()
+                + "\nРасстояние: " + tvDistance.getText()
+                + "\nСредняя скорость: " + tvAverageSpeed.getText()
+                + "\nЗатрачено калорий: " + tvCalories.getText()
+                + "\nВид деятельности: " + spAction.getSelectedItem().toString()
+                + "\nКомментарий: " + tvComment.getText();
+
+        intent.putExtra(Intent.EXTRA_TEXT, extraText);
+        startActivity(Intent.createChooser(intent, "Результаты маршрута"));
     }
 }
