@@ -46,6 +46,8 @@ public class ResultDetailsFragment extends Fragment {
     ImageView ivScreenshot;
     @BindView(R.id.spAction)
     Spinner spAction;
+    @BindView(R.id.tvCalories)
+    TextView tvCalories;
 
 
     public static final String ID_KEY = "IdKey";
@@ -86,6 +88,7 @@ public class ResultDetailsFragment extends Fragment {
         mViewModel.getAction().observe(this, spAction::setSelection);
         mViewModel.getAverageSpeed().observe(this, tvAverageSpeed::setText);
         mViewModel.getStartDate().observe(this, tvStartDate::setText);
+        mViewModel.getCalories().observe(this, tvCalories::setText);
         mViewModel.loadTrack();
 
         setHasOptionsMenu(true);

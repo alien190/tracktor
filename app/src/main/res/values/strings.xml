@@ -50,4 +50,5 @@
     <string name="age_title">Возраст</string>
     <string name="actionLabel">Вид деятельности:</string>
     <string name="dateLabel">Трек начат:</string>
+    <string name="caloriesLabel">Затрачено калорий:</string>
 </resources>

@@ -19,6 +19,11 @@ public class StringUtils {
         speed = speed * 3.6;
         return String.format(Locale.ENGLISH, "%.1f км/ч", speed);
     }
+
+    public static String getCaloriesText(Double calories) {
+        return String.format(Locale.ENGLISH, "%.1f", calories);
+    }
+
     public static String getDurationText(long totalSeconds) {
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
@@ -29,7 +34,7 @@ public class StringUtils {
 
     public static String getLocationDataText(List<LocationData> rawLocationData) {
         StringBuilder resultBuilder = new StringBuilder();
-        for (LocationData locationData:rawLocationData) {
+        for (LocationData locationData : rawLocationData) {
             resultBuilder.append(locationData.timeSeconds).append(',')
                     .append(locationData.point.latitude).append(',')
                     .append(locationData.point.longitude).append('\n');

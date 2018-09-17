@@ -6,15 +6,19 @@ import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CurrentPreferences {
     private Map mPrefs;
-    private Integer[] mKeys = {R.string.sex_key};
+    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key};
+    private String weightKey;
+    private String heightKey;
 
 
     public void notifyChanges() {
@@ -28,6 +32,9 @@ public class CurrentPreferences {
             String key = context.getString(id);
             mPrefs.put(key, sharedPreferences.getString(key, ""));
         }
+
+        weightKey = context.getString(R.string.weight_key);
+        heightKey = context.getString(R.string.height_key);
     }
 
     public void setValueAndNotify(String key, String value) {
@@ -41,5 +48,26 @@ public class CurrentPreferences {
     public String getValue(String key) {
         Object value = mPrefs.get(key);
         return value != null ? value.toString() : "";
+    }
+
+    public double getWeight() {
+        return getDoubleValue(weightKey);
+    }
+
+    public double getHeight() {
+        return getDoubleValue(heightKey);
+    }
+
+    private double getDoubleValue(String key) {
+        Object value = mPrefs.get(key);
+        if (value != null) {
+            try {
+                return Double.valueOf(value.toString());
+            } catch (Throwable t) {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
     }
 }
