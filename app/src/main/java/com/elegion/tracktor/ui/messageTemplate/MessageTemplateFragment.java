@@ -1,0 +1,199 @@
+package com.elegion.tracktor.ui.messageTemplate;
+
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.example.alien.recyclerviewdraddrop.common.CustomLayoutManager;
+import com.example.alien.recyclerviewdraddrop.event.MessageTemplateUpdateEvent;
+import com.example.alien.recyclerviewdraddrop.helper.ItemTouchCallback;
+import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
+public class MessageTemplateFragment extends Fragment implements MessageTemplateListAdapter.IOnEditItemListener {
+
+    private ItemTouchHelper mItemTouchHelper;
+    private MessageTemplateListAdapter mAdapter;
+    @BindView(R.id.recycler_view)
+    protected RecyclerView mRecyclerView;
+    @BindView(R.id.tvPreview)
+    TextView mTvPreview;
+    private View mView;
+
+
+    public static MessageTemplateFragment newInstance() {
+        Bundle args = new Bundle();
+        MessageTemplateFragment fragment = new MessageTemplateFragment();
+        fragment.setArguments(args);
+        fragment.setRetainInstance(true);
+        return fragment;
+    }
+
+    public MessageTemplateFragment() {
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            mView = inflater.inflate(R.layout.fragment_main, container, false);
+            ButterKnife.bind(this, mView);
+        }
+        return mView;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState == null) {
+
+            List<String> paramTypesNames = new ArrayList<>();
+            paramTypesNames.add("Средняя скорость");
+            paramTypesNames.add("Количество калорий");
+
+            MessageTemplate messageTemplate = new MessageTemplate(paramTypesNames,
+                    PreferenceManager.getDefaultSharedPreferences(getContext()),
+                    new Gson());
+
+            messageTemplate.load()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(b -> showPreview());
+//            messageTemplate.addTextItem("Сегодня гулял со скоростью");
+//            messageTemplate.addParameterItem(0);
+//            messageTemplate.addTextItem("и истратил");
+//            messageTemplate.addParameterItem(1);
+//            messageTemplate.addTextItem("text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3");
+
+            mAdapter = new MessageTemplateListAdapter(messageTemplate);
+            mAdapter.setIOnEditItemListener(this);
+            mRecyclerView.setHasFixedSize(true);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new CustomLayoutManager());
+
+            ItemTouchHelper.Callback callback = new ItemTouchCallback(mAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(mRecyclerView);
+
+            setHasOptionsMenu(true);
+
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.itmResult) {
+            showPreview();
+            return true;
+        }
+        if (item.getItemId() == R.id.itmText) {
+            return mAdapter.addItem(MessageTemplateListAdapter.ITEM_TYPE_TEXT);
+        }
+        return mAdapter.addItem(MessageTemplateListAdapter.ITEM_TYPE_PARAMETER);
+    }
+
+    @Override
+    public void onEditTextItem(final int pos) {
+        String text = "";
+        if (pos != MessageTemplateListAdapter.NEW_ITEM) {
+            text = mAdapter.getItemText(pos);
+        }
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.edit_text_title)
+                .setView(R.layout.dialog_text)
+                .setPositiveButton(R.string.save_btn, null)
+                .setNegativeButton(R.string.cancel_btn, null)
+                .create();
+        alertDialog.show();
+
+        final EditText editText = alertDialog.findViewById(R.id.etText);
+        editText.setText(text);
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String text = editText.getText().toString();
+                if (pos == MessageTemplateListAdapter.NEW_ITEM) {
+                    mAdapter.addTextItem(text);
+                } else {
+                    mAdapter.updateTextItem(pos, text);
+                }
+            }
+        });
+    }
+
+
+    @Override
+    public void onEditParameterItem(final int pos) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.edit_parameter_dialog_title)
+                .setNegativeButton(R.string.cancel_btn, null)
+                .setItems(mAdapter.getParametersTypes(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int type) {
+                        if (pos == MessageTemplateListAdapter.NEW_ITEM) {
+                            mAdapter.addParameterItem(type);
+                        } else {
+                            mAdapter.updateParameterItem(pos, type);
+                        }
+                        dialogInterface.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageTemplateUpdate(MessageTemplateUpdateEvent event) {
+        showPreview();
+    }
+
+    private void showPreview() {
+        List<String> values = new ArrayList<>();
+        values.add("10 км/ч");
+        values.add("1000 Ккал");
+        mTvPreview.setText(mAdapter.mMessageTemplate.getMessage(values));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+}

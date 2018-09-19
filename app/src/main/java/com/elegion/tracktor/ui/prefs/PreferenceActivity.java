@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.elegion.tracktor.common.SingleFragmentActivity;
+import com.elegion.tracktor.ui.common.SingleFragmentActivity;
 
 public class PreferenceActivity extends SingleFragmentActivity {
 

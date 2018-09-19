@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.elegion.tracktor.common.SingleFragmentActivity;
+import com.elegion.tracktor.ui.common.SingleFragmentActivity;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
-import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.di.result.ResultModule;
-import com.elegion.tracktor.ui.map.CounterFragment;
-import com.elegion.tracktor.ui.map.TrackMapFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
