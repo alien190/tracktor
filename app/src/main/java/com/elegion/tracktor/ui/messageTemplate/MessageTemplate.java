@@ -19,10 +19,13 @@ public class MessageTemplate {
     private Gson mGson;
 
     @SuppressLint("CheckResult")
-    public MessageTemplate(List<String> parameterTypesNames, SharedPreferences sharedPreferences, Gson gson) {
-        mParameterTypesName = parameterTypesNames;
+    public MessageTemplate(SharedPreferences sharedPreferences, Gson gson) {
         mSharedPreferences = sharedPreferences;
         mGson = gson;
+    }
+
+    public void setParameterTypesName(List<String> parameterTypesName) {
+        mParameterTypesName = parameterTypesName;
     }
 
     public String getMessage(List<String> parameterValues) {

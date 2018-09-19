@@ -1,9 +1,7 @@
 package com.elegion.tracktor.ui.messageTemplate;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -19,10 +17,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.MessageTemplateUpdateEvent;
+import com.elegion.tracktor.di.messageTemplate.MessageTemplateModule;
 import com.elegion.tracktor.ui.common.CustomLayoutManager;
-import com.elegion.tracktor.ui.messageTemplate.helper.ItemTouchCallback;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,20 +29,32 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class MessageTemplateFragment extends Fragment implements MessageTemplateListAdapter.IOnEditItemListener {
 
-    private ItemTouchHelper mItemTouchHelper;
-    private MessageTemplateListAdapter mAdapter;
     @BindView(R.id.recycler_view)
     protected RecyclerView mRecyclerView;
     @BindView(R.id.tvPreview)
     TextView mTvPreview;
     private View mView;
 
+    @Inject
+    protected MessageTemplate mMessageTemplate;
+    @Inject
+    protected MessageTemplateListAdapter mAdapter;
+    @Inject
+    protected CustomLayoutManager mCustomLayoutManager;
+    @Inject
+    protected ItemTouchHelper mItemTouchHelper;
+    @Inject
+    protected CurrentPreferences mCurrentPreferences;
 
     public static MessageTemplateFragment newInstance() {
         Bundle args = new Bundle();
@@ -63,6 +73,10 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         if (savedInstanceState == null) {
             mView = inflater.inflate(R.layout.fragment_main, container, false);
             ButterKnife.bind(this, mView);
+
+            Scope scope = Toothpick.openScopes("Application", "MessageTemplate");
+            scope.installModules(new MessageTemplateModule());
+            Toothpick.inject(this, scope);
         }
         return mView;
     }
@@ -73,30 +87,18 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState == null) {
 
-            List<String> paramTypesNames = new ArrayList<>();
-            paramTypesNames.add("Средняя скорость");
-            paramTypesNames.add("Количество калорий");
-
-            MessageTemplate messageTemplate = new MessageTemplate(paramTypesNames,
-                    PreferenceManager.getDefaultSharedPreferences(getContext()),
-                    new Gson());
-
-            messageTemplate.load()
+            mMessageTemplate.setParameterTypesName(mCurrentPreferences.getMessageTemplateParamTypes());
+            mMessageTemplate.load()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(b -> showPreview());
 
-            mAdapter = new MessageTemplateListAdapter(messageTemplate);
             mAdapter.setIOnEditItemListener(this);
             mRecyclerView.setHasFixedSize(true);
             mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setLayoutManager(new CustomLayoutManager());
-
-            ItemTouchHelper.Callback callback = new ItemTouchCallback(mAdapter);
-            mItemTouchHelper = new ItemTouchHelper(callback);
+            mRecyclerView.setLayoutManager(mCustomLayoutManager);
             mItemTouchHelper.attachToRecyclerView(mRecyclerView);
 
             setHasOptionsMenu(true);
-
         }
     }
 
@@ -131,15 +133,12 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         final EditText editText = alertDialog.findViewById(R.id.etText);
         editText.setText(text);
 
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                String text = editText.getText().toString();
-                if (pos == MessageTemplateListAdapter.NEW_ITEM) {
-                    mAdapter.addTextItem(text);
-                } else {
-                    mAdapter.updateTextItem(pos, text);
-                }
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "", (dialogInterface, i) -> {
+            String text1 = editText.getText().toString();
+            if (pos == MessageTemplateListAdapter.NEW_ITEM) {
+                mAdapter.addTextItem(text1);
+            } else {
+                mAdapter.updateTextItem(pos, text1);
             }
         });
     }
@@ -150,16 +149,13 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.edit_parameter_dialog_title)
                 .setNegativeButton(R.string.cancel_btn, null)
-                .setItems(mAdapter.getParametersTypes(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int type) {
-                        if (pos == MessageTemplateListAdapter.NEW_ITEM) {
-                            mAdapter.addParameterItem(type);
-                        } else {
-                            mAdapter.updateParameterItem(pos, type);
-                        }
-                        dialogInterface.dismiss();
+                .setItems(mAdapter.getParametersTypes(), (dialogInterface, type) -> {
+                    if (pos == MessageTemplateListAdapter.NEW_ITEM) {
+                        mAdapter.addParameterItem(type);
+                    } else {
+                        mAdapter.updateParameterItem(pos, type);
                     }
+                    dialogInterface.dismiss();
                 })
                 .create();
         alertDialog.show();
