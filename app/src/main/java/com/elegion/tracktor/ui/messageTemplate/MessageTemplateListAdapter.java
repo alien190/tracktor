@@ -5,13 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.alien.recyclerviewdraddrop.MessageTemplate.CommonTemplateItem;
-import com.example.alien.recyclerviewdraddrop.MessageTemplate.ParameterTemplateItem;
-import com.example.alien.recyclerviewdraddrop.event.MessageTemplateUpdateEvent;
-import com.example.alien.recyclerviewdraddrop.helper.ItemTouchAdapter;
-import com.example.alien.recyclerviewdraddrop.viewHolder.CommonItemViewHolder;
-import com.example.alien.recyclerviewdraddrop.viewHolder.ParameterItemViewHolder;
-import com.example.alien.recyclerviewdraddrop.viewHolder.TextItemViewHolder;
+
+import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.MessageTemplateUpdateEvent;
+import com.elegion.tracktor.ui.messageTemplate.helper.ItemTouchAdapter;
+import com.elegion.tracktor.ui.messageTemplate.viewHolder.CommonItemViewHolder;
+import com.elegion.tracktor.ui.messageTemplate.viewHolder.ParameterItemViewHolder;
+import com.elegion.tracktor.ui.messageTemplate.viewHolder.TextItemViewHolder;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate.CommonTemplateItem;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate.ParameterTemplateItem;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -112,7 +114,7 @@ public class MessageTemplateListAdapter extends RecyclerView.Adapter<CommonItemV
     }
 
     public String getItemText(int pos) {
-        CommonTemplateItem commonTemplateItem = mMessageTemplate.getItem(pos);
+        MessageTemplate.CommonTemplateItem commonTemplateItem = mMessageTemplate.getItem(pos);
         if (commonTemplateItem != null) {
             return commonTemplateItem.getText();
         } else {

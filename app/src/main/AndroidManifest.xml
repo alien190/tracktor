@@ -29,6 +29,7 @@
             android:enabled="true"
             android:exported="false"/>
         <activity android:name=".ui.prefs.PreferenceActivity"/>
+        <activity android:name=".ui.messageTemplate.MessageTemplateActivity"/>
     </application>
 
 </manifest>

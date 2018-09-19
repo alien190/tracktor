@@ -18,9 +18,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.alien.recyclerviewdraddrop.common.CustomLayoutManager;
-import com.example.alien.recyclerviewdraddrop.event.MessageTemplateUpdateEvent;
-import com.example.alien.recyclerviewdraddrop.helper.ItemTouchCallback;
+import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.MessageTemplateUpdateEvent;
+import com.elegion.tracktor.ui.common.CustomLayoutManager;
+import com.elegion.tracktor.ui.messageTemplate.helper.ItemTouchCallback;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -83,11 +84,6 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
             messageTemplate.load()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(b -> showPreview());
-//            messageTemplate.addTextItem("Сегодня гулял со скоростью");
-//            messageTemplate.addParameterItem(0);
-//            messageTemplate.addTextItem("и истратил");
-//            messageTemplate.addParameterItem(1);
-//            messageTemplate.addTextItem("text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3 text3");
 
             mAdapter = new MessageTemplateListAdapter(messageTemplate);
             mAdapter.setIOnEditItemListener(this);
@@ -106,15 +102,11 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.add_menu, menu);
+        inflater.inflate(R.menu.menu_add_template_item, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.itmResult) {
-            showPreview();
-            return true;
-        }
         if (item.getItemId() == R.id.itmText) {
             return mAdapter.addItem(MessageTemplateListAdapter.ITEM_TYPE_TEXT);
         }

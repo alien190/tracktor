@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.alien.recyclerviewdraddrop.MessageTemplate.CommonTemplateItem;
-import com.example.alien.recyclerviewdraddrop.R;
-import com.example.alien.recyclerviewdraddrop.helper.ItemTouchViewHolder;
+import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate.CommonTemplateItem;
+import com.elegion.tracktor.ui.messageTemplate.helper.ItemTouchViewHolder;
+
 
 public abstract class CommonItemViewHolder extends RecyclerView.ViewHolder implements
         ItemTouchViewHolder {
@@ -18,7 +20,7 @@ public abstract class CommonItemViewHolder extends RecyclerView.ViewHolder imple
     protected final CardView mCardView;
     private ColorStateList mColorStateList;
     private IOnItemClickListener mIOnItemClickListener;
-    private CommonTemplateItem mItem;
+    private MessageTemplate.CommonTemplateItem mItem;
 
     public CommonItemViewHolder(final View itemView) {
         super(itemView);

@@ -55,4 +55,12 @@
     <string name="btn_cancel_label">Отмена</string>
     <string name="comment_dialog_title">Ваш комментарий</string>
     <string name="no_comment">Введите комментарий</string>
+    <string name="edit_template_title">Редактировать шаблон сообщения</string>
+    <string name="edit_text_title">Введите текст</string>
+    <string name="save_btn">Сохранить</string>
+    <string name="cancel_btn">Отмена</string>
+    <string name="edit_parameter_dialog_title">Выберите тип параметра</string>
+    <string name="menu_add_text">Добавить текстовое поле</string>
+    <string name="menu_add_param">Добавить параметр</string>
+    <string name="preview">Предпросмотр:</string>
 </resources>

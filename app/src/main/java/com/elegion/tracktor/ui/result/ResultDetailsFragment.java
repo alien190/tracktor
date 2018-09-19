@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplateActivity;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 
 import javax.inject.Inject;
@@ -148,6 +149,11 @@ public class ResultDetailsFragment extends Fragment {
             case R.id.actionDelete: {
                 mViewModel.deleteTrack();
                 getActivity().onBackPressed();
+                return true;
+            }
+            case R.id.actionEditTemplate: {
+                MessageTemplateActivity.start(getContext());
+                return true;
             }
             default: {
                 return super.onOptionsItemSelected(item);
