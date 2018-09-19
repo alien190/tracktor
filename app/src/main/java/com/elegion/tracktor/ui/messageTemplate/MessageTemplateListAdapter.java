@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.MessageTemplateUpdateEvent;
 import com.elegion.tracktor.ui.messageTemplate.helper.ItemTouchAdapter;
 import com.elegion.tracktor.ui.messageTemplate.viewHolder.CommonItemViewHolder;
@@ -22,15 +23,17 @@ import java.util.ArrayList;
 public class MessageTemplateListAdapter extends RecyclerView.Adapter<CommonItemViewHolder>
         implements ItemTouchAdapter, CommonItemViewHolder.IOnItemClickListener {
 
-    public final MessageTemplate mMessageTemplate;
+    private final MessageTemplate mMessageTemplate;
     public static final int ITEM_TYPE_TEXT = 1;
     public static final int ITEM_TYPE_PARAMETER = 2;
     public static final int NEW_ITEM = -1;
     private IOnEditItemListener mIOnEditItemListener;
+    private CurrentPreferences mCurrentPreferences;
 
 
-    public MessageTemplateListAdapter(MessageTemplate messageTemplate) {
+    public MessageTemplateListAdapter(MessageTemplate messageTemplate, CurrentPreferences currentPreferences) {
         mMessageTemplate = messageTemplate;
+        mCurrentPreferences = currentPreferences;
     }
 
     @Override
@@ -84,8 +87,8 @@ public class MessageTemplateListAdapter extends RecyclerView.Adapter<CommonItemV
 
     public CharSequence[] getParametersTypes() {
         ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i < mMessageTemplate.getParameterItemTypesCount(); i++) {
-            list.add(mMessageTemplate.getParameterItemTypeName(i));
+        for (int i = 0; i < mCurrentPreferences.getMessageTemplateParamTypesCount(); i++) {
+            list.add(mCurrentPreferences.getMessageTemplateParamName(i));
         }
         return list.toArray(new CharSequence[0]);
     }

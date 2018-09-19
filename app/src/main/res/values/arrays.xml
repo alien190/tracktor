@@ -38,4 +38,26 @@
         <item>Велосипед</item>
         <item>Транспорт</item>
     </string-array>
+
+    <string-array name="messageTemplateParameters">
+        <item>Начало трека</item>
+        <item>Длительность</item>
+        <item>Расстояние</item>
+        <item>Скорость</item>
+        <item>Истрачено калорий</item>
+        <item>Вид деятельности</item>
+        <item>Комментарий</item>
+        <item>Изображение</item>
+    </string-array>
+
+    <string-array name="messageTemplatePreviewValues">
+        <item>10.10.2010 10:10:10</item>
+        <item>00:01:34</item>
+        <item>1343 м</item>
+        <item>6 км/ч</item>
+        <item>1500 Ккал</item>
+        <item>Бег</item>
+        <item>Отличная прогулка</item>
+        <item>[Картинка]</item>
+    </string-array>
 </resources>

@@ -3,6 +3,7 @@ package com.elegion.tracktor.ui.messageTemplate;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -14,24 +15,30 @@ import io.reactivex.schedulers.Schedulers;
 public class MessageTemplate {
     private static final String KEY = "MessageTemplateKey";
     private List<CommonTemplateItem> mItems;
-    private List<String> mParameterTypesName;
+    // private List<String> mParameterTypesName;
     private SharedPreferences mSharedPreferences;
     private Gson mGson;
+    private CurrentPreferences mCurrentPreferences;
 
     @SuppressLint("CheckResult")
-    public MessageTemplate(SharedPreferences sharedPreferences, Gson gson) {
+    public MessageTemplate(SharedPreferences sharedPreferences, Gson gson, CurrentPreferences currentPreferences) {
         mSharedPreferences = sharedPreferences;
         mGson = gson;
+        mCurrentPreferences = currentPreferences;
     }
 
-    public void setParameterTypesName(List<String> parameterTypesName) {
-        mParameterTypesName = parameterTypesName;
-    }
+//    public void setParameterTypesName(List<String> parameterTypesName) {
+//        mParameterTypesName = parameterTypesName;
+//    }
 
     public String getMessage(List<String> parameterValues) {
+        if(parameterValues == null) {
+            parameterValues = mCurrentPreferences.getMessageTemplatePreviewValues();
+        }
         String ret = "";
-        if (parameterValues != null && mParameterTypesName != null &&
-                parameterValues.size() == mParameterTypesName.size() && mItems != null) {
+        List<String> parameterTypesName = mCurrentPreferences.getMessageTemplateParamTypes();
+        if (parameterValues != null && parameterTypesName != null &&
+                parameterValues.size() == parameterTypesName.size() && mItems != null) {
             for (CommonTemplateItem item : mItems) {
                 if (!ret.isEmpty() && !ret.endsWith(" ")) {
                     ret = ret + " ";
@@ -51,18 +58,23 @@ public class MessageTemplate {
             mItems = new ArrayList<>();
             if (mSharedPreferences != null && mGson != null) {
                 try {
-                    String loadedJSON = mSharedPreferences.getString(KEY, "");
+                    String loadedJSON = mSharedPreferences.getString(KEY,
+                            mCurrentPreferences.getMessageTemplateDraft());
                     String[] list = loadedJSON.split("\\|");
                     for (String item : list) {
                         if (!item.isEmpty()) {
                             if (item.startsWith("1")) {
                                 mItems.add(mGson.fromJson(item.substring(1), TextTemplateItem.class));
                             } else if (item.startsWith("2")) {
-                                mItems.add(mGson.fromJson(item.substring(1), ParameterTemplateItem.class));
+                                ParameterTemplateItem parameterTemplateItem =
+                                        mGson.fromJson(item.substring(1), ParameterTemplateItem.class);
+                                parameterTemplateItem.setCurrentPreferences(mCurrentPreferences);
+                                mItems.add(parameterTemplateItem);
                             }
                         }
                     }
-                } catch (Throwable t){
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
             }
             return true;
@@ -72,19 +84,23 @@ public class MessageTemplate {
     public Single<Boolean> save() {
         return Single.fromCallable(() -> {
             if (mSharedPreferences != null && mGson != null && mItems != null) {
-                String writeJSON = "";
-                for (CommonTemplateItem item : mItems) {
-                    if (!writeJSON.isEmpty()) {
-                        writeJSON = writeJSON + "|";
+                try {
+                    String writeJSON = "";
+                    for (CommonTemplateItem item : mItems) {
+                        if (!writeJSON.isEmpty()) {
+                            writeJSON = writeJSON + "|";
+                        }
+                        if (item instanceof TextTemplateItem) {
+                            writeJSON = writeJSON + "1";
+                        } else {
+                            writeJSON = writeJSON + "2";
+                        }
+                        writeJSON = writeJSON + mGson.toJson(item);
                     }
-                    if (item instanceof TextTemplateItem) {
-                        writeJSON = writeJSON + "1";
-                    } else {
-                        writeJSON = writeJSON + "2";
-                    }
-                    writeJSON = writeJSON + mGson.toJson(item);
+                    mSharedPreferences.edit().putString(KEY, writeJSON).apply();
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
-                mSharedPreferences.edit().putString(KEY, writeJSON).apply();
             }
             return true;
         }).subscribeOn(Schedulers.io());
@@ -96,7 +112,7 @@ public class MessageTemplate {
     }
 
     public void addParameterItem(int type) {
-        mItems.add(new ParameterTemplateItem(type));
+        mItems.add(new ParameterTemplateItem(type, mCurrentPreferences));
         save().subscribe();
     }
 
@@ -132,16 +148,16 @@ public class MessageTemplate {
         return ret;
     }
 
-    public int getParameterItemTypesCount() {
-        return mParameterTypesName != null ? mParameterTypesName.size() : 0;
-    }
-
-    public String getParameterItemTypeName(int id) {
-        if (mParameterTypesName != null && id >= 0 && id < mParameterTypesName.size()) {
-            return mParameterTypesName.get(id);
-        }
-        return "";
-    }
+//    public int getParameterItemTypesCount() {
+//        return mParameterTypesName != null ? mParameterTypesName.size() : 0;
+//    }
+//
+//    public String getParameterItemTypeName(int id) {
+//        if (mParameterTypesName != null && id >= 0 && id < mParameterTypesName.size()) {
+//            return mParameterTypesName.get(id);
+//        }
+//        return "";
+//    }
 
     public int getItemCount() {
         return mItems.size();
@@ -171,15 +187,21 @@ public class MessageTemplate {
 
     public class ParameterTemplateItem extends CommonTemplateItem {
         private int mType;
+        private transient CurrentPreferences mCurrentPreferences;
 
-        public ParameterTemplateItem(int type) {
-            super(getParameterItemTypeName(type));
+        public ParameterTemplateItem(int type, CurrentPreferences currentPreferences) {
+            super("");
+            mCurrentPreferences = currentPreferences;
             setType(type);
         }
 
         public void setType(int type) {
             mType = type;
-            setText(getParameterItemTypeName(type));
+            setText(mCurrentPreferences.getMessageTemplateParamName(type));
+        }
+
+        public void setCurrentPreferences(CurrentPreferences currentPreferences) {
+            mCurrentPreferences = currentPreferences;
         }
     }
 

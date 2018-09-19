@@ -28,4 +28,5 @@ public class MessageTemplateActivity extends SingleFragmentActivity {
         Intent intent = new Intent(context, MessageTemplateActivity.class);
         context.startActivity(intent);
     }
+
 }

@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.MessageTemplateUpdateEvent;
 import com.elegion.tracktor.di.messageTemplate.MessageTemplateModule;
 import com.elegion.tracktor.ui.common.CustomLayoutManager;
@@ -25,9 +24,6 @@ import com.elegion.tracktor.ui.common.CustomLayoutManager;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -53,8 +49,6 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
     protected CustomLayoutManager mCustomLayoutManager;
     @Inject
     protected ItemTouchHelper mItemTouchHelper;
-    @Inject
-    protected CurrentPreferences mCurrentPreferences;
 
     public static MessageTemplateFragment newInstance() {
         Bundle args = new Bundle();
@@ -67,27 +61,18 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
     public MessageTemplateFragment() {
     }
 
+    @SuppressLint("CheckResult")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
+        if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_main, container, false);
             ButterKnife.bind(this, mView);
 
             Scope scope = Toothpick.openScopes("Application", "MessageTemplate");
             scope.installModules(new MessageTemplateModule());
             Toothpick.inject(this, scope);
-        }
-        return mView;
-    }
 
-    @SuppressLint("CheckResult")
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState == null) {
-
-            mMessageTemplate.setParameterTypesName(mCurrentPreferences.getMessageTemplateParamTypes());
             mMessageTemplate.load()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(b -> showPreview());
@@ -100,6 +85,14 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
 
             setHasOptionsMenu(true);
         }
+        return mView;
+    }
+
+    @SuppressLint("CheckResult")
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
     }
 
     @Override
@@ -143,7 +136,6 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         });
     }
 
-
     @Override
     public void onEditParameterItem(final int pos) {
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -167,10 +159,7 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
     }
 
     private void showPreview() {
-        List<String> values = new ArrayList<>();
-        values.add("10 км/ч");
-        values.add("1000 Ккал");
-        mTvPreview.setText(mAdapter.mMessageTemplate.getMessage(values));
+        mTvPreview.setText(mMessageTemplate.getMessage(null));
     }
 
     @Override
@@ -184,4 +173,5 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
+
 }

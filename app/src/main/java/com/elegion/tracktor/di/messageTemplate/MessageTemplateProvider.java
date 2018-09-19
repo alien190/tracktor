@@ -2,6 +2,7 @@ package com.elegion.tracktor.di.messageTemplate;
 
 import android.content.SharedPreferences;
 
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
 import com.google.gson.Gson;
 
@@ -12,15 +13,17 @@ public class MessageTemplateProvider implements Provider<MessageTemplate> {
 
     private SharedPreferences mSharedPreferences;
     private Gson mGson;
+    private CurrentPreferences mCurrentPreferences;
 
     @Inject
-    public MessageTemplateProvider(SharedPreferences sharedPreferences, Gson gson) {
+    public MessageTemplateProvider(SharedPreferences sharedPreferences, Gson gson, CurrentPreferences currentPreferences) {
         mSharedPreferences = sharedPreferences;
         mGson = gson;
+        mCurrentPreferences = currentPreferences;
     }
 
     @Override
     public MessageTemplate get() {
-        return new MessageTemplate(mSharedPreferences, mGson);
+        return new MessageTemplate(mSharedPreferences, mGson, mCurrentPreferences);
     }
 }

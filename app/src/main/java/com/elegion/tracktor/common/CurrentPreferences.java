@@ -11,6 +11,7 @@ import com.elegion.tracktor.utils.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,9 @@ public class CurrentPreferences {
     private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key};
     private String weightKey;
     private String heightKey;
-    private List<String> mMessageTemplateParamTypes = new ArrayList<>();
+    private List<String> mMessageTemplateParamTypes;
+    private List<String> mMessageTemplatePreviewValues;
+    private String mMessageTemplateDraft;
 
 
     public void notifyChanges() {
@@ -39,8 +42,13 @@ public class CurrentPreferences {
         weightKey = context.getString(R.string.weight_key);
         heightKey = context.getString(R.string.height_key);
 
-        mMessageTemplateParamTypes.add("Средняя скорость");
-        mMessageTemplateParamTypes.add("Количество калорий");
+        mMessageTemplateParamTypes = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.messageTemplateParameters)));
+
+        mMessageTemplatePreviewValues = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.messageTemplatePreviewValues)));
+
+        mMessageTemplateDraft = context.getString(R.string.messageTemplateDraft);
     }
 
     public void setValueAndNotify(String key, String value) {
@@ -81,5 +89,24 @@ public class CurrentPreferences {
 
     public List<String> getMessageTemplateParamTypes() {
         return mMessageTemplateParamTypes;
+    }
+
+    public int getMessageTemplateParamTypesCount() {
+        return mMessageTemplateParamTypes.size();
+    }
+
+    public String getMessageTemplateParamName(int pos) {
+        if (pos >= 0 && pos < mMessageTemplateParamTypes.size()) {
+            return mMessageTemplateParamTypes.get(pos);
+        }
+        return "";
+    }
+
+    public List<String> getMessageTemplatePreviewValues() {
+        return mMessageTemplatePreviewValues;
+    }
+
+    public String getMessageTemplateDraft() {
+        return mMessageTemplateDraft;
     }
 }
