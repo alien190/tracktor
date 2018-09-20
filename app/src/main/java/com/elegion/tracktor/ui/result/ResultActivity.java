@@ -16,7 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
-public class ResultActivity extends SingleFragmentActivity {
+public class ResultActivity extends SingleFragmentActivity implements IOnZoomClickListener{
 
     public static final String ID_KEY = "IdKey";
     public static final Long ID_LIST = -1L;
@@ -57,5 +57,10 @@ public class ResultActivity extends SingleFragmentActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showResultDetailsFragment(ShowResultDetailEvent event) {
         changeFragment(ResultDetailsFragment.newInstance(event.id));
+    }
+
+    @Override
+    public void onZoomClick() {
+        changeFragment(ImageZoomFragment.newInstance());
     }
 }

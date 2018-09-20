@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -188,5 +189,21 @@ public class ResultDetailsFragment extends Fragment {
 
         intent.putExtra(Intent.EXTRA_TEXT, shareMessage);
         startActivity(Intent.createChooser(intent, getString(R.string.share_chooser_title)));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ivScreenshot.setOnClickListener(view -> {
+            if(getActivity() instanceof IOnZoomClickListener) {
+                ((IOnZoomClickListener)getActivity()).onZoomClick();
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        ivScreenshot.setOnClickListener(null);
+        super.onPause();
     }
 }
