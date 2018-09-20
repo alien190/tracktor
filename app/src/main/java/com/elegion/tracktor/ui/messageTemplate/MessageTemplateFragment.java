@@ -66,7 +66,7 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mView == null) {
-            mView = inflater.inflate(R.layout.fragment_main, container, false);
+            mView = inflater.inflate(R.layout.fr_message_template, container, false);
             ButterKnife.bind(this, mView);
 
             Scope scope = Toothpick.openScopes("Application", "MessageTemplate");

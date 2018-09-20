@@ -38,7 +38,7 @@ public class MessageTemplateListAdapter extends RecyclerView.Adapter<CommonItemV
 
     @Override
     public CommonItemViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_main, parent, false);
+        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_template, parent, false);
         CommonItemViewHolder commonItemViewHolder;
         if (viewType == ITEM_TYPE_PARAMETER) {
             commonItemViewHolder = new ParameterItemViewHolder(view);
