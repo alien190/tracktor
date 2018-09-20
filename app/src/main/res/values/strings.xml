@@ -63,6 +63,6 @@
     <string name="menu_add_text">Добавить текстовое поле</string>
     <string name="menu_add_param">Добавить параметр</string>
     <string name="preview">Предпросмотр:</string>
-    <string name="messageTemplateDraft">1{"mText":"'Я прошел'"}|2{"mType":2,"mText":"'Расстояние'"}|1{"mText":"'за'"}|2{"mType":1,"mText":"'Длительность'"}|1{"mText":"', в среднем со скоростью'"}|2{"mType":3,"mText":"'Скорость'"}|1{"mText":"', затратил при этом'"}|2{"mType":4,"mText":"'Истрачено калорий'"}|1{"mText":"'. Вот посмотри:'"}|2{"mType":7,"mText":"'Изображение'"}</string>
+    <string name="messageTemplateDraft">1{"mText":"'Я прошел'"}|2{"mType":2,"mText":"'Расстояние'"}|1{"mText":"'за'"}|2{"mType":1,"mText":"'Длительность'"}|1{"mText":"', в среднем со скоростью'"}|2{"mType":3,"mText":"'Скорость'"}|1{"mText":"', затратил при этом'"}|2{"mType":4,"mText":"'Истрачено калорий'"}|1{"mText":"'. Вот посмотри'"}|2{"mType":7,"mText":"'Изображение'"}</string>
     <string name="share_chooser_title">Результаты маршрута</string>
 </resources>

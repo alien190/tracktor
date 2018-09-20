@@ -32,23 +32,26 @@ public class MessageTemplate {
 //    }
 
     public String getMessage(List<String> parameterValues) {
-        if(parameterValues == null) {
+        if (parameterValues == null) {
             parameterValues = mCurrentPreferences.getMessageTemplatePreviewValues();
         }
 
         String ret = "";
+        String stringItem = "";
         List<String> parameterTypesName = mCurrentPreferences.getMessageTemplateParamTypes();
         if (parameterValues != null && parameterTypesName != null &&
                 parameterValues.size() == parameterTypesName.size() && mItems != null) {
             for (CommonTemplateItem item : mItems) {
-                if (!ret.isEmpty() && !ret.endsWith(" ")) {
+                if (item instanceof TextTemplateItem) {
+                    stringItem = item.getText();
+                } else if (item instanceof ParameterTemplateItem) {
+                    stringItem = parameterValues.get(((ParameterTemplateItem) item).mType);
+                }
+                if (!ret.isEmpty() && !ret.endsWith(" ") &&
+                        !stringItem.startsWith(".") && !stringItem.startsWith(",")) {
                     ret = ret + " ";
                 }
-                if (item instanceof TextTemplateItem) {
-                    ret = ret + item.getText();
-                } else if (item instanceof ParameterTemplateItem) {
-                    ret = ret + parameterValues.get(((ParameterTemplateItem) item).mType);
-                }
+                ret = ret + stringItem;
             }
         }
         return ret;
