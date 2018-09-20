@@ -1,4 +1,4 @@
-package com.elegion.tracktor.di.messageTemplate;
+package com.elegion.tracktor.di.application;
 
 import android.content.SharedPreferences;
 

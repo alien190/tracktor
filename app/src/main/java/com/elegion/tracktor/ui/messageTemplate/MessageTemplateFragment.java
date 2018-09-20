@@ -88,12 +88,6 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
         return mView;
     }
 
-    @SuppressLint("CheckResult")
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

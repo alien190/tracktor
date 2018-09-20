@@ -21,9 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplateActivity;
 import com.elegion.tracktor.utils.ScreenshotMaker;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -63,6 +67,8 @@ public class ResultDetailsFragment extends Fragment {
     ResultDetailsViewModel mViewModel;
     @Inject
     CommentDialogFragment mCommentDialogFragment;
+    @Inject
+    CurrentPreferences mCurrentPreferences;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -119,14 +125,13 @@ public class ResultDetailsFragment extends Fragment {
     }
 
     private void initSpinner() {
-        String[] actions = getResources().getStringArray(R.array.actions);
+        List<String> actions = mCurrentPreferences.getActions();
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.support_simple_spinner_dropdown_item,
                 actions);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spAction.setAdapter(arrayAdapter);
-
     }
 
     @OnItemSelected(R.id.spAction)
@@ -170,19 +175,18 @@ public class ResultDetailsFragment extends Fragment {
         String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
         Uri uri = Uri.parse(path);
 
+        String shareMessage = mViewModel.getSharingMessage();
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("image/jpeg");
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
 
-        String extraText = "Начало трека :" + tvStartDate.getText()
-                + "\nВремя: " + tvDuration.getText()
-                + "\nРасстояние: " + tvDistance.getText()
-                + "\nСредняя скорость: " + tvAverageSpeed.getText()
-                + "\nЗатрачено калорий: " + tvCalories.getText()
-                + "\nВид деятельности: " + spAction.getSelectedItem().toString()
-                + "\nКомментарий: " + tvComment.getText();
+        if(shareMessage.contains("[image]")) {  //todo переделать
+            shareMessage = shareMessage.replace("[image]", "");
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        } else {
+            intent.setType("text/plain");
+        }
 
-        intent.putExtra(Intent.EXTRA_TEXT, extraText);
-        startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+        intent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+        startActivity(Intent.createChooser(intent, getString(R.string.share_chooser_title)));
     }
 }

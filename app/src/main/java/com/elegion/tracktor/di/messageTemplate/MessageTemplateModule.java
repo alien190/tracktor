@@ -17,7 +17,6 @@ public class MessageTemplateModule extends Module {
         mMessageTemplateFragment = MessageTemplateFragment.newInstance();
         mCustomLayoutManager = new CustomLayoutManager();
 
-        bind(MessageTemplate.class).toProvider(MessageTemplateProvider.class).providesSingletonInScope();
         bind(MessageTemplateListAdapter.class).toProvider(MessageTemplateListAdapterProvider.class).providesSingletonInScope();
         bind(MessageTemplateFragment.class).toInstance(mMessageTemplateFragment);
         bind(CustomLayoutManager.class).toInstance(mCustomLayoutManager);

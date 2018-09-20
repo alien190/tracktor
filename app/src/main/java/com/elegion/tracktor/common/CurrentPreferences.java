@@ -25,6 +25,7 @@ public class CurrentPreferences {
     private List<String> mMessageTemplateParamTypes;
     private List<String> mMessageTemplatePreviewValues;
     private String mMessageTemplateDraft;
+    private List<String> mActions;
 
 
     public void notifyChanges() {
@@ -49,6 +50,9 @@ public class CurrentPreferences {
                 context.getResources().getStringArray(R.array.messageTemplatePreviewValues)));
 
         mMessageTemplateDraft = context.getString(R.string.messageTemplateDraft);
+
+        mActions = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.actions)));
     }
 
     public void setValueAndNotify(String key, String value) {
@@ -106,7 +110,27 @@ public class CurrentPreferences {
         return mMessageTemplatePreviewValues;
     }
 
+    public List<String> createMessageTemplateValues(String start, String duration, String distance,
+                                                    String speed, String calories, String action,
+                                                    String comment) {
+        List<String> list = new ArrayList<>();
+        list.add(start);
+        list.add(duration);
+        list.add(distance);
+        list.add(speed);
+        list.add(calories);
+        list.add(action);
+        list.add(comment);
+        list.add("[image]");
+
+        return list;
+    }
+
     public String getMessageTemplateDraft() {
         return mMessageTemplateDraft;
+    }
+
+    public List<String> getActions() {
+        return mActions;
     }
 }

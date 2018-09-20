@@ -35,6 +35,7 @@ public class MessageTemplate {
         if(parameterValues == null) {
             parameterValues = mCurrentPreferences.getMessageTemplatePreviewValues();
         }
+
         String ret = "";
         List<String> parameterTypesName = mCurrentPreferences.getMessageTemplateParamTypes();
         if (parameterValues != null && parameterTypesName != null &&

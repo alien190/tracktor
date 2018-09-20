@@ -8,6 +8,7 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
 import com.google.gson.Gson;
 
 import toothpick.config.Module;
@@ -27,5 +28,6 @@ public class ApplicationModule extends Module {
         bind(CurrentPreferences.class).toInstance(mCurrentPreferences);
         bind(SharedPreferences.class).toInstance(mSharedPreferences);
         bind(Gson.class).toInstance(mGson);
+        bind(MessageTemplate.class).toProvider(MessageTemplateProvider.class).providesSingletonInScope();
     }
 }
