@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/miSortingOrder"
-        android:title="@string/mi_sorting_order_label" />
+        android:id="@+id/miSortOrder"
+        android:title="@string/mi_sorting_order_label"
+        android:icon="@drawable/ic_arrow_downward_white_24dp"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/miSortBy"
-        android:title="@string/mi_sort_by_title" />
+        android:title="@string/mi_sort_by_title"
+        android:icon="@drawable/ic_distance_white_24dp"
+        app:showAsAction="ifRoom"/>
 
 </menu>

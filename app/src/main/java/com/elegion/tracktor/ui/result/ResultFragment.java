@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -26,6 +29,9 @@ public class ResultFragment extends Fragment {
     public RecyclerView mRvTrackList;
     @BindView(R.id.rl_stub)
     RelativeLayout mRlStub;
+
+    MenuItem mMiSortOrder;
+    MenuItem mMiSortBy;
 
     @Inject
     protected ResultViewModel mResultViewModel;
@@ -61,7 +67,7 @@ public class ResultFragment extends Fragment {
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTrackList.setAdapter(mAdapter);
         mResultViewModel.getIsEmpty().observe(this, isEmpty -> {
-            if(isEmpty) {
+            if (isEmpty) {
                 mRlStub.setVisibility(View.VISIBLE);
                 mRvTrackList.setVisibility(View.GONE);
             } else {
@@ -69,5 +75,62 @@ public class ResultFragment extends Fragment {
                 mRvTrackList.setVisibility(View.VISIBLE);
             }
         });
+        mResultViewModel.getSortOrder().observe(this, this::setSortOrderIcon);
+        mResultViewModel.getSortBy().observe(this, this::setSortByIcon);
+        setHasOptionsMenu(true);
+    }
+
+    private void setSortOrderIcon(int sortOrder) {
+        if(mMiSortOrder!=null) {
+            if (sortOrder == ResultViewModel.SORT_ORDER_ASC) {
+                mMiSortOrder.setIcon(R.drawable.ic_arrow_downward_white_24dp);
+            } else {
+                mMiSortOrder.setIcon(R.drawable.ic_arrow_upward_white_24dp);
+            }
+        }
+    }
+
+    private void setSortByIcon(int sortBy) {
+        if(mMiSortBy!=null) {
+            switch (sortBy){
+                case ResultViewModel.SORT_BY_DISTANCE:{
+                    mMiSortBy.setIcon(R.drawable.ic_distance_white_24dp);
+                    break;
+                }
+                case ResultViewModel.SORT_BY_DURATION:{
+                    mMiSortBy.setIcon(R.drawable.ic_timelapse_white_24dp);
+                    break;
+                }
+                default:{
+                    mMiSortBy.setIcon(R.drawable.ic_start_white_24dp);
+                    break;
+                }
+            }
+        }
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_result, menu);
+        mMiSortOrder = menu.findItem(R.id.miSortOrder);
+        mMiSortBy = menu.findItem(R.id.miSortBy);
+        setSortOrderIcon(mResultViewModel.getSortOrder().getValue());
+        setSortByIcon(mResultViewModel.getSortBy().getValue());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.miSortOrder: {
+                mResultViewModel.changeSortOrder();
+                return true;
+            }
+            case R.id.miSortBy: {
+                mResultViewModel.changeSortBy();
+                return true;
+            }
+            default: {
+                return super.onOptionsItemSelected(item);
+            }
+        }
     }
 }

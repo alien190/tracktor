@@ -57,6 +57,6 @@
     <string name="no_comment">Введите комментарий</string>
     <string name="list_empty">Список пуст</string>
     <string name="label_start">Начало:</string>
-    <string name="mi_sorting_order_label">Сортировать по</string>
-    <string name="mi_sort_by_title">Сортировать по</string>
+    <string name="mi_sorting_order_label">Порядок сортировки</string>
+    <string name="mi_sort_by_title">fff</string>
 </resources>
