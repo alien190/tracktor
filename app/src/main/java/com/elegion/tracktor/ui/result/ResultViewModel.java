@@ -11,9 +11,11 @@ import java.util.List;
 public class ResultViewModel extends ViewModel {
     private IRepository<Track> mRepository;
     private MutableLiveData<List<Track>> mTracks = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isEmpty = new MutableLiveData<>();
 
     public ResultViewModel(IRepository<Track> repository) {
         mRepository = repository;
+        mTracks.observeForever(list -> isEmpty.postValue(list!=null && list.isEmpty()));
     }
 
     public void loadTracks() {
@@ -24,13 +26,7 @@ public class ResultViewModel extends ViewModel {
         return mTracks;
     }
 
-    public Track getItem(long id) {
-        return mRepository.getItem(id);
+    public MutableLiveData<Boolean> getIsEmpty() {
+        return isEmpty;
     }
-
-    public void deleteItem(long id) {
-        mRepository.deleteItem(id);
-    }
-
-    public void updateItem(Track track) {mRepository.updateItem(track);}
 }

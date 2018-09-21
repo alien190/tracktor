@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.elegion.tracktor.R;
 
@@ -23,6 +24,8 @@ public class ResultFragment extends Fragment {
 
     @BindView(R.id.rvTrackList)
     public RecyclerView mRvTrackList;
+    @BindView(R.id.rl_stub)
+    RelativeLayout mRlStub;
 
     @Inject
     protected ResultViewModel mResultViewModel;
@@ -57,7 +60,14 @@ public class ResultFragment extends Fragment {
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTrackList.setAdapter(mAdapter);
+        mResultViewModel.getIsEmpty().observe(this, isEmpty -> {
+            if(isEmpty) {
+                mRlStub.setVisibility(View.VISIBLE);
+                mRvTrackList.setVisibility(View.GONE);
+            } else {
+                mRlStub.setVisibility(View.GONE);
+                mRvTrackList.setVisibility(View.VISIBLE);
+            }
+        });
     }
-
-
 }
