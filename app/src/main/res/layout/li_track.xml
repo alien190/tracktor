@@ -34,6 +34,17 @@
             android:text="@string/label_id"
             tools:text="Id элемента:" />
 
+        <ImageView
+            android:id="@+id/ivDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/tvLabelId"
+            android:layout_alignBottom="@+id/tvLabelId"
+            android:scaleType="fitStart"
+            android:src="@drawable/ic_expand_more_black_24dp"/>
+
         <TextView
             android:id="@+id/tvId"
             android:layout_width="wrap_content"
@@ -107,6 +118,34 @@
             android:layout_toEndOf="@+id/tvLabelDistance"
             android:layout_toRightOf="@+id/tvLabelDistance"
             tools:text="100500 м" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rlDetail"
+            android:layout_below="@+id/ivPreview"
+            android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/tvLabelSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin"
+                android:text="@string/label_distance"
+                tools:text="Средняя скорость:" />
+
+            <TextView
+                android:id="@+id/tvSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvLabelSpeed"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_toEndOf="@+id/tvLabelSpeed"
+                android:layout_toRightOf="@+id/tvLabelSpeed"
+                tools:text="150 км/ч" />
+
+        </RelativeLayout>
 
 
     </RelativeLayout>

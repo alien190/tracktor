@@ -3,6 +3,7 @@ package com.elegion.tracktor.ui.result;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
@@ -28,6 +29,10 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     public TextView mTvDistance;
     @BindView(R.id.tvStartDate)
     public TextView mTvStartDate;
+    @BindView(R.id.ivDetail)
+    public ImageView mIvDetail;
+    @BindView(R.id.rlDetail)
+    RelativeLayout mRlDetail;
 
     private View view;
     private long mId;
@@ -47,6 +52,17 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mTvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
         mTvStartDate.setText(StringUtils.getDateText(track.getDate()));
         view.setOnClickListener(view -> EventBus.getDefault().post(new ShowResultDetailEvent(mId)));
+        mIvDetail.setOnClickListener(view -> showDetail(!(mRlDetail.getVisibility() == View.VISIBLE)));
+    }
+
+    private void showDetail(boolean isVisible) {
+        if (isVisible) {
+            mRlDetail.setVisibility(View.VISIBLE);
+            mIvDetail.setImageResource(R.drawable.ic_expand_less_black_24dp);
+        } else {
+            mRlDetail.setVisibility(View.GONE);
+            mIvDetail.setImageResource(R.drawable.ic_expand_more_black_24dp);
+        }
     }
 }
 
