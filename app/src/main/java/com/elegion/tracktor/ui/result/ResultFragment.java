@@ -16,6 +16,11 @@ import android.widget.RelativeLayout;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.event.TrackCommentEditEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
@@ -38,6 +43,9 @@ public class ResultFragment extends Fragment {
     protected ResultViewModel mResultViewModel;
     @Inject
     protected CurrentPreferences mCurrentPreferences;
+    @Inject
+    protected CommentDialogFragment mCommentDialogFragment;
+
     private ResultAdapter mAdapter;
 
 
@@ -55,6 +63,7 @@ public class ResultFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Scope scope = Toothpick.openScope("Result");
         Toothpick.inject(this, scope);
+        Toothpick.inject(mCommentDialogFragment, scope);
 
         View view = inflater.inflate(R.layout.fr_result, container, false);
         return view;
@@ -84,7 +93,7 @@ public class ResultFragment extends Fragment {
     }
 
     private void setSortOrderIcon(int sortOrder) {
-        if(mMiSortOrder!=null) {
+        if (mMiSortOrder != null) {
             if (sortOrder == ResultViewModel.SORT_ORDER_ASC) {
                 mMiSortOrder.setIcon(R.drawable.ic_arrow_downward_white_24dp);
             } else {
@@ -94,23 +103,24 @@ public class ResultFragment extends Fragment {
     }
 
     private void setSortByIcon(int sortBy) {
-        if(mMiSortBy!=null) {
-            switch (sortBy){
-                case ResultViewModel.SORT_BY_DISTANCE:{
+        if (mMiSortBy != null) {
+            switch (sortBy) {
+                case ResultViewModel.SORT_BY_DISTANCE: {
                     mMiSortBy.setIcon(R.drawable.ic_distance_white_24dp);
                     break;
                 }
-                case ResultViewModel.SORT_BY_DURATION:{
+                case ResultViewModel.SORT_BY_DURATION: {
                     mMiSortBy.setIcon(R.drawable.ic_timelapse_white_24dp);
                     break;
                 }
-                default:{
+                default: {
                     mMiSortBy.setIcon(R.drawable.ic_start_white_24dp);
                     break;
                 }
             }
         }
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_result, menu);
@@ -135,5 +145,24 @@ public class ResultFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onTrackCommentEdit(TrackCommentEditEvent editEvent)
+    {
+        mResultViewModel.setTrackIdForComment(editEvent.mId);
+        mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "result");
     }
 }

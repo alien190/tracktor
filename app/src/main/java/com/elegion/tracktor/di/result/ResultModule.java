@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.elegion.tracktor.App;
 import com.elegion.tracktor.di.main.MainViewModelProvider;
+import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.ui.map.MainViewModel;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.ui.result.ResultViewModel;
@@ -16,6 +17,8 @@ public class ResultModule extends Module {
     public ResultModule(AppCompatActivity activity) {
         mActivity = activity;
         bind(AppCompatActivity.class).toInstance(mActivity);
-        bind(ResultViewModel.class).toProvider(ResultViewModelProvider.class);
+        bind(ResultViewModel.class).toProvider(ResultViewModelProvider.class).providesSingletonInScope();
+        bind(ICommentViewModel.class).toProvider(ResultViewModelProvider.class).providesSingletonInScope();
+
     }
 }

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 
@@ -82,6 +83,7 @@ public class ResultDetailsFragment extends Fragment {
         Scope scope = Toothpick.openScopes("Application", "ResultDetail");
         scope.installModules(new ResultDetailsModule(this, mId));
         Toothpick.inject(this, scope);
+        Toothpick.inject(mCommentDialogFragment, scope);
 
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);

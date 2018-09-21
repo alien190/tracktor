@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
+import com.elegion.tracktor.common.event.TrackCommentEditEvent;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -17,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class ResultViewHolder extends RecyclerView.ViewHolder {
@@ -79,6 +81,10 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
             mRlDetail.setVisibility(View.GONE);
             mIvDetail.setImageResource(R.drawable.ic_expand_more_black_24dp);
         }
+    }
+    @OnClick(R.id.ibEditComment)
+    protected void onEditCommentClick(){
+        EventBus.getDefault().post(new TrackCommentEditEvent(mId));
     }
 }
 

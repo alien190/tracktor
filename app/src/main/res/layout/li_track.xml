@@ -200,7 +200,14 @@
                 android:layout_marginLeft="@dimen/margin"
                 android:layout_toEndOf="@+id/tvLabelComment"
                 android:layout_toRightOf="@+id/tvLabelComment"
-                tools:text="Хорошая прогулка" />
+                tools:text="Хорошая прогулка Хорошая прогулка Хорошая прогулка Хорошая прогулка Хорошая прогулка Хорошая прогулка" />
+            <ImageButton
+                android:id="@+id/ibEditComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvComment"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_edit_black_24dp"/>
 
         </RelativeLayout>
 

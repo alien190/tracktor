@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ScrollView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.common.ICommentViewModel;
 
 import javax.inject.Inject;
 
@@ -23,7 +24,7 @@ import toothpick.Toothpick;
 public class CommentDialogFragment extends DialogFragment {
 
     @Inject
-    ResultDetailsViewModel mViewModel;
+    ICommentViewModel mViewModel;
     @BindView(R.id.etComment)
     EditText edComment;
 
@@ -43,7 +44,7 @@ public class CommentDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fr_comment_dialog, null);
         ButterKnife.bind(this, view);
-        toothpickInject();
+        //toothpickInject();
         mViewModel.getComment().observe(this, edComment::setText);
 
         builder.setView(view)

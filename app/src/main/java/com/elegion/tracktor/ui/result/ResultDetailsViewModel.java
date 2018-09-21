@@ -7,6 +7,7 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -15,7 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import toothpick.Toothpick;
 
-public class ResultDetailsViewModel extends ViewModel {
+public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel{
     private MutableLiveData<String> mStartDate = new MutableLiveData<>();
     private MutableLiveData<String> mDistance = new MutableLiveData<>();
     private MutableLiveData<String> mAverageSpeed = new MutableLiveData<>();
@@ -153,6 +154,10 @@ public class ResultDetailsViewModel extends ViewModel {
     }
 
     public MutableLiveData<String> getComment() {
+        return mComment;
+    }
+
+    public MutableLiveData<String> getComment(long trackId) {
         return mComment;
     }
 }

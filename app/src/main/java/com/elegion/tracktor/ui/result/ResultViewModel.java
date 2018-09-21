@@ -5,10 +5,11 @@ import android.arch.lifecycle.ViewModel;
 
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.ui.common.ICommentViewModel;
 
 import java.util.List;
 
-public class ResultViewModel extends ViewModel {
+public class ResultViewModel extends ViewModel implements ICommentViewModel {
     public static final int SORT_ORDER_ASC = 1;
     public static final int SORT_ORDER_DESC = 2;
     public static final int SORT_BY_START_DATE = 1;
@@ -22,6 +23,7 @@ public class ResultViewModel extends ViewModel {
     private MutableLiveData<Integer> mSortBy = new MutableLiveData<>();
     private int mRepositorySortOrder;
     private int mRepositorySortBy;
+    private long mTrackIdForComment;
 
     public ResultViewModel(IRepository<Track> repository) {
         mRepository = repository;
@@ -31,6 +33,7 @@ public class ResultViewModel extends ViewModel {
         mSortOrder.postValue(SORT_ORDER_ASC);
         mSortBy.postValue(SORT_BY_START_DATE);
     }
+
 
     public void loadTracks() {
         mTracks.postValue(mRepository.getAll(mRepositorySortOrder, mRepositorySortBy));
@@ -82,5 +85,25 @@ public class ResultViewModel extends ViewModel {
 
     public MutableLiveData<Integer> getSortBy() {
         return mSortBy;
+    }
+
+    public void setTrackIdForComment(long trackIdForComment) {
+        mTrackIdForComment = trackIdForComment;
+    }
+
+    @Override
+    public MutableLiveData<String> getComment() {
+        MutableLiveData<String> comment = new MutableLiveData<>();
+        Track track = mRepository.getItem(mTrackIdForComment);
+        comment.postValue(track.getComment());
+        comment.observeForever(newComment -> {
+            if (track.getComment() == null || !track.getComment().equals(newComment)) {
+                track.setComment(newComment);
+                mRepository.updateItem(track);
+                //todo переделать такой рефреш
+                loadTracks();
+            }
+        });
+        return comment;
     }
 }
