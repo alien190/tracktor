@@ -33,6 +33,7 @@
     </string-array>
 
     <string-array name="actions">
+        <item>Не указано</item>
         <item>Ходьба</item>
         <item>Бег</item>
         <item>Велосипед</item>

@@ -47,4 +47,11 @@ public class StringUtils {
         DateFormat dfOut = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         return dfOut.format(date);
     }
+
+    public static String getCommentText(String comment) {
+        if(comment==null || comment.isEmpty()){
+            return "нет комментария";
+        }
+        return comment;
+    }
 }

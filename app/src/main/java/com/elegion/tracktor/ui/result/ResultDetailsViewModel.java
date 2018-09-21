@@ -84,18 +84,18 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
         double calories;
 
         switch (mTrack.getAction()) {
-            case 0: { //ходьба
+            case 1: { //ходьба
                 calories = 0.035 * mCurrentPreferences.getWeight()
                         + Math.pow(mTrack.getAverageSpeed(), 2) /
                         mCurrentPreferences.getHeight() * 2.9 *
                         mCurrentPreferences.getWeight();
                 break;
             }
-            case 1: { //бег
+            case 2: { //бег
                 calories = mCurrentPreferences.getWeight() * mTrack.getDistance() / 1000;
                 break;
             }
-            case 2: { //велосипед
+            case 3: { //велосипед
                 calories = mCurrentPreferences.getWeight() / 70 * 300 * mTrack.getDuration() / 3600;
                 break;
             }

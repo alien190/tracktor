@@ -69,7 +69,7 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mTvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
         mTvCalories.setText(StringUtils.getCaloriesText(track.getCalories()));
         mTvAction.setText(mCurrentPreferences.getActions().get(track.getAction()));
-        mTvComment.setText(track.getComment());
+        mTvComment.setText(StringUtils.getCommentText(track.getComment()));
     }
 
     private void showDetail(boolean isVisible) {
