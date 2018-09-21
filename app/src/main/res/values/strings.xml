@@ -59,4 +59,5 @@
     <string name="label_start">Начало:</string>
     <string name="mi_sorting_order_label">Порядок сортировки</string>
     <string name="mi_sort_by_title">fff</string>
+    <string name="commentLabel">Комментарий:</string>
 </resources>

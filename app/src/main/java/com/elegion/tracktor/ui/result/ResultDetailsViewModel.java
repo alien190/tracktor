@@ -71,6 +71,13 @@ public class ResultDetailsViewModel extends ViewModel {
         }
     }
 
+    public void updateCalories(double calories) {
+        if (mTrack.getCalories() != calories) {
+            mTrack.setCalories(calories);
+            mRepository.updateItem(mTrack);
+        }
+    }
+
     private void calculateCalories() {
 
         double calories;
@@ -98,6 +105,7 @@ public class ResultDetailsViewModel extends ViewModel {
         }
 
         mCalories.postValue(StringUtils.getCaloriesText(calories));
+        updateCalories(calories);
     }
 
     public void deleteTrack() {

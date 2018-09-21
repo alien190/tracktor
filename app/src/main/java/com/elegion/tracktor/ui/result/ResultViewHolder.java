@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
@@ -20,27 +21,38 @@ import butterknife.ButterKnife;
 
 public class ResultViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.ivPreview)
-    public ImageView mIvPreview;
+    protected ImageView mIvPreview;
     @BindView(R.id.tvId)
-    public TextView mTvId;
+    protected TextView mTvId;
     @BindView(R.id.tvDuration)
-    public TextView mTvDuration;
+    protected TextView mTvDuration;
     @BindView(R.id.tvDistance)
-    public TextView mTvDistance;
+    protected TextView mTvDistance;
     @BindView(R.id.tvStartDate)
-    public TextView mTvStartDate;
+    protected TextView mTvStartDate;
     @BindView(R.id.ivDetail)
-    public ImageView mIvDetail;
+    protected ImageView mIvDetail;
     @BindView(R.id.rlDetail)
-    RelativeLayout mRlDetail;
+    protected RelativeLayout mRlDetail;
+    @BindView(R.id.tvSpeed)
+    protected TextView mTvSpeed;
+    @BindView(R.id.tvCalories)
+    protected TextView mTvCalories;
+    @BindView(R.id.tvAction)
+    protected TextView mTvAction;
+    @BindView(R.id.tvComment)
+    protected TextView mTvComment;
+
 
     private View view;
     private long mId;
+    private CurrentPreferences mCurrentPreferences;
 
 
-    public ResultViewHolder(View itemView) {
+    public ResultViewHolder(View itemView, CurrentPreferences currentPreferences) {
         super(itemView);
         view = itemView;
+        mCurrentPreferences = currentPreferences;
         ButterKnife.bind(this, itemView);
     }
 
@@ -53,6 +65,10 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mTvStartDate.setText(StringUtils.getDateText(track.getDate()));
         view.setOnClickListener(view -> EventBus.getDefault().post(new ShowResultDetailEvent(mId)));
         mIvDetail.setOnClickListener(view -> showDetail(!(mRlDetail.getVisibility() == View.VISIBLE)));
+        mTvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
+        mTvCalories.setText(StringUtils.getCaloriesText(track.getCalories()));
+        mTvAction.setText(mCurrentPreferences.getActions().get(track.getAction()));
+        mTvComment.setText(track.getComment());
     }
 
     private void showDetail(boolean isVisible) {

@@ -10,7 +10,10 @@ import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -19,6 +22,7 @@ public class CurrentPreferences {
     private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key};
     private String weightKey;
     private String heightKey;
+    private List<String> mActions;
 
 
     public void notifyChanges() {
@@ -35,6 +39,9 @@ public class CurrentPreferences {
 
         weightKey = context.getString(R.string.weight_key);
         heightKey = context.getString(R.string.height_key);
+
+        mActions = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.actions)));
     }
 
     public void setValueAndNotify(String key, String value) {
@@ -71,5 +78,8 @@ public class CurrentPreferences {
         } else {
             return 0;
         }
+    }
+    public List<String> getActions() {
+        return mActions;
     }
 }

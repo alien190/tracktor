@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 
 import javax.inject.Inject;
 
@@ -35,6 +36,8 @@ public class ResultFragment extends Fragment {
 
     @Inject
     protected ResultViewModel mResultViewModel;
+    @Inject
+    protected CurrentPreferences mCurrentPreferences;
     private ResultAdapter mAdapter;
 
 
@@ -61,7 +64,7 @@ public class ResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        mAdapter = new ResultAdapter();
+        mAdapter = new ResultAdapter(mCurrentPreferences);
         mResultViewModel.loadTracks();
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
         mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));

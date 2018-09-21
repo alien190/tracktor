@@ -20,6 +20,7 @@ public class Track extends RealmObject {
     private double averageSpeed;
     private int action;
     private String comment;
+    private double calories;
 
 
     public long getId() {
@@ -92,6 +93,14 @@ public class Track extends RealmObject {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public double getCalories() {
+        return calories;
+    }
+
+    public void setCalories(double calories) {
+        this.calories = calories;
     }
 
     @Override

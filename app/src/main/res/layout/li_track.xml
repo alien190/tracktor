@@ -124,15 +124,15 @@
             android:layout_height="wrap_content"
             android:id="@+id/rlDetail"
             android:layout_below="@+id/ivPreview"
-            android:visibility="gone">
-
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/tvLabelSpeed"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/margin"
-                android:text="@string/label_distance"
+                android:text="@string/speedLabel"
                 tools:text="Средняя скорость:" />
 
             <TextView
@@ -144,6 +144,63 @@
                 android:layout_toEndOf="@+id/tvLabelSpeed"
                 android:layout_toRightOf="@+id/tvLabelSpeed"
                 tools:text="150 км/ч" />
+
+            <TextView
+                android:id="@+id/tvLabelCalories"
+                android:layout_below="@+id/tvLabelSpeed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin"
+                android:text="@string/caloriesLabel"
+                tools:text="Истрачено калорий:" />
+
+            <TextView
+                android:id="@+id/tvCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvLabelCalories"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_toEndOf="@+id/tvLabelCalories"
+                android:layout_toRightOf="@+id/tvLabelCalories"
+                tools:text="150 Ккал" />
+
+            <TextView
+                android:id="@+id/tvLabelAction"
+                android:layout_below="@+id/tvLabelCalories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin"
+                android:text="@string/actionLabel"
+                tools:text="Тип деятельности:" />
+
+            <TextView
+                android:id="@+id/tvAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvLabelAction"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_toEndOf="@+id/tvLabelAction"
+                android:layout_toRightOf="@+id/tvLabelAction"
+                tools:text="Ходьба" />
+
+            <TextView
+                android:id="@+id/tvLabelComment"
+                android:layout_below="@+id/tvLabelAction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin"
+                android:text="@string/commentLabel"
+                tools:text="Комментарий:" />
+
+            <TextView
+                android:id="@+id/tvComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvLabelComment"
+                android:layout_marginLeft="@dimen/margin"
+                android:layout_toEndOf="@+id/tvLabelComment"
+                android:layout_toRightOf="@+id/tvLabelComment"
+                tools:text="Хорошая прогулка" />
 
         </RelativeLayout>
 
