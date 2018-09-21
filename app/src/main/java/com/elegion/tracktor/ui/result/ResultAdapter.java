@@ -41,11 +41,5 @@ public class ResultAdapter extends ListAdapter<Track, ResultViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
         holder.bind(getItem(position));
-        holder.setOnClickListener(id -> EventBus.getDefault().post(new ShowResultDetailEvent(id)));
-    }
-
-
-    interface OnItemClickListener {
-        void onItemClick (long id);
     }
 }

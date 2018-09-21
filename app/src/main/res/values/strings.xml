@@ -22,7 +22,7 @@
     <string name="requestPermissionMessage">Нам необходимо знать Ваше местоположение, чтобы приложение работало. Доступ к хранилищу необходим для сохранения скриншотов.</string>
     <string name="share">Поделиться</string>
     <string name="label_id">Id элемента:</string>
-    <string name="label_duration">Время:</string>
+    <string name="label_duration">Продолжительность:</string>
     <string name="label_distance">Расстояние:</string>
     <string name="delete">Удалить</string>
     <string name="pref_title">Настройки</string>
@@ -56,4 +56,7 @@
     <string name="comment_dialog_title">Ваш комментарий</string>
     <string name="no_comment">Введите комментарий</string>
     <string name="list_empty">Список пуст</string>
+    <string name="label_start">Начало:</string>
+    <string name="mi_sorting_order_label">Сортировать по</string>
+    <string name="mi_sort_by_title">Сортировать по</string>
 </resources>

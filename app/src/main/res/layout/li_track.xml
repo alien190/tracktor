@@ -43,11 +43,34 @@
             android:layout_toRightOf="@+id/tvLabelId"
             tools:text="1" />
 
+
+
+        <TextView
+            android:id="@+id/tvLabelStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvLabelId"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_toEndOf="@+id/ivPreview"
+            android:layout_toRightOf="@+id/ivPreview"
+            android:text="@string/label_start"
+            tools:text="Начало:" />
+
+        <TextView
+            android:id="@+id/tvStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/tvLabelStart"
+            android:layout_marginLeft="@dimen/margin"
+            android:layout_toEndOf="@+id/tvLabelStart"
+            android:layout_toRightOf="@+id/tvLabelStart"
+            tools:text="10.10.2018 00:00:10" />
+
         <TextView
             android:id="@+id/tvLabelDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvLabelId"
+            android:layout_below="@+id/tvLabelStart"
             android:layout_marginLeft="@dimen/margin"
             android:layout_toEndOf="@+id/ivPreview"
             android:layout_toRightOf="@+id/ivPreview"
