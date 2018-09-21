@@ -10,6 +10,8 @@ import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
 import com.elegion.tracktor.common.event.TrackCommentEditEvent;
+import com.elegion.tracktor.common.event.TrackDeleteEvent;
+import com.elegion.tracktor.common.event.TrackShareEvent;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -24,8 +26,6 @@ import butterknife.OnClick;
 public class ResultViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.ivPreview)
     protected ImageView mIvPreview;
-    @BindView(R.id.tvId)
-    protected TextView mTvId;
     @BindView(R.id.tvDuration)
     protected TextView mTvDuration;
     @BindView(R.id.tvDistance)
@@ -61,7 +61,6 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     public void bind(Track track) {
         mIvPreview.setImageBitmap(ScreenshotMaker.fromBase64(track.getImage()));
         mId = track.getId();
-        mTvId.setText(String.valueOf(track.getId()));
         mTvDuration.setText(StringUtils.getDurationText(track.getDuration()));
         mTvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
         mTvStartDate.setText(StringUtils.getDateText(track.getDate()));
@@ -85,6 +84,16 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     @OnClick(R.id.ibEditComment)
     protected void onEditCommentClick(){
         EventBus.getDefault().post(new TrackCommentEditEvent(mId));
+    }
+
+    @OnClick(R.id.ibDelete)
+    protected void onDelete(){
+        EventBus.getDefault().post(new TrackDeleteEvent(mId));
+    }
+
+    @OnClick(R.id.ibShare)
+    protected void onShare(){
+        EventBus.getDefault().post(new TrackShareEvent(mId));
     }
 }
 

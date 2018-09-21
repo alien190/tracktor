@@ -6,4 +6,5 @@
     <color name="colorRouteLine">#37c200</color>
     <color name="colorBlack">#000000</color>
     <color name="colorGray">#b9b9b9</color>
+    <color name="colorWhite">#FFFFFF</color>
 </resources>

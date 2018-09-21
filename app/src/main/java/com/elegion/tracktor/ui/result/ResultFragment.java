@@ -1,6 +1,10 @@
 package com.elegion.tracktor.ui.result;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +21,11 @@ import android.widget.RelativeLayout;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.TrackCommentEditEvent;
+import com.elegion.tracktor.common.event.TrackDeleteEvent;
+import com.elegion.tracktor.common.event.TrackShareEvent;
+import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.utils.ScreenshotMaker;
+import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -160,9 +169,42 @@ public class ResultFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onTrackCommentEdit(TrackCommentEditEvent editEvent)
-    {
+    protected void onTrackCommentEdit(TrackCommentEditEvent editEvent) {
         mResultViewModel.setTrackIdForComment(editEvent.mId);
         mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "result");
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onTrackDelete(TrackDeleteEvent event) {
+        mResultViewModel.deleteTrack(event.trackId);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    protected void onTrackShare(TrackShareEvent event) {
+        doShare(mResultViewModel.getTrack(event.trackId));
+    }
+
+    //todo переделать это
+    private void doShare(Track track) {
+        if (track != null) {
+            Bitmap screenShot = ScreenshotMaker.fromBase64(track.getImage());
+            String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), screenShot, "Мой маршрут", null);
+            Uri uri = Uri.parse(path);
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("image/jpeg");
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+            String extraText = "Начало трека :" + StringUtils.getDateText(track.getDate())
+                    + "\nВремя: " + StringUtils.getDurationText(track.getDuration())
+                    + "\nРасстояние: " + StringUtils.getDistanceText(track.getDistance())
+                    + "\nСредняя скорость: " + StringUtils.getSpeedText(track.getAverageSpeed())
+                    + "\nЗатрачено калорий: " + StringUtils.getCaloriesText(track.getCalories())
+                    + "\nВид деятельности: " + mCurrentPreferences.getActions().get(track.getAction())
+                    + "\nКомментарий: " + track.getComment();
+
+            intent.putExtra(Intent.EXTRA_TEXT, extraText);
+            startActivity(Intent.createChooser(intent, "Результаты маршрута"));
+        }
     }
 }

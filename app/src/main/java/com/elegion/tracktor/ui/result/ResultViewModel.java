@@ -71,6 +71,15 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
         loadTracks();
     }
 
+    public void deleteTrack(long trackId) {
+        mRepository.deleteItem(trackId);
+        loadTracks();
+    }
+
+    public Track getTrack(long trackId) {
+        return mRepository.getItem(trackId);
+    }
+
     public MutableLiveData<List<Track>> getTracks() {
         return mTracks;
     }
