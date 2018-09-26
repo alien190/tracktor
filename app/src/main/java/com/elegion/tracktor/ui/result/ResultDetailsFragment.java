@@ -23,7 +23,9 @@ import android.widget.Toast;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
+import com.elegion.tracktor.utils.DetectActionUtils;
 import com.elegion.tracktor.utils.ScreenshotMaker;
+import com.elegion.tracktor.utils.StringUtils;
 
 import javax.inject.Inject;
 
@@ -53,6 +55,8 @@ public class ResultDetailsFragment extends Fragment {
     TextView tvCalories;
     @BindView(R.id.tvComment)
     TextView tvComment;
+    @BindView(R.id.ivAverageSpeedIcon)
+    ImageView mIvAverageSpeedIcon;
 
 
     public static final String ID_KEY = "IdKey";
@@ -100,11 +104,16 @@ public class ResultDetailsFragment extends Fragment {
         mViewModel.getDuration().observe(this, tvDuration::setText);
         mViewModel.getDistance().observe(this, tvDistance::setText);
         mViewModel.getAction().observe(this, spAction::setSelection);
-        mViewModel.getAverageSpeed().observe(this, tvAverageSpeed::setText);
+        mViewModel.getAverageSpeed().observe(this, this::setAverageSpeed);
         mViewModel.getStartDate().observe(this, tvStartDate::setText);
         mViewModel.getCalories().observe(this, tvCalories::setText);
         mViewModel.getComment().observe(this, this::setComment);
         mViewModel.loadTrack();
+    }
+
+    private void setAverageSpeed(double speed) {
+        tvAverageSpeed.setText(StringUtils.getSpeedText(speed));
+        mIvAverageSpeedIcon.setImageResource(DetectActionUtils.getDetectActionIconId(speed));
     }
 
     private void setComment(String comment) {

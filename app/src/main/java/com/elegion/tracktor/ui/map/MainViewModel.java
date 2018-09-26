@@ -23,7 +23,7 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> mIsShutdown = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
-    private MutableLiveData<String> mAverageSpeedText = new MutableLiveData<>();
+    private MutableLiveData<Double> mAverageSpeedLive = new MutableLiveData<>();
     private long mTotalTime;
     private double mDistance;
     private double mAverageSpeed;
@@ -55,7 +55,7 @@ public class MainViewModel extends ViewModel {
 
         timeText.postValue(StringUtils.getDurationText(mTotalTime));
         mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
-        mAverageSpeedText.postValue(StringUtils.getSpeedText(mAverageSpeed));
+        mAverageSpeedLive.postValue(mAverageSpeed);
         if (!isRouteStart) {
             startRoute();
         }
@@ -121,7 +121,7 @@ public class MainViewModel extends ViewModel {
         return mIsShutdown;
     }
 
-    public MutableLiveData<String> getAverageSpeedText() {
-        return mAverageSpeedText;
+    public MutableLiveData<Double> getAverageSpeed() {
+        return mAverageSpeedLive;
     }
 }

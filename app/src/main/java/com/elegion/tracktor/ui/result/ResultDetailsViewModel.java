@@ -19,7 +19,7 @@ import toothpick.Toothpick;
 public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel{
     private MutableLiveData<String> mStartDate = new MutableLiveData<>();
     private MutableLiveData<String> mDistance = new MutableLiveData<>();
-    private MutableLiveData<String> mAverageSpeed = new MutableLiveData<>();
+    private MutableLiveData<Double> mAverageSpeed = new MutableLiveData<>();
     private MutableLiveData<String> mDuration = new MutableLiveData<>();
     private MutableLiveData<String> mScreenShotBase64 = new MutableLiveData<>();
     private MutableLiveData<Integer> mAction = new MutableLiveData<>();
@@ -46,7 +46,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
             mStartDate.postValue(StringUtils.getDateText(mTrack.getDate()));
             mScreenShotBase64.postValue(mTrack.getImage());
             mDuration.postValue(StringUtils.getDurationText(mTrack.getDuration()));
-            mAverageSpeed.postValue(StringUtils.getSpeedText(mTrack.getAverageSpeed()));
+            mAverageSpeed.postValue(mTrack.getAverageSpeed());
             mAction.postValue(mTrack.getAction());
             mDistance.postValue(StringUtils.getDistanceText(mTrack.getDistance()));
             mComment.postValue(mTrack.getComment());
@@ -133,7 +133,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
         return mDistance;
     }
 
-    public MutableLiveData<String> getAverageSpeed() {
+    public MutableLiveData<Double> getAverageSpeed() {
         return mAverageSpeed;
     }
 

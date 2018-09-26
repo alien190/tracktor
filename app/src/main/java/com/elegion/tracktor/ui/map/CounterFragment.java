@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.service.CounterService;
+import com.elegion.tracktor.utils.DetectActionUtils;
+import com.elegion.tracktor.utils.StringUtils;
 
 import javax.inject.Inject;
 
@@ -34,6 +37,8 @@ public class CounterFragment extends Fragment {
     Button buttonStart;
     @BindView(R.id.buttonStop)
     Button buttonStop;
+    @BindView(R.id.ivAverageSpeedIcon)
+    ImageView mIvAverageSpeedIcon;
 
     @Inject
     protected MainViewModel mViewModel;
@@ -58,7 +63,7 @@ public class CounterFragment extends Fragment {
 
         mViewModel.getTimeText().observe(this, tvTime::setText);
         mViewModel.getDistanceText().observe(this, tvDistance::setText);
-        mViewModel.getAverageSpeedText().observe(this, tvSpeed::setText);
+        mViewModel.getAverageSpeed().observe(this, this::setAverageSpeed);
         mViewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
         mViewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
         mViewModel.getIsShutdown().observe(this, this::stopService);
@@ -66,6 +71,10 @@ public class CounterFragment extends Fragment {
         return view;
     }
 
+    private void setAverageSpeed(double speed) {
+        tvSpeed.setText(StringUtils.getSpeedText(speed));
+        mIvAverageSpeedIcon.setImageResource(DetectActionUtils.getDetectActionIconId(speed));
+    }
     @OnClick(R.id.buttonStart)
     void onStartClick() {
         mViewModel.startRoute();
