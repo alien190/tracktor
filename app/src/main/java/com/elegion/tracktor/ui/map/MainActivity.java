@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Scope scope = Toothpick.openScopes("Application", "Main");
+        Scope scope = Toothpick.openScopes("Application", "MainActivity");
         scope.installModules(new MainModule(this));
         Toothpick.inject(this, scope);
 

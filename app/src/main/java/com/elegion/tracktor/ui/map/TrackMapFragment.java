@@ -69,7 +69,7 @@ public class TrackMapFragment extends SupportMapFragment implements
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Scope scope = Toothpick.openScope("Main");
+        Scope scope = Toothpick.openScope("MainActivity");
         Toothpick.inject(this, scope);
 
         TrackMapFragment fragment = this;

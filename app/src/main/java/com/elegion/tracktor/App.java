@@ -15,7 +15,7 @@ import toothpick.smoothie.module.SmoothieApplicationModule;
 
 public class App extends Application {
 
-    private static Scope sAppScope;
+
 
     @Override
     public void onCreate() {
@@ -28,11 +28,8 @@ public class App extends Application {
         MemberInjectorRegistryLocator.setRootRegistry(new com.elegion.tracktor.MemberInjectorRegistry());
         FactoryRegistryLocator.setRootRegistry(new com.elegion.tracktor.FactoryRegistry());
 
-        sAppScope = Toothpick.openScope("Application");
+        Scope sAppScope = Toothpick.openScope("Application");
         sAppScope.installModules(new ApplicationModule(this), new NetworkModule());
     }
 
-    public static Scope getAppScope() {
-        return sAppScope;
-    }
 }

@@ -2,6 +2,7 @@ package com.elegion.tracktor.di.main;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.elegion.tracktor.ui.common.IWeatherViewModel;
 import com.elegion.tracktor.ui.map.MainViewModel;
 
 import toothpick.config.Module;
@@ -15,6 +16,7 @@ public class MainModule extends Module{
     public MainModule(AppCompatActivity activity) {
         mActivity = activity;
         bind(AppCompatActivity.class).toInstance(mActivity);
-        bind(MainViewModel.class).toProvider(MainViewModelProvider.class);
+        bind(MainViewModel.class).toProvider(MainViewModelProvider.class).providesSingletonInScope();
+        bind(IWeatherViewModel.class).toProvider(MainViewModelProvider.class).providesSingletonInScope();
     }
 }

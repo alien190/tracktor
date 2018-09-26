@@ -55,7 +55,7 @@ public class CounterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Scope scope = Toothpick.openScope("Main");
+        Scope scope = Toothpick.openScope("MainActivity");
         Toothpick.inject(this, scope);
 
         View view = inflater.inflate(R.layout.fr_counter, container, false);

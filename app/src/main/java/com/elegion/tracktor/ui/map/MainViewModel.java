@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
+import com.elegion.tracktor.ui.common.IWeatherViewModel;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,7 +18,7 @@ import java.util.Date;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 
-public class MainViewModel extends ViewModel {
+public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsShutdown = new MutableLiveData<>();
