@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.elegion.tracktor.di.application.ApplicationModule;
 import com.elegion.tracktor.di.application.NetworkModule;
+import com.squareup.picasso.Picasso;
 
 import io.realm.Realm;
 import toothpick.Scope;
@@ -30,6 +31,9 @@ public class App extends Application {
 
         Scope sAppScope = Toothpick.openScope("Application");
         sAppScope.installModules(new ApplicationModule(this), new NetworkModule());
+
+        Picasso.Builder builder = new Picasso.Builder(this);
+        Picasso.setSingletonInstance(builder.build());
     }
 
 }

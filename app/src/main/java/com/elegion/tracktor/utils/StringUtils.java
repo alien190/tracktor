@@ -49,9 +49,17 @@ public class StringUtils {
     }
 
     public static String getCommentText(String comment) {
-        if(comment==null || comment.isEmpty()){
+        if (comment == null || comment.isEmpty()) {
             return "нет комментария";
         }
         return comment;
+    }
+
+    public static String getTemperatureText(double temp) {
+        String format = "%.0f º";
+        if (temp > 0) {
+            format = "+" + format;
+        }
+        return String.format(Locale.ENGLISH, format, temp);
     }
 }

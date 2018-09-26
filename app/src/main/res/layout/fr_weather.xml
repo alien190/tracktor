@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llWeather"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -8,14 +9,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="+10C"
+        tools:text="+10C"
         android:textColor="@color/colorBlack"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:id="@+id/tvDegrees"/>
 
     <ImageView
+        android:layout_marginLeft="8dp"
         android:id="@+id/ivWeather"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:scaleType="centerInside"
-        android:src="@drawable/sample_weather"/>
+        tools:src="@drawable/sample_weather"/>
 </LinearLayout>

@@ -1,9 +1,17 @@
 package com.elegion.tracktor.ui.map;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
+import com.elegion.tracktor.BuildConfig;
+import com.elegion.tracktor.api.IOpenweathermapApi;
+import com.elegion.tracktor.api.model.Weather;
+import com.elegion.tracktor.api.model.WeatherItem;
+import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.ShutdownEvent;
+import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.common.IWeatherViewModel;
@@ -14,9 +22,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Date;
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
@@ -25,6 +37,11 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
     private MutableLiveData<Double> mAverageSpeedLive = new MutableLiveData<>();
+    private MutableLiveData<String> mTemperature = new MutableLiveData<>();
+    private MutableLiveData<String> mWeatherIconURL = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsBigStyleWeather = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsShowWeather = new MutableLiveData<>();
+
     private long mTotalTime;
     private double mDistance;
     private double mAverageSpeed;
@@ -37,14 +54,19 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         }
     };
     private boolean isRouteStart;
-    IRepository mRealmRepository;
+    private IRepository mRealmRepository;
+    private IOpenweathermapApi mOpenweathermapApi;
+    private Disposable mWeatherDisposable;
+    private int mWeatherUpdateCounter;
 
 
-    public MainViewModel(IRepository repository) {
+    public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi) {
         // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
         mRealmRepository = repository;
+        mOpenweathermapApi = openweathermapApi;
         mIsShutdown.postValue(false);
+        mIsShowWeather.postValue(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -60,6 +82,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         if (!isRouteStart) {
             startRoute();
         }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -68,13 +91,52 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         stopRoute();
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRouteUpdate(SegmentForRouteEvent event) {
+        updateWeather(event.points.second);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onStartRoute(StartRouteEvent event) {
+        updateWeather(event.firstPoint);
+    }
+
+    private void updateWeather(LocationData locationData) {
+        if (mTotalTime >= BuildConfig.MIN_WEATHER_UPDATE_PERIOD_SECS * mWeatherUpdateCounter) {
+            if (mWeatherDisposable != null) {
+                mWeatherDisposable.dispose();
+            }
+            mWeatherDisposable = mOpenweathermapApi.getWeather(locationData.point.latitude,
+                    locationData.point.longitude)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::setWeather, Throwable::printStackTrace);
+            mWeatherUpdateCounter = ((int) mTotalTime / BuildConfig.MIN_WEATHER_UPDATE_PERIOD_SECS) + 1;
+        }
+    }
+
+    private void setWeather(Weather weather) {
+        mTemperature.postValue(StringUtils.getTemperatureText(weather.getMain().getTemp()));
+        List<WeatherItem> weatherItems = weather.getWeather();
+        if (weatherItems != null && !weatherItems.isEmpty()) {
+            String iconURL;
+            iconURL = BuildConfig.WEATHER_ICON_URL +
+                    weatherItems.get(0).getIcon() +
+                    BuildConfig.WEATHER_ICON_EXTENSION;
+            mWeatherIconURL.postValue(iconURL);
+        }
+    }
+
     public void startRoute() {
+        mWeatherUpdateCounter = 0;
+        mIsShowWeather.postValue(true);
         isRouteStart = true;
         startEnabled.postValue(false);
         stopEnabled.postValue(true);
     }
 
     public void stopRoute() {
+        mIsShowWeather.postValue(false);
         isRouteStart = false;
         startEnabled.postValue(true);
         stopEnabled.postValue(false);
@@ -86,6 +148,21 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         } else {
             mIsPermissionGranted = Single.just(true);
         }
+    }
+
+    @Override
+    public LiveData<String> getTemperature() {
+        return mTemperature;
+    }
+
+    @Override
+    public LiveData<String> getWeatherPictureURL() {
+        return mWeatherIconURL;
+    }
+
+    @Override
+    public LiveData<Boolean> getIsBigStyleWeather() {
+        return mIsBigStyleWeather;
     }
 
     public MutableLiveData<String> getTimeText() {
@@ -124,5 +201,9 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
 
     public MutableLiveData<Double> getAverageSpeed() {
         return mAverageSpeedLive;
+    }
+
+    public MutableLiveData<Boolean> getIsShowWeather() {
+        return mIsShowWeather;
     }
 }

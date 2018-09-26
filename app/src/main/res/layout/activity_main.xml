@@ -22,9 +22,8 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/frWeather"
-        android:name="com.elegion.tracktor.ui.weather.WeatherFragment"
+    <FrameLayout
+        android:id="@+id/weatherContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"

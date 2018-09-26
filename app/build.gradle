@@ -13,6 +13,10 @@ android {
         resValue "string", "google_maps_key", (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
         buildConfigField "String", "API_KEY", '"b6851774c09e07c641ba96c4180178cc"'
         buildConfigField "String", "API_URL", '"http://api.openweathermap.org/"'
+        buildConfigField "String", "WEATHER_ICON_URL", '"http://openweathermap.org/img/w/"'
+        buildConfigField "String", "WEATHER_ICON_EXTENSION", '".png"'
+        buildConfigField "Integer", "MIN_WEATHER_UPDATE_PERIOD_SECS", '300'
+
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -91,5 +95,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }

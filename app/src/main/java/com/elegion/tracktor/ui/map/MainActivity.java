@@ -15,6 +15,7 @@ import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
+import com.elegion.tracktor.ui.weather.WeatherFragment;
 
 import javax.inject.Inject;
 
@@ -41,13 +42,17 @@ public class MainActivity extends AppCompatActivity {
         Toothpick.inject(this, scope);
 
         if (savedInstanceState == null) {
+
+            WeatherFragment weatherFragment = WeatherFragment.newInstance();
+            Toothpick.inject(weatherFragment, scope);
+
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.counterContainer, CounterFragment.newInstance())
                     .replace(R.id.mapContainer, TrackMapFragment.newInstance())
+                    .replace(R.id.weatherContainer, weatherFragment)
                     .commit();
         }
-
         requestPermissions();
     }
 
