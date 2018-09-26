@@ -104,9 +104,12 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     public MutableLiveData<String> getComment() {
         MutableLiveData<String> comment = new MutableLiveData<>();
         Track track = mRepository.getItem(mTrackIdForComment);
+        if (track.getComment() == null) {
+            track.setComment("");
+        }
         comment.postValue(track.getComment());
         comment.observeForever(newComment -> {
-            if (track.getComment() == null || !track.getComment().equals(newComment)) {
+            if (!track.getComment().equals(newComment)) {
                 track.setComment(newComment);
                 mRepository.updateItem(track);
                 //todo переделать такой рефреш

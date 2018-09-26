@@ -110,7 +110,11 @@ public class Track extends RealmObject {
             return this.getDistance() == newTrack.getDistance() &&
                     this.getDuration() == newTrack.getDuration() &&
                     this.getDate() == newTrack.getDate() &&
-                    this.getAverageSpeed() == newTrack.getAverageSpeed();
+                    this.getAverageSpeed() == newTrack.getAverageSpeed() &&
+                    this.getAction() == newTrack.getAction() &&
+                    (this.getComment()!=null && newTrack.getComment()!=null &&
+                            this.getComment().equals(newTrack.getComment())) &&
+                    this.getCalories() == newTrack.getCalories();
         }
         return false;
     }
