@@ -55,7 +55,7 @@ public class WeatherFragment extends Fragment {
         mViewModel.getTemperature().observe(this, mTvDegrees::setText);
         mViewModel.getIsShowWeather().observe(this,
                 isShow -> mLayoutWeather.setVisibility(isShow ? View.VISIBLE : View.GONE));
-        mViewModel.getWeatherPictureURL().observe(this, this::showWeatherIcon);
+        mViewModel.getWeatherIconURL().observe(this, this::showWeatherIcon);
         mViewModel.getIsWeatherRefreshing().observe(this,
                 isRefreshing -> mPbWeather.setVisibility(isRefreshing ? View.VISIBLE : View.GONE));
         return view;

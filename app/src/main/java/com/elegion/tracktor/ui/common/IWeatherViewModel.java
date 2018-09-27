@@ -5,7 +5,7 @@ import android.arch.lifecycle.LiveData;
 public interface IWeatherViewModel {
     LiveData<String> getTemperature();
 
-    LiveData<String> getWeatherPictureURL();
+    LiveData<String> getWeatherIconURL();
 
     LiveData<Boolean> getIsBigStyleWeather();
 

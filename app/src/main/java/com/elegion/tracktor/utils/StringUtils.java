@@ -65,6 +65,9 @@ public class StringUtils {
     }
 
     public static String getWeatherIconURL(String iconName) {
+        if (iconName == null || iconName.isEmpty()) {
+            return "";
+        }
         return BuildConfig.WEATHER_ICON_URL +
                 iconName +
                 BuildConfig.WEATHER_ICON_EXTENSION;

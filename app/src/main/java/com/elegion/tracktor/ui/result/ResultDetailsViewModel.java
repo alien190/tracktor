@@ -27,6 +27,9 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     private MutableLiveData<Integer> mAction = new MutableLiveData<>();
     private MutableLiveData<String> mCalories = new MutableLiveData<>();
     private MutableLiveData<String> mComment = new MutableLiveData<>();
+    private MutableLiveData<String> mTemperature = new MutableLiveData<>();
+    private MutableLiveData<String> mWeatherIconURL = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsShowWeather = new MutableLiveData<>();
 
     private CurrentPreferences mCurrentPreferences;
     private IRepository<Track> mRepository;
@@ -35,7 +38,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     public ResultDetailsViewModel(IRepository<Track> repository,
                                   CurrentPreferences currentPreferences,
-                                  Long id)  {
+                                  Long id) {
         mCurrentPreferences = currentPreferences;
         mRepository = repository;
         mId = id;
@@ -54,9 +57,12 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
             mComment.postValue(mTrack.getComment());
             mComment.observeForever(this::updateComment);
             mAction.observeForever(this::updateTrackAction);
+            mTemperature.postValue(StringUtils.getTemperatureText(mTrack.getTemperature()));
+            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(mTrack.getWeatherIcon()));
+            mWeatherIconURL.observeForever(iconUrl ->
+                    mIsShowWeather.postValue(iconUrl != null && !iconUrl.isEmpty()));
             calculateCalories();
         }
-
     }
 
     public void updateTrackAction(Integer action) {
@@ -133,23 +139,27 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     }
 
     @Override
-    public LiveData<String> getWeatherPictureURL() {
+    public LiveData<String> getWeatherIconURL() {
         return null;
     }
 
     @Override
     public LiveData<Boolean> getIsBigStyleWeather() {
-        return null;
+        MutableLiveData<Boolean> ret = new MutableLiveData<>();
+        ret.postValue(false);
+        return ret;
     }
 
     @Override
     public LiveData<Boolean> getIsShowWeather() {
-        return null;
+        return mIsShowWeather;
     }
 
     @Override
     public LiveData<Boolean> getIsWeatherRefreshing() {
-        return null;
+        MutableLiveData<Boolean> ret = new MutableLiveData<>();
+        ret.postValue(false);
+        return ret;
     }
 
     @Override

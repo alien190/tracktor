@@ -30,6 +30,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+
+//todo выделить погоду в отдельную ViewModel
+
 public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
@@ -186,7 +189,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     }
 
     @Override
-    public LiveData<String> getWeatherPictureURL() {
+    public LiveData<String> getWeatherIconURL() {
         return mWeatherIconURL;
     }
 
