@@ -62,6 +62,8 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private int mErrorWeatherUpdateCounter;
     private boolean mIsSuccessLastWeatherUpdate;
     private LocationData mLastWeatherUpdateLocation;
+    private double mLastTemperature;
+    private String mLastWeatherIcon;
 
 
     public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi) {
@@ -138,14 +140,12 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
 
     private void setWeather(Weather weather) {
         mIsSuccessLastWeatherUpdate = true;
-        mTemperature.postValue(StringUtils.getTemperatureText(weather.getMain().getTemp()));
+        mLastTemperature = weather.getMain().getTemp();
+        mTemperature.postValue(StringUtils.getTemperatureText(mLastTemperature));
         List<WeatherItem> weatherItems = weather.getWeather();
         if (weatherItems != null && !weatherItems.isEmpty()) {
-            String iconURL;
-            iconURL = BuildConfig.WEATHER_ICON_URL +
-                    weatherItems.get(0).getIcon() +
-                    BuildConfig.WEATHER_ICON_EXTENSION;
-            mWeatherIconURL.postValue(iconURL);
+            mLastWeatherIcon = weatherItems.get(0).getIcon();
+            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(mLastWeatherIcon));
         }
         if (mIsShowWeather.getValue() != null && !mIsShowWeather.getValue()) {
             mIsShowWeather.postValue(true);
@@ -222,7 +222,14 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     }
 
     public long saveResults(String imageBase64) {
-        return mRealmRepository.createTrackAndSave(mTotalTime, mDistance, mAverageSpeed, mStartDate, imageBase64);
+        return mRealmRepository.createTrackAndSave(
+                mTotalTime,
+                mDistance,
+                mAverageSpeed,
+                mStartDate,
+                imageBase64,
+                mLastTemperature,
+                mLastWeatherIcon);
     }
 
     public MutableLiveData<Boolean> getIsShutdown() {

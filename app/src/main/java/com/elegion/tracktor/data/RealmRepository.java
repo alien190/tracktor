@@ -77,8 +77,8 @@ public class RealmRepository implements IRepository<Track> {
     }
 
     @Override
-    public long createTrackAndSave(long duration, double distance, double averageSpeed, Date startDate, String imageBase64) {
-
+    public long createTrackAndSave(long duration, double distance, double averageSpeed,
+                                   Date startDate, String imageBase64, double temperature, String weatherIcon) {
         Track track = new Track();
 
         track.setDuration(duration);
@@ -86,6 +86,8 @@ public class RealmRepository implements IRepository<Track> {
         track.setAverageSpeed(averageSpeed);
         track.setImage(imageBase64);
         track.setDate(startDate);
+        track.setTemperature(temperature);
+        track.setWeatherIcon(weatherIcon);
         return insertItem(track);
     }
 
@@ -99,11 +101,11 @@ public class RealmRepository implements IRepository<Track> {
                 realmResults = realmResults.sort("duration", realmSortOrder);
                 break;
             }
-            case IRepository.SORT_BY_DISTANCE:{
+            case IRepository.SORT_BY_DISTANCE: {
                 realmResults = realmResults.sort("distance", realmSortOrder);
                 break;
             }
-            default:{
+            default: {
                 realmResults = realmResults.sort("date", realmSortOrder);
                 break;
             }

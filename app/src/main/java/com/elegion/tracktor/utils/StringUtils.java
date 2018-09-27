@@ -1,5 +1,6 @@
 package com.elegion.tracktor.utils;
 
+import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.common.LocationData;
 
 import java.text.DateFormat;
@@ -61,5 +62,11 @@ public class StringUtils {
             format = "+" + format;
         }
         return String.format(Locale.ENGLISH, format, temp);
+    }
+
+    public static String getWeatherIconURL(String iconName) {
+        return BuildConfig.WEATHER_ICON_URL +
+                iconName +
+                BuildConfig.WEATHER_ICON_EXTENSION;
     }
 }

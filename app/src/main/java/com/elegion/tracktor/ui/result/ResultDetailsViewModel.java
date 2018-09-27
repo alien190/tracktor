@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.result;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
@@ -8,6 +9,7 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
+import com.elegion.tracktor.ui.common.IWeatherViewModel;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import toothpick.Toothpick;
 
-public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel{
+public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel, IWeatherViewModel {
     private MutableLiveData<String> mStartDate = new MutableLiveData<>();
     private MutableLiveData<String> mDistance = new MutableLiveData<>();
     private MutableLiveData<Double> mAverageSpeed = new MutableLiveData<>();
@@ -33,7 +35,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     public ResultDetailsViewModel(IRepository<Track> repository,
                                   CurrentPreferences currentPreferences,
-                                  Long id) {
+                                  Long id)  {
         mCurrentPreferences = currentPreferences;
         mRepository = repository;
         mId = id;
@@ -123,6 +125,36 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onCurentPreferencesChande(PreferencesChangeEvent preferencesChangeEvent) {
         calculateCalories();
+    }
+
+    @Override
+    public LiveData<String> getTemperature() {
+        return null;
+    }
+
+    @Override
+    public LiveData<String> getWeatherPictureURL() {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> getIsBigStyleWeather() {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> getIsShowWeather() {
+        return null;
+    }
+
+    @Override
+    public LiveData<Boolean> getIsWeatherRefreshing() {
+        return null;
+    }
+
+    @Override
+    public void updateWeather() {
+
     }
 
     public MutableLiveData<String> getStartDate() {

@@ -23,5 +23,6 @@ public interface IRepository<T> {
 
     void updateItem(T t);
 
-    long createTrackAndSave(long duration, double distance, double averageSpeed, Date startDate, String imageBase64);
+    long createTrackAndSave(long duration, double distance, double averageSpeed, Date startDate,
+                            String imageBase64, double temperature, String weatherIcon);
 }

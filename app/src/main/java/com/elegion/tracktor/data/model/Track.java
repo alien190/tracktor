@@ -21,6 +21,8 @@ public class Track extends RealmObject {
     private int action;
     private String comment;
     private double calories;
+    private double temperature;
+    private String weatherIcon;
 
 
     public long getId() {
@@ -103,6 +105,23 @@ public class Track extends RealmObject {
         this.calories = calories;
     }
 
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getWeatherIcon() {
+        return weatherIcon;
+    }
+
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Track) {
@@ -112,7 +131,7 @@ public class Track extends RealmObject {
                     this.getDate() == newTrack.getDate() &&
                     this.getAverageSpeed() == newTrack.getAverageSpeed() &&
                     this.getAction() == newTrack.getAction() &&
-                    (this.getComment()!=null && newTrack.getComment()!=null &&
+                    (this.getComment() != null && newTrack.getComment() != null &&
                             this.getComment().equals(newTrack.getComment())) &&
                     this.getCalories() == newTrack.getCalories();
         }
