@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
 
-            WeatherFragment weatherFragment = WeatherFragment.newInstance(true);
+            WeatherFragment weatherFragment = WeatherFragment.newInstance();
             Toothpick.inject(weatherFragment, scope);
 
             getSupportFragmentManager()

@@ -250,4 +250,12 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     public MutableLiveData<Boolean> getIsWeatherRefreshing() {
         return mIsWeatherRefreshing;
     }
+
+    public String getLastWeatherIcon() {
+        return mLastWeatherIcon;
+    }
+
+    public void setLastWeatherIcon(String lastWeatherIcon) {
+        mLastWeatherIcon = lastWeatherIcon;
+    }
 }

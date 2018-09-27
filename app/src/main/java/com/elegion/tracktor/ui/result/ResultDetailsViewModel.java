@@ -1,6 +1,5 @@
 package com.elegion.tracktor.ui.result;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
@@ -9,7 +8,6 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
-import com.elegion.tracktor.ui.common.IWeatherViewModel;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -18,7 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import toothpick.Toothpick;
 
-public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel, IWeatherViewModel {
+public class ResultDetailsViewModel extends ViewModel implements ICommentViewModel {
     private MutableLiveData<String> mStartDate = new MutableLiveData<>();
     private MutableLiveData<String> mDistance = new MutableLiveData<>();
     private MutableLiveData<Double> mAverageSpeed = new MutableLiveData<>();
@@ -28,7 +26,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     private MutableLiveData<String> mCalories = new MutableLiveData<>();
     private MutableLiveData<String> mComment = new MutableLiveData<>();
     private MutableLiveData<String> mTemperature = new MutableLiveData<>();
-    private MutableLiveData<String> mWeatherIconURL = new MutableLiveData<>();
+    private MutableLiveData<String> mWeatherIcon = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsShowWeather = new MutableLiveData<>();
 
     private CurrentPreferences mCurrentPreferences;
@@ -58,9 +56,9 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
             mComment.observeForever(this::updateComment);
             mAction.observeForever(this::updateTrackAction);
             mTemperature.postValue(StringUtils.getTemperatureText(mTrack.getTemperature()));
-            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(mTrack.getWeatherIcon()));
-            mWeatherIconURL.observeForever(iconUrl ->
-                    mIsShowWeather.postValue(iconUrl != null && !iconUrl.isEmpty()));
+            mWeatherIcon.postValue(mTrack.getWeatherIcon());
+            mWeatherIcon.observeForever(icon ->
+                    mIsShowWeather.postValue(icon != null && !icon.isEmpty()));
             calculateCalories();
         }
     }
@@ -133,39 +131,6 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
         calculateCalories();
     }
 
-    @Override
-    public LiveData<String> getTemperature() {
-        return mTemperature;
-    }
-
-    @Override
-    public LiveData<String> getWeatherIconURL() {
-        return mWeatherIconURL;
-    }
-
-    @Override
-    public LiveData<Boolean> getIsBigStyleWeather() {
-        MutableLiveData<Boolean> ret = new MutableLiveData<>();
-        ret.postValue(false);
-        return ret;
-    }
-
-    @Override
-    public LiveData<Boolean> getIsShowWeather() {
-        return mIsShowWeather;
-    }
-
-    @Override
-    public LiveData<Boolean> getIsWeatherRefreshing() {
-        MutableLiveData<Boolean> ret = new MutableLiveData<>();
-        ret.postValue(false);
-        return ret;
-    }
-
-    @Override
-    public void updateWeather() {
-
-    }
 
     public MutableLiveData<String> getStartDate() {
         return mStartDate;
@@ -201,5 +166,13 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     public MutableLiveData<String> getComment(long trackId) {
         return mComment;
+    }
+
+    public MutableLiveData<String> getTemperature() {
+        return mTemperature;
+    }
+
+    public MutableLiveData<String> getWeatherIcon() {
+        return mWeatherIcon;
     }
 }

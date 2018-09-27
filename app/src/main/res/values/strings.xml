@@ -61,4 +61,5 @@
     <string name="mi_sort_by_title">fff</string>
     <string name="commentLabel">Комментарий:</string>
     <string name="commentWeather">Погодные условия:</string>
+    <string name="weather_stub">Не известно</string>
 </resources>

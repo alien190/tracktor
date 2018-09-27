@@ -21,8 +21,8 @@
             android:id="@+id/tvStartDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="0dp"
             android:paddingStart="4dp"
+            android:paddingEnd="0dp"
             android:textColor="@color/colorBlack"
             android:textSize="16sp"
             tools:text="10.10.2018 10:10:24" />
@@ -46,11 +46,54 @@
             android:id="@+id/tvCalories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="0dp"
             android:paddingStart="4dp"
+            android:paddingEnd="0dp"
             android:textColor="@color/colorBlack"
             android:textSize="16sp"
             tools:text="300" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvLabelWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commentWeather"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            tools:text="+15 C" />
+
+        <ImageView
+            android:layout_margin="4dp"
+            android:id="@+id/ivWeather"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitStart"
+            tools:src="@drawable/sample_weather" />
+        <TextView
+            android:id="@+id/tvWeatherStub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="4dp"
+            android:paddingEnd="0dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="16sp"
+            android:text="@string/weather_stub"
+            tools:text="не известно"
+            android:visibility="gone"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -71,31 +114,31 @@
 
     </LinearLayout>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/tvLabelComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/commentLabel"
-            android:textSize="16sp"
-            android:id="@+id/tvLabelComment"/>
+            android:textSize="16sp" />
 
         <TextView
-            android:layout_toRightOf="@+id/tvLabelComment"
-            android:layout_toEndOf="@+id/tvLabelComment"
             android:id="@+id/tvComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/btnComment"
+            android:layout_toLeftOf="@+id/btnComment"
+            android:layout_toEndOf="@+id/tvLabelComment"
+            android:layout_toRightOf="@+id/tvLabelComment"
             android:paddingEnd="0dp"
+            android:text="Введите комментарий"
             android:textColor="@color/colorBlack"
             android:textSize="16sp"
-            tools:text="Введите комментарий"
-            android:layout_toLeftOf="@+id/btnComment"
-            android:layout_toStartOf="@+id/btnComment"
-            android:text="Введите комментарий"
-            />
+            tools:text="Введите комментарий" />
 
         <ImageButton
             android:id="@+id/btnComment"
@@ -103,27 +146,10 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tvComment"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_more_horiz_black_24dp"
-            android:background="@color/colorWhite"/>
+            android:background="@color/colorWhite"
+            android:src="@drawable/ic_more_horiz_black_24dp" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/commentWeather"
-            android:textSize="16sp"
-            android:id="@+id/tvLabelWeather"/>
-
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/weatherContainer">
-        </FrameLayout>
-
-    </LinearLayout>
 
     <ImageView
         android:id="@+id/ivScreenshot"

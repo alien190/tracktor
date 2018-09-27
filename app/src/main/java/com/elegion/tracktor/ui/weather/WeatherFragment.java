@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.weather;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,8 +15,8 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.ui.common.IWeatherViewModel;
+import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -25,7 +26,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WeatherFragment extends Fragment {
-    private static String KEY_SIZE = "SIZE_KEY";
     @Inject
     protected IWeatherViewModel mViewModel;
     @Inject
@@ -42,10 +42,9 @@ public class WeatherFragment extends Fragment {
 
     private View view;
 
-    public static WeatherFragment newInstance(boolean isBigSize) {
+    public static WeatherFragment newInstance() {
 
         Bundle args = new Bundle();
-        args.putBoolean(KEY_SIZE, isBigSize);
         WeatherFragment fragment = new WeatherFragment();
         fragment.setRetainInstance(true);
         fragment.setArguments(args);
@@ -56,12 +55,7 @@ public class WeatherFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (view == null) {
-            Bundle args = getArguments();
-            if (args != null && args.getBoolean(KEY_SIZE)) {
-                view = inflater.inflate(R.layout.fr_weather_big, container, false);
-            } else {
-                view = inflater.inflate(R.layout.fr_weather_small, container, false);
-            }
+            view = inflater.inflate(R.layout.fr_weather, container, false);
             ButterKnife.bind(this, view);
             mViewModel.getTemperature().observe(this, mTvDegrees::setText);
             mViewModel.getIsShowWeather().observe(this,
@@ -85,6 +79,8 @@ public class WeatherFragment extends Fragment {
                             double ratio = (double) mIvWeather.getDrawable().getIntrinsicWidth() /
                                     mIvWeather.getDrawable().getIntrinsicHeight();
                             mIvWeather.setMinimumWidth((int) (mIvWeather.getHeight() * ratio));
+                            mViewModel.setLastWeatherIcon(ScreenshotMaker.toBase64(
+                                    ((BitmapDrawable) mIvWeather.getDrawable()).getBitmap()));
                         }
 
                         @Override

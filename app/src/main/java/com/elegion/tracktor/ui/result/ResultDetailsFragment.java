@@ -1,6 +1,5 @@
 package com.elegion.tracktor.ui.result;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -9,7 +8,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,12 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
-import com.elegion.tracktor.ui.weather.WeatherFragment;
 import com.elegion.tracktor.utils.DetectActionUtils;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -43,24 +38,29 @@ import toothpick.Toothpick;
 public class ResultDetailsFragment extends Fragment {
 
     @BindView(R.id.tvTime)
-    TextView tvDuration;
+    TextView mTvDuration;
     @BindView(R.id.tvDistance)
-    TextView tvDistance;
+    TextView mTvDistance;
     @BindView(R.id.tvAverageSpeed)
-    TextView tvAverageSpeed;
+    TextView mTvAverageSpeed;
     @BindView(R.id.tvStartDate)
-    TextView tvStartDate;
+    TextView mTvStartDate;
     @BindView(R.id.ivScreenshot)
-    ImageView ivScreenshot;
+    ImageView mIvScreenshot;
     @BindView(R.id.spAction)
-    Spinner spAction;
+    Spinner mSpAction;
     @BindView(R.id.tvCalories)
-    TextView tvCalories;
+    TextView mTvCalories;
     @BindView(R.id.tvComment)
-    TextView tvComment;
+    TextView mTvComment;
     @BindView(R.id.ivAverageSpeedIcon)
     ImageView mIvAverageSpeedIcon;
-
+    @BindView(R.id.tvTemperature)
+    TextView mTvTemperature;
+    @BindView(R.id.ivWeather)
+    ImageView mIvWeather;
+    @BindView(R.id.tvWeatherStub)
+    TextView mTvWeatherStub;
 
     public static final String ID_KEY = "IdKey";
     Bitmap mScreenShot;
@@ -70,8 +70,6 @@ public class ResultDetailsFragment extends Fragment {
     ResultDetailsViewModel mViewModel;
     @Inject
     CommentDialogFragment mCommentDialogFragment;
-    @Inject
-    WeatherFragment mWeatherFragment;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -89,7 +87,6 @@ public class ResultDetailsFragment extends Fragment {
             mId = args.getLong(ID_KEY, 0);
         }
         toothpickInject();
-        replaceWeatherFragment();
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
 
@@ -105,41 +102,40 @@ public class ResultDetailsFragment extends Fragment {
         scope.installModules(new ResultDetailsModule(this, mId));
         Toothpick.inject(this, scope);
         Toothpick.inject(mCommentDialogFragment, scope);
-        Toothpick.inject(mWeatherFragment, scope);
     }
 
-    private void replaceWeatherFragment() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        if (fm != null) {
-            fm.beginTransaction()
-                    .replace(R.id.weatherContainer, mWeatherFragment)
-                    .commit();
-        }
-    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof ResultActivity) {
-
-        }
-    }
-
-    private void initUI() {
+        private void initUI() {
         initSpinner();
         mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
-        mViewModel.getDuration().observe(this, tvDuration::setText);
-        mViewModel.getDistance().observe(this, tvDistance::setText);
-        mViewModel.getAction().observe(this, spAction::setSelection);
+        mViewModel.getDuration().observe(this, mTvDuration::setText);
+        mViewModel.getDistance().observe(this, mTvDistance::setText);
+        mViewModel.getAction().observe(this, mSpAction::setSelection);
         mViewModel.getAverageSpeed().observe(this, this::setAverageSpeed);
-        mViewModel.getStartDate().observe(this, tvStartDate::setText);
-        mViewModel.getCalories().observe(this, tvCalories::setText);
+        mViewModel.getStartDate().observe(this, mTvStartDate::setText);
+        mViewModel.getCalories().observe(this, mTvCalories::setText);
         mViewModel.getComment().observe(this, this::setComment);
+        mViewModel.getWeatherIcon().observe(this, this::setWeatherIcon);
+        mViewModel.getTemperature().observe(this, mTvTemperature::setText);
         mViewModel.loadTrack();
     }
 
+    private void setWeatherIcon(String iconBase64) {
+        if (iconBase64 != null && !iconBase64.isEmpty()) {
+            mIvWeather.setImageBitmap(ScreenshotMaker.fromBase64(iconBase64));
+            mTvTemperature.setVisibility(View.VISIBLE);
+            mIvWeather.setVisibility(View.VISIBLE);
+            mTvWeatherStub.setVisibility(View.GONE);
+        }
+        else {
+            mTvTemperature.setVisibility(View.GONE);
+            mIvWeather.setVisibility(View.GONE);
+            mTvWeatherStub.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void setAverageSpeed(double speed) {
-        tvAverageSpeed.setText(StringUtils.getSpeedText(speed));
+        mTvAverageSpeed.setText(StringUtils.getSpeedText(speed));
         mIvAverageSpeedIcon.setImageResource(DetectActionUtils.getDetectActionIconId(speed));
     }
 
@@ -147,12 +143,12 @@ public class ResultDetailsFragment extends Fragment {
         if (comment == null || comment.isEmpty()) {
             comment = getString(R.string.no_comment);
         }
-        tvComment.setText(comment);
+        mTvComment.setText(comment);
     }
 
     private void setScreenShot(String imageString) {
         mScreenShot = ScreenshotMaker.fromBase64(imageString);
-        ivScreenshot.setImageBitmap(mScreenShot);
+        mIvScreenshot.setImageBitmap(mScreenShot);
     }
 
     private void initSpinner() {
@@ -162,7 +158,7 @@ public class ResultDetailsFragment extends Fragment {
                 R.layout.support_simple_spinner_dropdown_item,
                 actions);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spAction.setAdapter(arrayAdapter);
+        mSpAction.setAdapter(arrayAdapter);
 
     }
 
@@ -206,13 +202,13 @@ public class ResultDetailsFragment extends Fragment {
         intent.setType("image/jpeg");
         intent.putExtra(Intent.EXTRA_STREAM, uri);
 
-        String extraText = "Начало трека :" + tvStartDate.getText()
-                + "\nВремя: " + tvDuration.getText()
-                + "\nРасстояние: " + tvDistance.getText()
-                + "\nСредняя скорость: " + tvAverageSpeed.getText()
-                + "\nЗатрачено калорий: " + tvCalories.getText()
-                + "\nВид деятельности: " + spAction.getSelectedItem().toString()
-                + "\nКомментарий: " + tvComment.getText();
+        String extraText = "Начало трека :" + mTvStartDate.getText()
+                + "\nВремя: " + mTvDuration.getText()
+                + "\nРасстояние: " + mTvDistance.getText()
+                + "\nСредняя скорость: " + mTvAverageSpeed.getText()
+                + "\nЗатрачено калорий: " + mTvCalories.getText()
+                + "\nВид деятельности: " + mSpAction.getSelectedItem().toString()
+                + "\nКомментарий: " + mTvComment.getText();
 
         intent.putExtra(Intent.EXTRA_TEXT, extraText);
         startActivity(Intent.createChooser(intent, "Результаты маршрута"));

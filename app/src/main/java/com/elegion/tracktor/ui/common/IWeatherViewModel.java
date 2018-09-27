@@ -14,4 +14,6 @@ public interface IWeatherViewModel {
     LiveData<Boolean> getIsWeatherRefreshing();
 
     void updateWeather();
+
+    void setLastWeatherIcon(String iconBase64);
 }
