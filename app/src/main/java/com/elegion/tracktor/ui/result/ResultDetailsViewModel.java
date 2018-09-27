@@ -121,7 +121,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
                 mStartDate.getValue(),
                 mDuration.getValue(),
                 mDistance.getValue(),
-                mAverageSpeed.getValue(),
+                StringUtils.getSpeedText(mAverageSpeed.getValue()),
                 mCalories.getValue(),
                 mActionTitles.get(mAction.getValue()),
                 mComment.getValue());

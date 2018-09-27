@@ -44,19 +44,19 @@ import toothpick.Toothpick;
 public class ResultDetailsFragment extends Fragment {
 
     @BindView(R.id.tvTime)
-    TextView tvDuration;
+    TextView mTvDuration;
     @BindView(R.id.tvDistance)
-    TextView tvDistance;
+    TextView mTvDistance;
     @BindView(R.id.tvAverageSpeed)
-    TextView tvAverageSpeed;
+    TextView mTvAverageSpeed;
     @BindView(R.id.tvStartDate)
-    TextView tvStartDate;
+    TextView mTvStartDate;
     @BindView(R.id.ivScreenshot)
-    ImageView ivScreenshot;
+    ImageView mIvScreenshot;
     @BindView(R.id.spAction)
-    Spinner spAction;
+    Spinner mSpAction;
     @BindView(R.id.tvCalories)
-    TextView tvCalories;
+    TextView mTvCalories;
     @BindView(R.id.tvComment)
     TextView mTvComment;
     @BindView(R.id.ivAverageSpeedIcon)
@@ -116,26 +116,47 @@ public class ResultDetailsFragment extends Fragment {
         private void initUI() {
         initSpinner();
         mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
-        mViewModel.getDuration().observe(this, tvDuration::setText);
-        mViewModel.getDistance().observe(this, tvDistance::setText);
-        mViewModel.getAction().observe(this, spAction::setSelection);
-        mViewModel.getAverageSpeed().observe(this, tvAverageSpeed::setText);
-        mViewModel.getStartDate().observe(this, tvStartDate::setText);
-        mViewModel.getCalories().observe(this, tvCalories::setText);
+        mViewModel.getDuration().observe(this, mTvDuration::setText);
+        mViewModel.getDistance().observe(this, mTvDistance::setText);
+        mViewModel.getAction().observe(this, mSpAction::setSelection);
+        mViewModel.getAverageSpeed().observe(this, this::setAverageSpeed);
+        mViewModel.getStartDate().observe(this, mTvStartDate::setText);
+        mViewModel.getCalories().observe(this, mTvCalories::setText);
         mViewModel.getComment().observe(this, this::setComment);
+        mViewModel.getWeatherIcon().observe(this, this::setWeatherIcon);
+        mViewModel.getTemperature().observe(this, mTvTemperature::setText);
         mViewModel.loadTrack();
+    }
+
+    private void setWeatherIcon(String iconBase64) {
+        if (iconBase64 != null && !iconBase64.isEmpty()) {
+            mIvWeather.setImageBitmap(ScreenshotMaker.fromBase64(iconBase64));
+            mTvTemperature.setVisibility(View.VISIBLE);
+            mIvWeather.setVisibility(View.VISIBLE);
+            mTvWeatherStub.setVisibility(View.GONE);
+        }
+        else {
+            mTvTemperature.setVisibility(View.GONE);
+            mIvWeather.setVisibility(View.GONE);
+            mTvWeatherStub.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setAverageSpeed(double speed) {
+        mTvAverageSpeed.setText(StringUtils.getSpeedText(speed));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(speed));
     }
 
     private void setComment(String comment) {
         if (comment == null || comment.isEmpty()) {
             comment = getString(R.string.no_comment);
         }
-        tvComment.setText(comment);
+        mTvComment.setText(comment);
     }
 
     private void setScreenShot(String imageString) {
         mScreenShot = ScreenshotMaker.fromBase64(imageString);
-        ivScreenshot.setImageBitmap(mScreenShot);
+        mIvScreenshot.setImageBitmap(mScreenShot);
     }
 
     private void initSpinner() {
@@ -145,7 +166,8 @@ public class ResultDetailsFragment extends Fragment {
                 R.layout.support_simple_spinner_dropdown_item,
                 actions);
         arrayAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spAction.setAdapter(arrayAdapter);
+        mSpAction.setAdapter(arrayAdapter);
+
     }
 
     @OnItemSelected(R.id.spAction)
@@ -207,7 +229,7 @@ public class ResultDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ivScreenshot.setOnClickListener(view -> {
+        mIvScreenshot.setOnClickListener(view -> {
             if(getActivity() instanceof IOnZoomClickListener) {
                 ((IOnZoomClickListener)getActivity()).onZoomClick();
             }
@@ -216,7 +238,7 @@ public class ResultDetailsFragment extends Fragment {
 
     @Override
     public void onPause() {
-        ivScreenshot.setOnClickListener(null);
+        mIvScreenshot.setOnClickListener(null);
         super.onPause();
     }
 }

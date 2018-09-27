@@ -26,7 +26,6 @@ public class CurrentPreferences {
     private List<String> mMessageTemplateParamTypes;
     private List<String> mMessageTemplatePreviewValues;
     private String mMessageTemplateDraft;
-    private List<String> mActions;
 
 
     public void notifyChanges() {
@@ -94,6 +93,7 @@ public class CurrentPreferences {
             return 0;
         }
     }
+
     public List<String> getActions() {
         return mActions;
     }
@@ -135,9 +135,5 @@ public class CurrentPreferences {
 
     public String getMessageTemplateDraft() {
         return mMessageTemplateDraft;
-    }
-
-    public List<String> getActions() {
-        return mActions;
     }
 }
