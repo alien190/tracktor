@@ -13,7 +13,7 @@ import com.elegion.tracktor.common.event.TrackCommentEditEvent;
 import com.elegion.tracktor.common.event.TrackDeleteEvent;
 import com.elegion.tracktor.common.event.TrackShareEvent;
 import com.elegion.tracktor.data.model.Track;
-import com.elegion.tracktor.utils.DetectActionUtils;
+import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
@@ -70,7 +70,7 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         view.setOnClickListener(view -> EventBus.getDefault().post(new ShowResultDetailEvent(mId)));
         mIvDetail.setOnClickListener(view -> showDetail(!(mRlDetail.getVisibility() == View.VISIBLE)));
         mTvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
-        mIvAverageSpeedIcon.setImageResource(DetectActionUtils.getDetectActionIconId(track.getAverageSpeed()));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(track.getAverageSpeed()));
         mTvCalories.setText(StringUtils.getCaloriesText(track.getCalories()));
         mTvAction.setText(mCurrentPreferences.getActions().get(track.getAction()));
         mTvComment.setText(StringUtils.getCommentText(track.getComment()));

@@ -8,6 +8,7 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
+import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -86,31 +87,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     }
 
     private void calculateCalories() {
-
-        double calories;
-
-        switch (mTrack.getAction()) {
-            case 1: { //ходьба
-                calories = 0.035 * mCurrentPreferences.getWeight()
-                        + Math.pow(mTrack.getAverageSpeed(), 2) /
-                        mCurrentPreferences.getHeight() * 2.9 *
-                        mCurrentPreferences.getWeight();
-                break;
-            }
-            case 2: { //бег
-                calories = mCurrentPreferences.getWeight() * mTrack.getDistance() / 1000;
-                break;
-            }
-            case 3: { //велосипед
-                calories = mCurrentPreferences.getWeight() / 70 * 300 * mTrack.getDuration() / 3600;
-                break;
-            }
-            default: { //автомобиль и др.
-                calories = mCurrentPreferences.getWeight() / 70 * 70 * mTrack.getDuration() / 3600;
-                break;
-            }
-        }
-
+        double calories = CommonUtils.calculateCalories(mTrack, mCurrentPreferences);
         mCalories.postValue(StringUtils.getCaloriesText(calories));
         updateCalories(calories);
     }

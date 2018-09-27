@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
-import com.elegion.tracktor.utils.DetectActionUtils;
+import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
@@ -136,7 +136,7 @@ public class ResultDetailsFragment extends Fragment {
 
     private void setAverageSpeed(double speed) {
         mTvAverageSpeed.setText(StringUtils.getSpeedText(speed));
-        mIvAverageSpeedIcon.setImageResource(DetectActionUtils.getDetectActionIconId(speed));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(speed));
     }
 
     private void setComment(String comment) {
