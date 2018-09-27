@@ -5,12 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 
-import com.elegion.tracktor.common.SingleFragmentActivity;
+import com.elegion.tracktor.ui.common.SingleFragmentActivity;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
-import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.di.result.ResultModule;
-import com.elegion.tracktor.ui.map.CounterFragment;
-import com.elegion.tracktor.ui.map.TrackMapFragment;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,7 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
-public class ResultActivity extends SingleFragmentActivity {
+public class ResultActivity extends SingleFragmentActivity implements IOnZoomClickListener{
 
     public static final String ID_KEY = "IdKey";
     public static final Long ID_LIST = -1L;
@@ -60,5 +57,10 @@ public class ResultActivity extends SingleFragmentActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void showResultDetailsFragment(ShowResultDetailEvent event) {
         changeFragment(ResultDetailsFragment.newInstance(event.id));
+    }
+
+    @Override
+    public void onZoomClick() {
+        changeFragment(ImageZoomFragment.newInstance());
     }
 }

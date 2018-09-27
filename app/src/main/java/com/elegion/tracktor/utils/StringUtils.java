@@ -22,7 +22,7 @@ public class StringUtils {
     }
 
     public static String getCaloriesText(Double calories) {
-        return String.format(Locale.ENGLISH, "%.1f", calories);
+        return String.format(Locale.ENGLISH, "%.1f Ккал", calories);
     }
 
     public static String getDurationText(long totalSeconds) {

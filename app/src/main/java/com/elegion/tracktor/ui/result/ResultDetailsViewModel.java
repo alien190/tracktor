@@ -9,11 +9,14 @@ import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.utils.CommonUtils;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import toothpick.Toothpick;
 
@@ -32,15 +35,21 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     private CurrentPreferences mCurrentPreferences;
     private IRepository<Track> mRepository;
+    private MessageTemplate mMessageTemplate;
     private Long mId;
     private Track mTrack;
+    private List<String> mActionTitles;
 
     public ResultDetailsViewModel(IRepository<Track> repository,
                                   CurrentPreferences currentPreferences,
+                                  MessageTemplate messageTemplate,
                                   Long id) {
         mCurrentPreferences = currentPreferences;
         mRepository = repository;
         mId = id;
+        mMessageTemplate = messageTemplate;
+        mMessageTemplate.load().subscribe();
+        mActionTitles = mCurrentPreferences.getActions();
         EventBus.getDefault().register(this);
     }
 
@@ -106,6 +115,18 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void onCurentPreferencesChande(PreferencesChangeEvent preferencesChangeEvent) {
         calculateCalories();
+    }
+    public String getSharingMessage(){
+        List<String> valuesForTemplate = mCurrentPreferences.createMessageTemplateValues(
+                mStartDate.getValue(),
+                mDuration.getValue(),
+                mDistance.getValue(),
+                mAverageSpeed.getValue(),
+                mCalories.getValue(),
+                mActionTitles.get(mAction.getValue()),
+                mComment.getValue());
+
+        return mMessageTemplate.getMessage(valuesForTemplate);
     }
 
 

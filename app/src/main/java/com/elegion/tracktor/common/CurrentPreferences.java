@@ -23,6 +23,10 @@ public class CurrentPreferences {
     private String weightKey;
     private String heightKey;
     private List<String> mActions;
+    private List<String> mMessageTemplateParamTypes;
+    private List<String> mMessageTemplatePreviewValues;
+    private String mMessageTemplateDraft;
+    private List<String> mActions;
 
 
     public void notifyChanges() {
@@ -39,6 +43,17 @@ public class CurrentPreferences {
 
         weightKey = context.getString(R.string.weight_key);
         heightKey = context.getString(R.string.height_key);
+
+        mActions = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.actions)));
+
+        mMessageTemplateParamTypes = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.messageTemplateParameters)));
+
+        mMessageTemplatePreviewValues = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.messageTemplatePreviewValues)));
+
+        mMessageTemplateDraft = context.getString(R.string.messageTemplateDraft);
 
         mActions = new ArrayList<>(Arrays.asList(
                 context.getResources().getStringArray(R.array.actions)));
@@ -79,6 +94,49 @@ public class CurrentPreferences {
             return 0;
         }
     }
+    public List<String> getActions() {
+        return mActions;
+    }
+
+    public List<String> getMessageTemplateParamTypes() {
+        return mMessageTemplateParamTypes;
+    }
+
+    public int getMessageTemplateParamTypesCount() {
+        return mMessageTemplateParamTypes.size();
+    }
+
+    public String getMessageTemplateParamName(int pos) {
+        if (pos >= 0 && pos < mMessageTemplateParamTypes.size()) {
+            return mMessageTemplateParamTypes.get(pos);
+        }
+        return "";
+    }
+
+    public List<String> getMessageTemplatePreviewValues() {
+        return mMessageTemplatePreviewValues;
+    }
+
+    public List<String> createMessageTemplateValues(String start, String duration, String distance,
+                                                    String speed, String calories, String action,
+                                                    String comment) {
+        List<String> list = new ArrayList<>();
+        list.add(start);
+        list.add(duration);
+        list.add(distance);
+        list.add(speed);
+        list.add(calories);
+        list.add(action);
+        list.add(comment);
+        list.add("[image]");
+
+        return list;
+    }
+
+    public String getMessageTemplateDraft() {
+        return mMessageTemplateDraft;
+    }
+
     public List<String> getActions() {
         return mActions;
     }

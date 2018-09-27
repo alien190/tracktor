@@ -7,6 +7,9 @@
         app:showAsAction="never">
 
     </item>
+    <item android:title="@string/edit_template_title"
+        app:showAsAction="never"
+        android:id="@+id/actionEditTemplate"></item>
     <item
         android:id="@+id/actionDelete"
         android:title="@string/delete"
