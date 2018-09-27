@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.result;
 
+import android.app.FragmentManager;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.util.DiffUtil;

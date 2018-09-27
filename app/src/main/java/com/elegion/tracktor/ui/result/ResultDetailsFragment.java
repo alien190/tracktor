@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.result;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
+import com.elegion.tracktor.ui.weather.WeatherFragment;
 import com.elegion.tracktor.utils.DetectActionUtils;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
@@ -67,6 +70,8 @@ public class ResultDetailsFragment extends Fragment {
     ResultDetailsViewModel mViewModel;
     @Inject
     CommentDialogFragment mCommentDialogFragment;
+    @Inject
+    WeatherFragment mWeatherFragment;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -83,12 +88,8 @@ public class ResultDetailsFragment extends Fragment {
         if (args != null) {
             mId = args.getLong(ID_KEY, 0);
         }
-        Toothpick.closeScope("ResultDetail");
-        Scope scope = Toothpick.openScopes("Application", "ResultDetail");
-        scope.installModules(new ResultDetailsModule(this, mId));
-        Toothpick.inject(this, scope);
-        Toothpick.inject(mCommentDialogFragment, scope);
-
+        toothpickInject();
+        replaceWeatherFragment();
         View view = inflater.inflate(R.layout.fr_result_details, container, false);
         ButterKnife.bind(this, view);
 
@@ -96,6 +97,32 @@ public class ResultDetailsFragment extends Fragment {
 
         setHasOptionsMenu(true);
         return view;
+    }
+
+    private void toothpickInject() {
+        Toothpick.closeScope("ResultDetail");
+        Scope scope = Toothpick.openScopes("Application", "ResultDetail");
+        scope.installModules(new ResultDetailsModule(this, mId));
+        Toothpick.inject(this, scope);
+        Toothpick.inject(mCommentDialogFragment, scope);
+        Toothpick.inject(mWeatherFragment, scope);
+    }
+
+    private void replaceWeatherFragment() {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        if (fm != null) {
+            fm.beginTransaction()
+                    .replace(R.id.weatherContainer, mWeatherFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof ResultActivity) {
+
+        }
     }
 
     private void initUI() {

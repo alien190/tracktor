@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutWeather"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginTop="12dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        card_view:cardBackgroundColor="@color/colorWeatherBackground">
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/tvDegrees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/colorBlack"
+                android:textSize="25sp"
+                tools:text="+10C" />
+
+            <ImageView
+                android:id="@+id/ivWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignTop="@+id/tvDegrees"
+                android:layout_alignBottom="@+id/tvDegrees"
+                android:layout_toEndOf="@+id/tvDegrees"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                tools:src="@drawable/sample_weather" />
+
+            <ProgressBar
+                android:id="@+id/pbWeather"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignTop="@+id/tvDegrees"
+                android:layout_alignBottom="@+id/tvDegrees"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>

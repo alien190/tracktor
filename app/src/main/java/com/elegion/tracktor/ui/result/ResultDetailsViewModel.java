@@ -135,12 +135,12 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     @Override
     public LiveData<String> getTemperature() {
-        return null;
+        return mTemperature;
     }
 
     @Override
     public LiveData<String> getWeatherIconURL() {
-        return null;
+        return mWeatherIconURL;
     }
 
     @Override

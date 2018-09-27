@@ -76,6 +76,15 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commentLabel"
+            android:textSize="16sp"
+            android:id="@+id/tvLabelComment"/>
+
+        <TextView
+            android:layout_toRightOf="@+id/tvLabelComment"
+            android:layout_toEndOf="@+id/tvLabelComment"
             android:id="@+id/tvComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,11 +102,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/tvComment"
-            android:layout_alignBottom="@+id/tvComment"
             android:layout_alignParentRight="true"
-            android:src="@drawable/ic_more_horiz_black_24dp"/>
+            android:src="@drawable/ic_more_horiz_black_24dp"
+            android:background="@color/colorWhite"/>
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/commentWeather"
+            android:textSize="16sp"
+            android:id="@+id/tvLabelWeather"/>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/weatherContainer">
+        </FrameLayout>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/ivScreenshot"

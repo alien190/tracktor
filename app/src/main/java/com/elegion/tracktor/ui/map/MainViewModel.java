@@ -147,8 +147,8 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mTemperature.postValue(StringUtils.getTemperatureText(mLastTemperature));
         List<WeatherItem> weatherItems = weather.getWeather();
         if (weatherItems != null && !weatherItems.isEmpty()) {
-            mLastWeatherIcon = weatherItems.get(0).getIcon();
-            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(mLastWeatherIcon));
+            String iconURL = weatherItems.get(0).getIcon();
+            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(iconURL));
         }
         if (mIsShowWeather.getValue() != null && !mIsShowWeather.getValue()) {
             mIsShowWeather.postValue(true);

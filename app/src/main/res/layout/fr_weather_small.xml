@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutWeather"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="12dp"
-    android:layout_marginLeft="12dp"
-    android:layout_marginTop="12dp"
-    card_view:cardBackgroundColor="@color/colorWeatherBackground"
-    android:id="@+id/layoutWeather">
-
-
+    android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-
         <TextView
             android:id="@+id/tvDegrees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:textColor="@color/colorBlack"
-            android:textSize="25sp"
-            tools:text="+10C"
-            android:layout_marginStart="8dp"/>
-
+            android:textSize="16sp"
+            tools:text="+10C" />
         <ImageView
             android:id="@+id/ivWeather"
             android:layout_width="wrap_content"
@@ -33,18 +24,18 @@
             android:layout_alignTop="@+id/tvDegrees"
             android:layout_alignBottom="@+id/tvDegrees"
             android:layout_toEndOf="@+id/tvDegrees"
-            android:padding="8dp"
             android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
             tools:src="@drawable/sample_weather" />
 
         <ProgressBar
+            android:id="@+id/pbWeather"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignTop="@+id/tvDegrees"
             android:layout_alignBottom="@+id/tvDegrees"
             android:layout_centerHorizontal="true"
-            android:id="@+id/pbWeather"
-            />
+            android:visibility="gone"/>
 
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</LinearLayout>
