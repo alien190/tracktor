@@ -1,24 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llWeather"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="12dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginTop="12dp"
+    card_view:cardBackgroundColor="@color/colorWeatherBackground"
+    android:id="@+id/layoutWeather">
 
-    <TextView
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="+10C"
-        android:textColor="@color/colorBlack"
-        android:textSize="25sp"
-        android:id="@+id/tvDegrees"/>
+        android:orientation="horizontal">
 
-    <ImageView
-        android:layout_marginLeft="8dp"
-        android:id="@+id/ivWeather"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        tools:src="@drawable/sample_weather"/>
-</LinearLayout>
+
+        <TextView
+            android:id="@+id/tvDegrees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:textSize="25sp"
+            tools:text="+10C"
+            android:layout_marginStart="8dp"/>
+
+        <ImageView
+            android:id="@+id/ivWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/tvDegrees"
+            android:layout_alignBottom="@+id/tvDegrees"
+            android:layout_toEndOf="@+id/tvDegrees"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            tools:src="@drawable/sample_weather" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignTop="@+id/tvDegrees"
+            android:layout_alignBottom="@+id/tvDegrees"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/pbWeather"
+            />
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

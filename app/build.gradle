@@ -15,7 +15,8 @@ android {
         buildConfigField "String", "API_URL", '"http://api.openweathermap.org/"'
         buildConfigField "String", "WEATHER_ICON_URL", '"http://openweathermap.org/img/w/"'
         buildConfigField "String", "WEATHER_ICON_EXTENSION", '".png"'
-        buildConfigField "Integer", "MIN_WEATHER_UPDATE_PERIOD_SECS", '300'
+        buildConfigField "Integer", "NORMAL_WEATHER_UPDATE_PERIOD_SECS", '300'
+        buildConfigField "Integer", "ERROR_WEATHER_UPDATE_PERIOD_SECS", '10'
 
 
         javaCompileOptions {
@@ -41,7 +42,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     implementation 'com.android.support:preference-v7:27.1.1'
 
     implementation 'com.google.android.gms:play-services-maps:15.0.1'

@@ -7,6 +7,8 @@ import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
 import com.elegion.tracktor.ui.result.CommentDialogFragment;
+import com.elegion.tracktor.utils.PicassoCropTransform;
+import com.squareup.picasso.Transformation;
 
 import toothpick.config.Module;
 
@@ -21,5 +23,6 @@ public class ApplicationModule extends Module {
         bind(CustomViewModelFactory.class).toProvider(CustomViewModelFactoryProvider.class).providesSingletonInScope();
         bind(CurrentPreferences.class).toInstance(mCurrentPreferences);
         bind(CommentDialogFragment.class).toInstance(CommentDialogFragment.newInstance());
+        bind(Transformation.class).toInstance(new PicassoCropTransform());
     }
 }
