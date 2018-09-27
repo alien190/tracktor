@@ -78,7 +78,8 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public long createTrackAndSave(long duration, double distance, double averageSpeed,
-                                   Date startDate, String imageBase64, double temperature, String weatherIcon) {
+                                   Date startDate, String imageBase64, double temperature,
+                                   String weatherIcon, String weatherDescription) {
         Track track = new Track();
 
         track.setDuration(duration);
@@ -88,6 +89,7 @@ public class RealmRepository implements IRepository<Track> {
         track.setDate(startDate);
         track.setTemperature(temperature);
         track.setWeatherIcon(weatherIcon);
+        track.setWeatherDescription(weatherDescription);
         return insertItem(track);
     }
 

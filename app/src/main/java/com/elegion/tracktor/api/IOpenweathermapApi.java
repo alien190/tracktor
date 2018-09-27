@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface IOpenweathermapApi {
-    @GET("data/2.5/weather?units=metric&APPID="+BuildConfig.API_KEY)
+    @GET("data/2.5/weather?lang=ru&units=metric&APPID="+BuildConfig.API_KEY)
     Single<Weather> getWeather(@Query("lat") double lat, @Query("lon") double lon);
 }

@@ -67,6 +67,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private LocationData mLastWeatherUpdateLocation;
     private double mLastTemperature;
     private String mLastWeatherIcon;
+    private String mLastWeatherDescription;
 
 
     public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi) {
@@ -147,8 +148,9 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mTemperature.postValue(StringUtils.getTemperatureText(mLastTemperature));
         List<WeatherItem> weatherItems = weather.getWeather();
         if (weatherItems != null && !weatherItems.isEmpty()) {
-            String iconURL = weatherItems.get(0).getIcon();
-            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(iconURL));
+            WeatherItem item =  weatherItems.get(0);
+            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(item.getIcon()));
+            mLastWeatherDescription = item.getDescription();
         }
         if (mIsShowWeather.getValue() != null && !mIsShowWeather.getValue()) {
             mIsShowWeather.postValue(true);
@@ -232,7 +234,8 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
                 mStartDate,
                 imageBase64,
                 mLastTemperature,
-                mLastWeatherIcon);
+                mLastWeatherIcon,
+                mLastWeatherDescription);
     }
 
     public MutableLiveData<Boolean> getIsShutdown() {

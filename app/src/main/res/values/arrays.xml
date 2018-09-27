@@ -47,6 +47,7 @@
         <item>Скорость</item>
         <item>Истрачено калорий</item>
         <item>Вид деятельности</item>
+        <item>Погодные условия</item>
         <item>Комментарий</item>
         <item>Изображение</item>
     </string-array>
@@ -58,6 +59,7 @@
         <item>6 км/ч</item>
         <item>1500 Ккал</item>
         <item>Бег</item>
+        <item>+15 ºС (пасмурно)</item>
         <item>Отличная прогулка</item>
         <item>[Картинка]</item>
     </string-array>

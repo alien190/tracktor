@@ -116,7 +116,10 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     public void onCurentPreferencesChande(PreferencesChangeEvent preferencesChangeEvent) {
         calculateCalories();
     }
-    public String getSharingMessage(){
+
+    public String getSharingMessage() {
+        String weather = mTemperature.getValue() + " (" + mTrack.getWeatherDescription() + ")";
+
         List<String> valuesForTemplate = mCurrentPreferences.createMessageTemplateValues(
                 mStartDate.getValue(),
                 mDuration.getValue(),
@@ -124,6 +127,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
                 StringUtils.getSpeedText(mAverageSpeed.getValue()),
                 mCalories.getValue(),
                 mActionTitles.get(mAction.getValue()),
+                weather,
                 mComment.getValue());
 
         return mMessageTemplate.getMessage(valuesForTemplate);

@@ -23,6 +23,7 @@ public class Track extends RealmObject {
     private double calories;
     private double temperature;
     private String weatherIcon;
+    private String weatherDescription;
 
 
     public long getId() {
@@ -120,6 +121,14 @@ public class Track extends RealmObject {
 
     public void setWeatherIcon(String weatherIcon) {
         this.weatherIcon = weatherIcon;
+    }
+
+    public String getWeatherDescription() {
+        return weatherDescription;
+    }
+
+    public void setWeatherDescription(String weatherDescription) {
+        this.weatherDescription = weatherDescription;
     }
 
     @Override

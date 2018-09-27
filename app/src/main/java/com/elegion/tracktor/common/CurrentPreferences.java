@@ -119,7 +119,7 @@ public class CurrentPreferences {
 
     public List<String> createMessageTemplateValues(String start, String duration, String distance,
                                                     String speed, String calories, String action,
-                                                    String comment) {
+                                                    String weather, String comment) {
         List<String> list = new ArrayList<>();
         list.add(start);
         list.add(duration);
@@ -127,6 +127,7 @@ public class CurrentPreferences {
         list.add(speed);
         list.add(calories);
         list.add(action);
+        list.add(weather);
         list.add(comment);
         list.add("[image]");
 
