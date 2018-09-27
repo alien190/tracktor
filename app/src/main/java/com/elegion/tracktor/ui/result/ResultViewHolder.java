@@ -47,6 +47,12 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     protected TextView mTvComment;
     @BindView(R.id.ivAverageSpeedIcon)
     protected ImageView mIvAverageSpeedIcon;
+    @BindView(R.id.tvTemperature)
+    protected TextView mTvTemperature;
+    @BindView(R.id.tvWeatherStub)
+    protected TextView mTvWeatherStub;
+    @BindView(R.id.ivWeather)
+    protected ImageView mIvWeather;
 
 
     private View view;
@@ -74,6 +80,17 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mTvCalories.setText(StringUtils.getCaloriesText(track.getCalories()));
         mTvAction.setText(mCurrentPreferences.getActions().get(track.getAction()));
         mTvComment.setText(StringUtils.getCommentText(track.getComment()));
+        if (track.getWeatherIcon() != null && !track.getWeatherIcon().isEmpty()) {
+            mIvWeather.setImageBitmap(ScreenshotMaker.fromBase64(track.getWeatherIcon()));
+            mTvTemperature.setText(StringUtils.getTemperatureText(track.getTemperature()));
+            mTvTemperature.setVisibility(View.VISIBLE);
+            mIvWeather.setVisibility(View.VISIBLE);
+            mTvWeatherStub.setVisibility(View.GONE);
+        } else {
+            mTvTemperature.setVisibility(View.GONE);
+            mIvWeather.setVisibility(View.GONE);
+            mTvWeatherStub.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showDetail(boolean isVisible) {
@@ -85,18 +102,19 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
             mIvDetail.setImageResource(R.drawable.ic_expand_more_black_24dp);
         }
     }
+
     @OnClick(R.id.ibEditComment)
-    protected void onEditCommentClick(){
+    protected void onEditCommentClick() {
         EventBus.getDefault().post(new TrackCommentEditEvent(mId));
     }
 
     @OnClick(R.id.ibDelete)
-    protected void onDelete(){
+    protected void onDelete() {
         EventBus.getDefault().post(new TrackDeleteEvent(mId));
     }
 
     @OnClick(R.id.ibShare)
-    protected void onShare(){
+    protected void onShare() {
         EventBus.getDefault().post(new TrackShareEvent(mId));
     }
 }
