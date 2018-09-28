@@ -1,12 +1,15 @@
 package com.elegion.tracktor.di.result;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.widget.LinearLayout;
 
 import com.elegion.tracktor.App;
 import com.elegion.tracktor.di.main.MainViewModelProvider;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.ui.map.MainViewModel;
 import com.elegion.tracktor.ui.result.ResultActivity;
+import com.elegion.tracktor.ui.result.ResultAdapter;
 import com.elegion.tracktor.ui.result.ResultViewModel;
 
 import toothpick.config.Module;
@@ -19,6 +22,7 @@ public class ResultModule extends Module {
         bind(AppCompatActivity.class).toInstance(mActivity);
         bind(ResultViewModel.class).toProvider(ResultViewModelProvider.class).providesSingletonInScope();
         bind(ICommentViewModel.class).toProvider(ResultViewModelProvider.class).providesSingletonInScope();
-
+        bind(ResultAdapter.class).toProvider(ResultAdapterProvider.class).providesSingletonInScope();
+        bind(LinearLayoutManager.class).toProvider(LinearLayoutManagerProvider.class);
     }
 }

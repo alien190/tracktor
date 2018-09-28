@@ -14,6 +14,7 @@ import com.elegion.tracktor.common.event.TrackDeleteEvent;
 import com.elegion.tracktor.common.event.TrackShareEvent;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.utils.CommonUtils;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
@@ -58,12 +59,15 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
     private View view;
     private long mId;
     private CurrentPreferences mCurrentPreferences;
+    private IDistanceConverter mDistanceConverter;
 
 
-    public ResultViewHolder(View itemView, CurrentPreferences currentPreferences) {
+    public ResultViewHolder(View itemView, CurrentPreferences currentPreferences,
+                            IDistanceConverter distanceConverter) {
         super(itemView);
         view = itemView;
         mCurrentPreferences = currentPreferences;
+        mDistanceConverter = distanceConverter;
         ButterKnife.bind(this, itemView);
     }
 
@@ -71,12 +75,12 @@ public class ResultViewHolder extends RecyclerView.ViewHolder {
         mIvPreview.setImageBitmap(ScreenshotMaker.fromBase64(track.getImage()));
         mId = track.getId();
         mTvDuration.setText(StringUtils.getDurationText(track.getDuration()));
-        mTvDistance.setText(StringUtils.getDistanceText(track.getDistance()));
+        mTvDistance.setText(mDistanceConverter.convertDistance(track.getDistance()));
         mTvStartDate.setText(StringUtils.getDateText(track.getDate()));
         view.setOnClickListener(view -> EventBus.getDefault().post(new ShowResultDetailEvent(mId)));
         mIvDetail.setOnClickListener(view -> showDetail(!(mRlDetail.getVisibility() == View.VISIBLE)));
-        mTvSpeed.setText(StringUtils.getSpeedText(track.getAverageSpeed()));
-        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(track.getAverageSpeed()));
+        mTvSpeed.setText(mDistanceConverter.convertSpeed(track.getAverageSpeed()));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.detectActionIconId(track.getAverageSpeed()));
         mTvCalories.setText(StringUtils.getCaloriesText(track.getCalories()));
         mTvAction.setText(mCurrentPreferences.getActions().get(track.getAction()));
         mTvComment.setText(StringUtils.getCommentText(track.getComment()));

@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.utils.IDistanceConverter;
+import com.elegion.tracktor.utils.StringUtils;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -19,42 +22,75 @@ public class MessageTemplate {
     private SharedPreferences mSharedPreferences;
     private Gson mGson;
     private CurrentPreferences mCurrentPreferences;
+    private IDistanceConverter mDistanceConverter;
 
     @SuppressLint("CheckResult")
-    public MessageTemplate(SharedPreferences sharedPreferences, Gson gson, CurrentPreferences currentPreferences) {
+    public MessageTemplate(SharedPreferences sharedPreferences, Gson gson,
+                           CurrentPreferences currentPreferences, IDistanceConverter distanceConverter) {
         mSharedPreferences = sharedPreferences;
         mGson = gson;
         mCurrentPreferences = currentPreferences;
+        mDistanceConverter = distanceConverter;
     }
 
 //    public void setParameterTypesName(List<String> parameterTypesName) {
 //        mParameterTypesName = parameterTypesName;
 //    }
 
-    public String getMessage(List<String> parameterValues) {
-        if (parameterValues == null) {
-            parameterValues = mCurrentPreferences.getMessageTemplatePreviewValues();
-        }
+    public String getMessagePreview() {
+        List<String> parameterValues = mCurrentPreferences.getMessageTemplatePreviewValues();
+        return getMessage(parameterValues);
+    }
 
-        String ret = "";
-        String stringItem = "";
-        List<String> parameterTypesName = mCurrentPreferences.getMessageTemplateParamTypes();
-        if (parameterValues != null && parameterTypesName != null &&
-                parameterValues.size() == parameterTypesName.size() && mItems != null) {
-            for (CommonTemplateItem item : mItems) {
-                if (item instanceof TextTemplateItem) {
-                    stringItem = item.getText();
-                } else if (item instanceof ParameterTemplateItem) {
-                    stringItem = parameterValues.get(((ParameterTemplateItem) item).mType);
+    public String getMessage(List<String> parameterValues) {
+        try {
+
+            String ret = "";
+            String stringItem = "";
+            List<String> parameterTypesName = mCurrentPreferences.getMessageTemplateParamTypes();
+            if (parameterValues != null && parameterTypesName != null &&
+                    parameterValues.size() == parameterTypesName.size() && mItems != null) {
+                for (CommonTemplateItem item : mItems) {
+                    if (item instanceof TextTemplateItem) {
+                        stringItem = item.getText();
+                    } else if (item instanceof ParameterTemplateItem) {
+                        stringItem = parameterValues.get(((ParameterTemplateItem) item).mType);
+                    }
+                    if (!ret.isEmpty() && !ret.endsWith(" ") &&
+                            !stringItem.startsWith(".") && !stringItem.startsWith(",")) {
+                        ret = ret + " ";
+                    }
+                    ret = ret + stringItem;
                 }
-                if (!ret.isEmpty() && !ret.endsWith(" ") &&
-                        !stringItem.startsWith(".") && !stringItem.startsWith(",")) {
-                    ret = ret + " ";
-                }
-                ret = ret + stringItem;
             }
+            return ret;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return "";
         }
-        return ret;
+    }
+
+    public String getMessage(Track track) {
+        try {
+            if (track != null) {
+                String weather = StringUtils.getTemperatureText(track.getTemperature()) + " (" + track.getWeatherDescription() + ")";
+                List<String> valuesForTemplate = mCurrentPreferences.createMessageTemplateValues(
+                        StringUtils.getDateText(track.getDate()),
+                        StringUtils.getDurationText(track.getDuration()),
+                        mDistanceConverter.convertDistance(track.getDistance()),
+                        mDistanceConverter.convertSpeed(track.getAverageSpeed()),
+                        StringUtils.getCaloriesText(track.getCalories()),
+                        mCurrentPreferences.getActions().get(track.getAction()),
+                        weather,
+                        track.getComment());
+
+                return getMessage(valuesForTemplate);
+            }
+            return "";
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return "";
+        }
     }
 
     public Single<Boolean> load() {

@@ -1,11 +1,12 @@
 package com.elegion.tracktor.utils;
 
+import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 
 import java.util.List;
 import java.util.Locale;
 
-public class DistanceConverter {
+public class DistanceConverter  implements IDistanceConverter{
     private CurrentPreferences mCurrentPreferences;
 
     public DistanceConverter(CurrentPreferences currentPreferences) {
@@ -70,4 +71,5 @@ public class DistanceConverter {
             return "";
         }
     }
+
 }

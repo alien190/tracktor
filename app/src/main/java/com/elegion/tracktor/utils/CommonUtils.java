@@ -5,7 +5,7 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.data.model.Track;
 
 public class CommonUtils {
-    public static int getDetectActionIconId(double speed) {
+    public static int detectActionIconId(double speed) {
         speed = speed * 3.6;
         if (speed < 2) {
             return R.drawable.ic_turtle_black_24dp;

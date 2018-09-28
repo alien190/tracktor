@@ -1,10 +1,7 @@
 package com.elegion.tracktor.ui.result;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,9 +19,11 @@ import android.widget.TextView;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.di.resultDetails.ResultDetailsModule;
+import com.elegion.tracktor.ui.common.TrackSharing;
 import com.elegion.tracktor.ui.zoom.IOnZoomClickListener;
 import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplateActivity;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
@@ -72,11 +71,15 @@ public class ResultDetailsFragment extends Fragment {
     private long mId;
 
     @Inject
-    ResultDetailsViewModel mViewModel;
+    protected ResultDetailsViewModel mViewModel;
     @Inject
-    CommentDialogFragment mCommentDialogFragment;
+    protected CommentDialogFragment mCommentDialogFragment;
     @Inject
-    CurrentPreferences mCurrentPreferences;
+    protected CurrentPreferences mCurrentPreferences;
+    @Inject
+    protected TrackSharing mTrackSharing;
+    @Inject
+    protected IDistanceConverter mDistanceConverter;
 
     public static ResultDetailsFragment newInstance(long id) {
         ResultDetailsFragment fragment = new ResultDetailsFragment();
@@ -112,7 +115,7 @@ public class ResultDetailsFragment extends Fragment {
     }
 
 
-        private void initUI() {
+    private void initUI() {
         initSpinner();
         mViewModel.getScreenShotBase64().observe(this, this::setScreenShot);
         mViewModel.getDuration().observe(this, mTvDuration::setText);
@@ -133,8 +136,7 @@ public class ResultDetailsFragment extends Fragment {
             mTvTemperature.setVisibility(View.VISIBLE);
             mIvWeather.setVisibility(View.VISIBLE);
             mTvWeatherStub.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             mTvTemperature.setVisibility(View.GONE);
             mIvWeather.setVisibility(View.GONE);
             mTvWeatherStub.setVisibility(View.VISIBLE);
@@ -142,8 +144,8 @@ public class ResultDetailsFragment extends Fragment {
     }
 
     private void setAverageSpeed(double speed) {
-        mTvAverageSpeed.setText(StringUtils.getSpeedText(speed));
-        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(speed));
+        mTvAverageSpeed.setText(mDistanceConverter.convertSpeed(speed));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.detectActionIconId(speed));
     }
 
     private void setComment(String comment) {
@@ -183,7 +185,7 @@ public class ResultDetailsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.actionShare: {
-                doShare();
+                mTrackSharing.doShare(mViewModel.getTrack(), getContext());
                 return true;
             }
             case R.id.actionDelete: {
@@ -206,31 +208,12 @@ public class ResultDetailsFragment extends Fragment {
         mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "commentDialog");
     }
 
-    private void doShare() {
-        String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), mScreenShot, "Мой маршрут", null);
-        Uri uri = Uri.parse(path);
-
-        String shareMessage = mViewModel.getSharingMessage();
-        Intent intent = new Intent(Intent.ACTION_SEND);
-
-        if(shareMessage.contains("[image]")) {  //todo переделать
-            shareMessage = shareMessage.replace("[image]", "");
-            intent.setType("image/jpeg");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-        } else {
-            intent.setType("text/plain");
-        }
-
-        intent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-        startActivity(Intent.createChooser(intent, getString(R.string.share_chooser_title)));
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         mIvScreenshot.setOnClickListener(view -> {
-            if(getActivity() instanceof IOnZoomClickListener) {
-                ((IOnZoomClickListener)getActivity()).onZoomClick();
+            if (getActivity() instanceof IOnZoomClickListener) {
+                ((IOnZoomClickListener) getActivity()).onZoomClick();
             }
         });
     }

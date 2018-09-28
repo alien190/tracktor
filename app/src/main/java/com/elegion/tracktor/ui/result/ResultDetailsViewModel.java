@@ -10,6 +10,7 @@ import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,13 +40,16 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     private Long mId;
     private Track mTrack;
     private List<String> mActionTitles;
+    private IDistanceConverter mDistanceConverter;
 
     public ResultDetailsViewModel(IRepository<Track> repository,
                                   CurrentPreferences currentPreferences,
+                                  IDistanceConverter distanceConverter,
                                   MessageTemplate messageTemplate,
                                   Long id) {
         mCurrentPreferences = currentPreferences;
         mRepository = repository;
+        mDistanceConverter = distanceConverter;
         mId = id;
         mMessageTemplate = messageTemplate;
         mMessageTemplate.load().subscribe();
@@ -61,7 +65,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
             mDuration.postValue(StringUtils.getDurationText(mTrack.getDuration()));
             mAverageSpeed.postValue(mTrack.getAverageSpeed());
             mAction.postValue(mTrack.getAction());
-            mDistance.postValue(StringUtils.getDistanceText(mTrack.getDistance()));
+            mDistance.postValue(mDistanceConverter.convertDistance(mTrack.getDistance()));
             mComment.postValue(mTrack.getComment());
             mComment.observeForever(this::updateComment);
             mAction.observeForever(this::updateTrackAction);
@@ -117,22 +121,6 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
         calculateCalories();
     }
 
-    public String getSharingMessage() {
-        String weather = mTemperature.getValue() + " (" + mTrack.getWeatherDescription() + ")";
-
-        List<String> valuesForTemplate = mCurrentPreferences.createMessageTemplateValues(
-                mStartDate.getValue(),
-                mDuration.getValue(),
-                mDistance.getValue(),
-                StringUtils.getSpeedText(mAverageSpeed.getValue()),
-                mCalories.getValue(),
-                mActionTitles.get(mAction.getValue()),
-                weather,
-                mComment.getValue());
-
-        return mMessageTemplate.getMessage(valuesForTemplate);
-    }
-
 
     public MutableLiveData<String> getStartDate() {
         return mStartDate;
@@ -176,5 +164,9 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
 
     public MutableLiveData<String> getWeatherIcon() {
         return mWeatherIcon;
+    }
+
+    public Track getTrack() {
+        return mTrack;
     }
 }

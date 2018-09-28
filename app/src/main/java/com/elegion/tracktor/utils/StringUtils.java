@@ -12,24 +12,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class StringUtils {
-    public static String getDistanceText(Double distance) {
-        if (distance == null || distance < 0) {
-            distance = 0d;
-        }
-        if (distance >= 1000) {
-            distance = distance / 1000;
-            return String.format(Locale.ENGLISH, "%.1f км", distance);
-        }
-        return String.format(Locale.ENGLISH, "%.1f м", distance);
-    }
-
-    public static String getSpeedText(Double speed) {
-        if (speed == null || speed < 0) {
-            speed = 0d;
-        }
-        speed = speed * 3.6;
-        return String.format(Locale.ENGLISH, "%.1f км/ч", speed);
-    }
 
     public static String getCaloriesText(Double calories) {
         if (calories == null || calories < 0) {

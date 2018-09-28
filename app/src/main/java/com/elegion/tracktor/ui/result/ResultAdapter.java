@@ -12,12 +12,14 @@ import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.ShowResultDetailEvent;
 import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.utils.IDistanceConverter;
 
 import org.greenrobot.eventbus.EventBus;
 
 public class ResultAdapter extends ListAdapter<Track, ResultViewHolder> {
 
     private CurrentPreferences mCurrentPreferences;
+    private IDistanceConverter mDistanceConverter;
 
     private static DiffUtil.ItemCallback<Track> DIFF_CALLBACK = new DiffUtil.ItemCallback<Track>() {
         @Override
@@ -31,16 +33,18 @@ public class ResultAdapter extends ListAdapter<Track, ResultViewHolder> {
         }
     };
 
-    public ResultAdapter(CurrentPreferences currentPreferences) {
+    public ResultAdapter(CurrentPreferences currentPreferences, IDistanceConverter distanceConverter) {
         super(DIFF_CALLBACK);
-        mCurrentPreferences = currentPreferences;
+        this.mCurrentPreferences = currentPreferences;
+        this.mDistanceConverter = distanceConverter;
+
     }
 
     @NonNull
     @Override
     public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.li_track, parent, false);
-        return new ResultViewHolder(view, mCurrentPreferences);
+        return new ResultViewHolder(view, mCurrentPreferences, mDistanceConverter);
     }
 
     @Override

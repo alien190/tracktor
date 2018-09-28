@@ -9,12 +9,15 @@ import com.elegion.tracktor.api.IOpenweathermapApi;
 import com.elegion.tracktor.api.model.Weather;
 import com.elegion.tracktor.api.model.WeatherItem;
 import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.common.IWeatherViewModel;
+import com.elegion.tracktor.utils.DistanceConverter;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -60,6 +63,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private boolean isRouteStart;
     private IRepository mRealmRepository;
     private IOpenweathermapApi mOpenweathermapApi;
+    private IDistanceConverter mDistanceConverter;
     private Disposable mWeatherDisposable;
     private int mNormalWeatherUpdateCounter;
     private int mErrorWeatherUpdateCounter;
@@ -70,11 +74,12 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private String mLastWeatherDescription;
 
 
-    public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi) {
+    public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi, IDistanceConverter distanceConverter) {
         // mIsPermissionGranted.setValue(false);
         EventBus.getDefault().register(this);
         mRealmRepository = repository;
         mOpenweathermapApi = openweathermapApi;
+        mDistanceConverter = distanceConverter;
         mIsShutdown.postValue(false);
         mIsShowWeather.postValue(false);
         mIsSuccessLastWeatherUpdate = false;
@@ -89,11 +94,17 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mStartDate = event.startDate;
 
         timeText.postValue(StringUtils.getDurationText(mTotalTime));
-        mDistanceText.postValue(StringUtils.getDistanceText(mDistance));
+        mDistanceText.postValue(mDistanceConverter.convertDistance(mDistance));
         mAverageSpeedLive.postValue(mAverageSpeed);
         if (!isRouteStart) {
             startRoute();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPreferencesChange(PreferencesChangeEvent event) {
+        mDistanceText.postValue(mDistanceConverter.convertDistance(mDistance));
+        mAverageSpeedLive.postValue(mAverageSpeed);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -148,7 +159,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mTemperature.postValue(StringUtils.getTemperatureText(mLastTemperature));
         List<WeatherItem> weatherItems = weather.getWeather();
         if (weatherItems != null && !weatherItems.isEmpty()) {
-            WeatherItem item =  weatherItems.get(0);
+            WeatherItem item = weatherItems.get(0);
             mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(item.getIcon()));
             mLastWeatherDescription = item.getDescription();
         }

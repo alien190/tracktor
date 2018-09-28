@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModel;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
+import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
+import com.elegion.tracktor.utils.StringUtils;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     private int mRepositorySortOrder;
     private int mRepositorySortBy;
     private long mTrackIdForComment;
+    private MessageTemplate mMessageTemplate;
 
     public ResultViewModel(IRepository<Track> repository) {
         mRepository = repository;
@@ -74,6 +77,10 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     public void deleteTrack(long trackId) {
         mRepository.deleteItem(trackId);
         loadTracks();
+    }
+
+    public String getSharingMessage(Track track) {
+        return mMessageTemplate.getMessage(track);
     }
 
     public Track getTrack(long trackId) {

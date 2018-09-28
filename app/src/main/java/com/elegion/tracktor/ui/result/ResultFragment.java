@@ -24,6 +24,7 @@ import com.elegion.tracktor.common.event.TrackCommentEditEvent;
 import com.elegion.tracktor.common.event.TrackDeleteEvent;
 import com.elegion.tracktor.common.event.TrackShareEvent;
 import com.elegion.tracktor.data.model.Track;
+import com.elegion.tracktor.ui.common.TrackSharing;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
 
@@ -54,9 +55,12 @@ public class ResultFragment extends Fragment {
     protected CurrentPreferences mCurrentPreferences;
     @Inject
     protected CommentDialogFragment mCommentDialogFragment;
-
-    private ResultAdapter mAdapter;
-
+    @Inject
+    protected ResultAdapter mAdapter;
+    @Inject
+    protected LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    protected TrackSharing mTrackSharing;
 
     public static ResultFragment newInstance() {
 
@@ -82,10 +86,9 @@ public class ResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        mAdapter = new ResultAdapter(mCurrentPreferences);
         mResultViewModel.loadTracks();
         mResultViewModel.getTracks().observe(this, tracks -> mAdapter.submitList(tracks));
-        mRvTrackList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRvTrackList.setLayoutManager(mLinearLayoutManager);
         mRvTrackList.setAdapter(mAdapter);
         mResultViewModel.getIsEmpty().observe(this, isEmpty -> {
             if (isEmpty) {
@@ -181,30 +184,6 @@ public class ResultFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     protected void onTrackShare(TrackShareEvent event) {
-        doShare(mResultViewModel.getTrack(event.trackId));
-    }
-
-    //todo переделать это
-    private void doShare(Track track) {
-        if (track != null) {
-            Bitmap screenShot = ScreenshotMaker.fromBase64(track.getImage());
-            String path = MediaStore.Images.Media.insertImage(requireActivity().getContentResolver(), screenShot, "Мой маршрут", null);
-            Uri uri = Uri.parse(path);
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("image/jpeg");
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-
-            String extraText = "Начало трека :" + StringUtils.getDateText(track.getDate())
-                    + "\nВремя: " + StringUtils.getDurationText(track.getDuration())
-                    + "\nРасстояние: " + StringUtils.getDistanceText(track.getDistance())
-                    + "\nСредняя скорость: " + StringUtils.getSpeedText(track.getAverageSpeed())
-                    + "\nЗатрачено калорий: " + StringUtils.getCaloriesText(track.getCalories())
-                    + "\nВид деятельности: " + mCurrentPreferences.getActions().get(track.getAction())
-                    + "\nКомментарий: " + track.getComment();
-
-            intent.putExtra(Intent.EXTRA_TEXT, extraText);
-            startActivity(Intent.createChooser(intent, "Результаты маршрута"));
-        }
+        mTrackSharing.doShare(mResultViewModel.getTrack(event.trackId), getContext());
     }
 }

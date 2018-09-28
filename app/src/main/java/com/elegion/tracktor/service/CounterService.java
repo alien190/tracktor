@@ -25,6 +25,7 @@ import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.DistanceConverter;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -80,7 +81,7 @@ public class CounterService extends Service {
     private LocationRequest mLocationRequest = new LocationRequest();
 
     @Inject
-    protected DistanceConverter mDistanceConverter;
+    protected IDistanceConverter mDistanceConverter;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override

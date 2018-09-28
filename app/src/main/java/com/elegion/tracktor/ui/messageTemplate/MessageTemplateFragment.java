@@ -153,7 +153,7 @@ public class MessageTemplateFragment extends Fragment implements MessageTemplate
     }
 
     private void showPreview() {
-        mTvPreview.setText(mMessageTemplate.getMessage(null));
+        mTvPreview.setText(mMessageTemplate.getMessagePreview());
     }
 
     @Override

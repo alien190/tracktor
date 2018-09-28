@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.utils.CommonUtils;
-import com.elegion.tracktor.utils.StringUtils;
+import com.elegion.tracktor.utils.IDistanceConverter;
 
 import javax.inject.Inject;
 
@@ -42,6 +42,8 @@ public class CounterFragment extends Fragment {
 
     @Inject
     protected MainViewModel mViewModel;
+    @Inject
+    protected IDistanceConverter mDistanceConverter;
 
     public static CounterFragment newInstance() {
         
@@ -72,8 +74,8 @@ public class CounterFragment extends Fragment {
     }
 
     private void setAverageSpeed(double speed) {
-        tvSpeed.setText(StringUtils.getSpeedText(speed));
-        mIvAverageSpeedIcon.setImageResource(CommonUtils.getDetectActionIconId(speed));
+        tvSpeed.setText(mDistanceConverter.convertSpeed(speed));
+        mIvAverageSpeedIcon.setImageResource(CommonUtils.detectActionIconId(speed));
     }
     @OnClick(R.id.buttonStart)
     void onStartClick() {

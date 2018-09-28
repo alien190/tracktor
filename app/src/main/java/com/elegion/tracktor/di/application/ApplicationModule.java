@@ -8,8 +8,10 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
+import com.elegion.tracktor.ui.common.TrackSharing;
 import com.elegion.tracktor.ui.result.CommentDialogFragment;
 import com.elegion.tracktor.utils.DistanceConverter;
+import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.PicassoCropTransform;
 import com.squareup.picasso.Transformation;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
@@ -22,9 +24,11 @@ public class ApplicationModule extends Module {
     private CurrentPreferences mCurrentPreferences = new CurrentPreferences();
     private SharedPreferences mSharedPreferences;
     private Gson mGson = new Gson();
+    private Context mContext;
 
     public ApplicationModule(Context context) {
-        mCurrentPreferences.init(context);
+        mContext = context;
+        mCurrentPreferences.init(mContext);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 
         bind(IRepository.class).toInstance(mRealmRepository);
@@ -35,6 +39,8 @@ public class ApplicationModule extends Module {
         bind(SharedPreferences.class).toInstance(mSharedPreferences);
         bind(Gson.class).toInstance(mGson);
         bind(MessageTemplate.class).toProvider(MessageTemplateProvider.class).providesSingletonInScope();
-        bind(DistanceConverter.class).toProvider(DistanceConverterProvider.class).providesSingletonInScope();
+        bind(IDistanceConverter.class).toProvider(DistanceConverterProvider.class).providesSingletonInScope();
+        bind(Context.class).toInstance(mContext);
+        bind(TrackSharing.class).toProvider(TrackSharingProvider.class).providesSingletonInScope();
     }
 }
