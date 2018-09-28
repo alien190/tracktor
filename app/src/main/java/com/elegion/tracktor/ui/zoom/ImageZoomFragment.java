@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui.result;
+package com.elegion.tracktor.ui.zoom;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.ui.result.ResultDetailsViewModel;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 
 import javax.inject.Inject;
@@ -54,18 +55,6 @@ public class ImageZoomFragment extends Fragment {
         return mView;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        hideSystemUI();
-    }
-
-    @Override
-    public void onDetach() {
-        showSystemUI();
-        super.onDetach();
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onResume() {
@@ -84,24 +73,6 @@ public class ImageZoomFragment extends Fragment {
         super.onPause();
     }
 
-    private void hideSystemUI() {
-        View decorView = getActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    private void showSystemUI() {
-        View decorView = getActivity().getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override

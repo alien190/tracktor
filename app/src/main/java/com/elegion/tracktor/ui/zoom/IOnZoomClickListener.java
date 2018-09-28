@@ -1,4 +1,4 @@
-package com.elegion.tracktor.ui.result;
+package com.elegion.tracktor.ui.zoom;
 
 public interface IOnZoomClickListener {
     void onZoomClick();
