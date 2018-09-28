@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="entries_unit">
-        <item>Километры</item>
-        <item>Мили</item>
+        <item>Метры/Километры</item>
+        <item>Футы/Мили</item>
+    </string-array>
+
+    <string-array name="distanceUnitsSi">
+        <item>м</item>
+        <item>км</item>
+    </string-array>
+
+    <string-array name="speedUnitsSi">
+        <item>км/ч</item>
+    </string-array>
+
+    <string-array name="distanceUnitsEng">
+        <item>ft</item>
+        <item>ml</item>
+    </string-array>
+
+    <string-array name="speedUnitsEng">
+        <item>mph</item>
     </string-array>
 
     <string-array name="entryvalues_unit">

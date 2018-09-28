@@ -24,6 +24,7 @@ import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.ui.map.MainActivity;
+import com.elegion.tracktor.utils.DistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -42,9 +43,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import toothpick.Scope;
+import toothpick.Toothpick;
 
 public class CounterService extends Service {
 
@@ -74,6 +79,9 @@ public class CounterService extends Service {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest = new LocationRequest();
 
+    @Inject
+    protected DistanceConverter mDistanceConverter;
+
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -93,6 +101,9 @@ public class CounterService extends Service {
 
     @Override
     public void onCreate() {
+        Scope scope = Toothpick.openScope("Application");
+        Toothpick.inject(this, scope);
+
         mKalmanRoute = new KalmanRoute();
         mTotalSecond = 0;
         mDistance = 0;
@@ -202,10 +213,10 @@ public class CounterService extends Service {
                 .append(StringUtils.getDurationText(mTotalSecond))
                 .append(" ")
                 .append(getString(R.string.distanceLabel))
-                .append(StringUtils.getDistanceText(mDistance))
+                .append(mDistanceConverter.convertDistance(mDistance))
                 .append(" ")
                 .append(getString(R.string.speedLabel))
-                .append(StringUtils.getSpeedText(mAverageSpeed));
+                .append(mDistanceConverter.convertSpeed(mAverageSpeed));
 
         mNotificationBuilder.setContentText(contentText.toString())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))

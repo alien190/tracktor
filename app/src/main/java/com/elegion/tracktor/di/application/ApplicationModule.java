@@ -9,6 +9,7 @@ import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
 import com.elegion.tracktor.ui.result.CommentDialogFragment;
+import com.elegion.tracktor.utils.DistanceConverter;
 import com.elegion.tracktor.utils.PicassoCropTransform;
 import com.squareup.picasso.Transformation;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
@@ -34,5 +35,6 @@ public class ApplicationModule extends Module {
         bind(SharedPreferences.class).toInstance(mSharedPreferences);
         bind(Gson.class).toInstance(mGson);
         bind(MessageTemplate.class).toProvider(MessageTemplateProvider.class).providesSingletonInScope();
+        bind(DistanceConverter.class).toProvider(DistanceConverterProvider.class).providesSingletonInScope();
     }
 }
