@@ -6,7 +6,6 @@ import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
-import com.elegion.tracktor.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -15,14 +14,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class CurrentPreferences {
     private Map mPrefs;
-    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key};
-    private String weightKey;
-    private String heightKey;
-    private String unitKey;
+    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key};
+    private String mWeightKey;
+    private String mHeightKey;
+    private String mUnitKey;
+    private String mPictureQualityKey;
     private List<String> mDistanceUnitsSi;
     private List<String> mDistanceUnitsEng;
     private List<String> mSpeedUnitsSi;
@@ -62,9 +61,10 @@ public class CurrentPreferences {
     }
 
     private void initKeys(Context context) {
-        weightKey = context.getString(R.string.weight_key);
-        heightKey = context.getString(R.string.height_key);
-        unitKey = context.getString(R.string.unit_key);
+        mWeightKey = context.getString(R.string.weight_key);
+        mHeightKey = context.getString(R.string.height_key);
+        mUnitKey = context.getString(R.string.unit_key);
+        mPictureQualityKey = context.getString(R.string.picture_quality_key);
     }
 
     private void initMessageTemplate(Context context) {
@@ -102,17 +102,17 @@ public class CurrentPreferences {
     }
 
     public double getWeight() {
-        double value = getDoubleValue(weightKey);
+        double value = getDoubleValue(mWeightKey);
         return value != 0 ? value : 60;
     }
 
     public double getHeight() {
-        double value = getDoubleValue(heightKey);
+        double value = getDoubleValue(mHeightKey);
         return value != 0 ? value : 175;
     }
 
     public double getUnit() {
-        double value = getDoubleValue(unitKey);
+        double value = getDoubleValue(mUnitKey);
         return value != 0 ? value : 1;
     }
 
@@ -123,19 +123,37 @@ public class CurrentPreferences {
         return mDistanceUnitsEng;
     }
 
-    public List<String> getSppedUnitSymbol() {
+    public List<String> getSpeedUnitSymbol() {
         if (getUnit() == UNITS_SI) {
             return mSpeedUnitsSi;
         }
         return mSpeedUnitsEng;
     }
 
+    public int getPictureQuality() {
+        int ret = getIntegerValue(mPictureQualityKey);
+        return ret != 0 ? ret : 100;
+    }
 
     private double getDoubleValue(String key) {
         Object value = mPrefs.get(key);
         if (value != null) {
             try {
                 return Double.valueOf(value.toString());
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    private int getIntegerValue(String key) {
+        Object value = mPrefs.get(key);
+        if (value != null) {
+            try {
+                return Integer.valueOf(value.toString());
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return 0;

@@ -1,6 +1,5 @@
 package com.elegion.tracktor.utils;
 
-import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 
 import java.util.List;
@@ -53,7 +52,7 @@ public class DistanceConverter  implements IDistanceConverter{
     public String convertSpeed(Double sppedMetersPerSecs) {
         try {
             double speed;
-            String format = "%.1f " + mCurrentPreferences.getSppedUnitSymbol().get(0);
+            String format = "%.1f " + mCurrentPreferences.getSpeedUnitSymbol().get(0);
 
             if (sppedMetersPerSecs == null || sppedMetersPerSecs < 0) {
                 speed = 0d;

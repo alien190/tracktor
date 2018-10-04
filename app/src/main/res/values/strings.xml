@@ -76,4 +76,7 @@
     <string name="image_stub">[image]</string>
     <string name="mime_image">image/jpeg</string>
     <string name="mime_text">text/plain</string>
+    <string name="picture_quality_dialog_title">Выберите качество скриншотов</string>
+    <string name="picture_quality_key">picture_quality</string>
+    <string name="picture_quality_title">Качество скриншотов</string>
 </resources>

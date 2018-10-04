@@ -81,4 +81,16 @@
         <item>Отличная прогулка</item>
         <item>[Картинка]</item>
     </string-array>
+    <string-array name="picture_quality_entries">
+        <item>Низкое</item>
+        <item>Среднее</item>
+        <item>Высокое</item>
+        <item>Наилучшее</item>
+    </string-array>
+    <string-array name="picture_quality_entryvalues">
+        <item>25</item>
+        <item>70</item>
+        <item>75</item>
+        <item>100</item>
+    </string-array>
 </resources>
