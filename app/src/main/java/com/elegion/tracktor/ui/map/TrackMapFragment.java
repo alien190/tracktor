@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
@@ -44,6 +45,8 @@ public class TrackMapFragment extends SupportMapFragment implements
     private static final int DEFAULT_ZOOM = 15;
     @Inject
     protected MainViewModel mViewModel;
+    @Inject
+    protected CurrentPreferences mCurrentPreferences;
 
     private GoogleMap mMap;
     private SingleObserver mMapSet;
@@ -137,11 +140,11 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
         //takeScreenshot(event, bitmap -> ResultActivity.start(getContext(), event, bitmap));
         takeScreenshot(event, bitmap ->
-        {
-            String imageBase64 = ScreenshotMaker.toBase64(bitmap);
-            long id = mViewModel.saveResults(imageBase64);
-            ResultActivity.start(getContext(), id);
-        }
+                {
+                    String imageBase64 = ScreenshotMaker.toBase64(bitmap, mCurrentPreferences.getPictureQuality());
+                    long id = mViewModel.saveResults(imageBase64);
+                    ResultActivity.start(getContext(), id);
+                }
         );
     }
 
