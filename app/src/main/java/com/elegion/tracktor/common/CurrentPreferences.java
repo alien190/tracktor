@@ -9,6 +9,7 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class CurrentPreferences {
     private List<String> mActions;
     private List<String> mMessageTemplateParamTypes;
     private List<String> mMessageTemplatePreviewValues;
+    private List<Integer> mMarkers;
     private String mMessageTemplateDraft;
     public static final int UNITS_SI = 1;
     public static final int UNITS_ENG = 2;
@@ -44,6 +46,16 @@ public class CurrentPreferences {
         initKeys(context);
         initMessageTemplate(context);
         initDistanceUnits(context);
+        initMarkers(context);
+    }
+
+    private void initMarkers(Context context) {
+        List<String> resList = new ArrayList<>(Arrays.asList(
+                context.getResources().getStringArray(R.array.markerIcons)));
+        mMarkers = new ArrayList<>();
+        for (String item : resList) {
+            mMarkers.add(getResId(item, R.drawable.class));
+        }
     }
 
     private void initActions(Context context) {
@@ -85,6 +97,7 @@ public class CurrentPreferences {
         mSpeedUnitsEng = new ArrayList<>(Arrays.asList(
                 context.getResources().getStringArray(R.array.speedUnitsEng)));
     }
+
 
     public void setValueAndNotify(String key, String value) {
         if (key != null && !key.isEmpty() && value != null) {
@@ -205,5 +218,22 @@ public class CurrentPreferences {
 
     public String getMessageTemplateDraft() {
         return mMessageTemplateDraft;
+    }
+
+    public int getMarkerResId(int pos) {
+        if (pos > 0 && pos <= mMarkers.size()) {
+            return mMarkers.get(pos - 1);
+        }
+        return mMarkers.get(0);
+    }
+
+    private static int getResId(String resName, Class<?> c) {
+        try {
+            Field idField = c.getDeclaredField(resName);
+            return idField.getInt(idField);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }

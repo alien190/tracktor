@@ -2,6 +2,9 @@ package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +26,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -200,7 +205,14 @@ public class TrackMapFragment extends SupportMapFragment implements
 
     private void addMarker(LatLng position, String text) {
         if (mMap != null) {
-            mMap.addMarker(new MarkerOptions().position(position).title(text));
+
+            Drawable drawable = getResources().getDrawable(R.drawable.ic_arrow_downward_red_48dp);
+            BitmapDescriptor bitmapDescriptor = ScreenshotMaker.getMarkerIconFromDrawable(drawable);
+            mMap.addMarker(new MarkerOptions()
+                    .icon(bitmapDescriptor)
+                    .position(position).title(text));
         }
     }
+
+
 }

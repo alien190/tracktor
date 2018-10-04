@@ -93,4 +93,9 @@
         <item>75</item>
         <item>100</item>
     </string-array>
+    <string-array name="markerIcons">
+        <item>ic_arrow_downward_red_48dp</item>
+        <item>ic_arrow_downward_green_48dp</item>
+        <item>ic_arrow_downward_blue_48dp</item>
+    </string-array>
 </resources>
