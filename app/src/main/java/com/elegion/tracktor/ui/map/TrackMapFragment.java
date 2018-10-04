@@ -102,6 +102,7 @@ public class TrackMapFragment extends SupportMapFragment implements
         if (mMap != null) {
             mMap.addPolyline(new PolylineOptions().add(segmentForRouteEvent.points.first.point,
                     segmentForRouteEvent.points.second.point)
+                    .width(20)
                     .color(ContextCompat.getColor(getContext(),
                             R.color.colorRouteLine)));
 
@@ -185,17 +186,17 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onRouteUpdate(RouteUpdateEvent event) {
-        if (mMap != null && event.points.size() != 0) {
-            mMap.clear();
-            mMap.addPolyline(new PolylineOptions().addAll(event.points)
-                    .color(ContextCompat.getColor(getContext(),
-                            R.color.colorRouteLine)));
-            addMarker(event.points.get(0), getString(R.string.routeStart));
-            animateCamera(event.points.get(event.points.size() - 1));
-        }
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onRouteUpdate(RouteUpdateEvent event) {
+//        if (mMap != null && event.points.size() != 0) {
+//            mMap.clear();
+//            mMap.addPolyline(new PolylineOptions().addAll(event.points)
+//                    .color(ContextCompat.getColor(getContext(),
+//                            R.color.colorRouteLine)));
+//            addMarker(event.points.get(0), getString(R.string.routeStart));
+//            animateCamera(event.points.get(event.points.size() - 1));
+//        }
+//    }
 
     private void addMarker(LatLng position, String text) {
         if (mMap != null) {
