@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
@@ -19,6 +20,7 @@ import butterknife.OnClick;
 public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragmentCompat {
 
     private int mLineWidthValue = 1;
+    private int mColor = Color.GREEN;
 
     @BindView(R.id.ivSample)
     protected ImageView mImageView;
@@ -54,7 +56,7 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
             Bitmap bitmap = Bitmap.createBitmap(width, mLineWidthValue, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint();
-            paint.setColor(Color.GREEN);
+            paint.setColor(mColor);
             //paint.setStrokeWidth(1);
             //canvas.drawLine(0, 0, 100, 0, paint);
             canvas.drawRect(0, 0, width, mLineWidthValue, paint);
@@ -79,6 +81,18 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
             mLineWidthValue--;
             drawLine();
         }
+    }
 
+    @OnClick({R.id.ibColorTrack01,
+            R.id.ibColorTrack02,
+            R.id.ibColorTrack03,
+            R.id.ibColorTrack04,
+            R.id.ibColorTrack05,
+            R.id.ibColorTrack06})
+    protected void changeColor(View view) {
+        if (view.getBackground() instanceof ColorDrawable) {
+            mColor = ((ColorDrawable) view.getBackground()).getColor();
+            drawLine();
+        }
     }
 }

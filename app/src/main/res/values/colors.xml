@@ -8,4 +8,10 @@
     <color name="colorGray">#b9b9b9</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorWeatherBackground">#96ffffff</color>
+    <color name="colorTrackLine01">#0000FF</color>
+    <color name="colorTrackLine02">#00FF00</color>
+    <color name="colorTrackLine03">#FF0000</color>
+    <color name="colorTrackLine04">#00FFFF</color>
+    <color name="colorTrackLine05">#FFFF00</color>
+    <color name="colorTrackLine06">#FF00FF</color>
 </resources>
