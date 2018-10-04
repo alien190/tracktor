@@ -79,4 +79,6 @@
     <string name="picture_quality_dialog_title">Выберите качество скриншотов</string>
     <string name="picture_quality_key">picture_quality</string>
     <string name="picture_quality_title">Качество скриншотов</string>
+    <string name="track_line_quality_key">track_line</string>
+    <string name="track_line_title">Декорирование трека</string>
 </resources>

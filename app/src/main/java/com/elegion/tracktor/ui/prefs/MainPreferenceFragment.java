@@ -2,6 +2,7 @@ package com.elegion.tracktor.ui.prefs;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
@@ -66,6 +67,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
         setSummaryFor(findPreference(getString(R.string.sex_key)));
         setSummaryFor(findPreference(getString(R.string.age_key)));
         setSummaryFor(findPreference(getString(R.string.height_key)));
+        setSummaryFor(findPreference(getString(R.string.picture_quality_key)));
     }
 
     private void setSummaryFor(Preference preference) {
@@ -78,5 +80,17 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
             preference.setSummary(((EditTextPreference) preference).getText());
         }
         mCurrentPreferences.setValueAndNotify(preference.getKey(), value);
+    }
+
+    @Override
+    public void onDisplayPreferenceDialog(Preference preference) {
+        if (preference instanceof TrackLinePreference) {
+            DialogFragment dialogFragment =
+                    TrackLinePreferencesDialogFragment.newInstance(preference.getKey());
+            dialogFragment.setTargetFragment(this, 0);
+            dialogFragment.show(getFragmentManager(), "TrackLinePreferencesDialogFragment");
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
     }
 }

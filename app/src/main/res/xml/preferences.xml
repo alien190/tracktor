@@ -64,6 +64,11 @@
             android:key="@string/picture_quality_key"
             android:title="@string/picture_quality_title" />
 
+        <com.elegion.tracktor.ui.prefs.TrackLinePreference
+            android:defaultValue="11"
+            android:key="@string/track_line_quality_key"
+            android:title="@string/track_line_title" />
+
         <Preference android:title="@string/about_title">
             <intent
                 android:action="android.intent.action.VIEW"
