@@ -9,7 +9,7 @@ import com.elegion.tracktor.R;
 
 public class TrackLinePreference extends DialogPreference {
 
-    private int mValue;
+    private String mValue;
 
     public TrackLinePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -27,23 +27,23 @@ public class TrackLinePreference extends DialogPreference {
         super(context);
     }
 
-    public int getValue() {
+    public String getValue() {
         return mValue;
     }
 
-    public void setValue(int value) {
+    public void setValue(String value) {
         mValue = value;
-        persistInt(value);
+        persistString(value);
     }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInt(index, 0);
+        return a.getString(index);
     }
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        setValue(restorePersistedValue ? getPersistedInt(mValue) : (int) defaultValue);
+        setValue(restorePersistedValue ? getPersistedString(mValue) : (String) defaultValue);
     }
 
     @Override

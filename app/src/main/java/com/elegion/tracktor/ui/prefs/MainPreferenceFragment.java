@@ -78,6 +78,8 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
         } else if (preference instanceof EditTextPreference) {
             value = String.valueOf(((EditTextPreference) preference).getText());
             preference.setSummary(((EditTextPreference) preference).getText());
+        } else if (preference instanceof TrackLinePreference) {
+            value = ((TrackLinePreference) preference).getValue();
         }
         mCurrentPreferences.setValueAndNotify(preference.getKey(), value);
     }

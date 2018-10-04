@@ -19,6 +19,7 @@ import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
+import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.google.android.gms.maps.CameraUpdate;
@@ -107,10 +108,8 @@ public class TrackMapFragment extends SupportMapFragment implements
         if (mMap != null) {
             mMap.addPolyline(new PolylineOptions().add(segmentForRouteEvent.points.first.point,
                     segmentForRouteEvent.points.second.point)
-                    .width(20)
-                    .color(ContextCompat.getColor(getContext(),
-                            R.color.colorRouteLine)));
-
+                    .width(mCurrentPreferences.getTrackDecorationLineWidth())
+                    .color(mCurrentPreferences.getTrackDecorationColor()));
             animateCamera(segmentForRouteEvent.points.second.point);
 
         }
@@ -123,6 +122,7 @@ public class TrackMapFragment extends SupportMapFragment implements
         EventBus.getDefault().register(this);
         EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
     }
+
 
     @Override
     public void onPause() {
@@ -191,22 +191,21 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onRouteUpdate(RouteUpdateEvent event) {
-//        if (mMap != null && event.points.size() != 0) {
-//            mMap.clear();
-//            mMap.addPolyline(new PolylineOptions().addAll(event.points)
-//                    .color(ContextCompat.getColor(getContext(),
-//                            R.color.colorRouteLine)));
-//            addMarker(event.points.get(0), getString(R.string.routeStart));
-//            animateCamera(event.points.get(event.points.size() - 1));
-//        }
-//    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRouteUpdate(RouteUpdateEvent event) {
+        if (mMap != null && event.points.size() != 0) {
+            mMap.clear();
+            mMap.addPolyline(new PolylineOptions().addAll(event.points)
+                    .width(mCurrentPreferences.getTrackDecorationLineWidth())
+                    .color(mCurrentPreferences.getTrackDecorationColor()));
+            addMarker(event.points.get(0), getString(R.string.routeStart));
+            animateCamera(event.points.get(event.points.size() - 1));
+        }
+    }
 
     private void addMarker(LatLng position, String text) {
         if (mMap != null) {
-
-            Drawable drawable = getResources().getDrawable(R.drawable.ic_arrow_downward_red_48dp);
+            Drawable drawable = getResources().getDrawable(mCurrentPreferences.getTrackDecorationMakrerResId());
             BitmapDescriptor bitmapDescriptor = ScreenshotMaker.getMarkerIconFromDrawable(drawable);
             mMap.addMarker(new MarkerOptions()
                     .icon(bitmapDescriptor)
@@ -214,5 +213,9 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onChangeTracDecorationPreferences(TrackDecorationPreferencesChangeEvent event) {
+        EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
+    }
 
 }

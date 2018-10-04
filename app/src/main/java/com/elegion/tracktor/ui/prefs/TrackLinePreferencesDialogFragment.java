@@ -2,11 +2,11 @@ package com.elegion.tracktor.ui.prefs;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.Display;
 import android.view.View;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.ui.common.TrackDecoration;
 
 import javax.inject.Inject;
 
@@ -26,10 +27,12 @@ import toothpick.Toothpick;
 
 public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragmentCompat {
 
-    private int mLineWidthValue = 1;
-    private int mColor = Color.GREEN;
-    private int mMarkerType = 1;
+    //private int mLineWidthValue = 1;
+    //private int mColor = Color.GREEN;
+    //private int mMarkerType = 1;
     private int mScreenWidth;
+
+    private TrackDecoration mTrackDecoration;
 
     @BindView(R.id.ivSample)
     protected ImageView mImageView;
@@ -62,9 +65,19 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
         super.onBindDialogView(view);
         ButterKnife.bind(this, view);
         Toothpick.inject(this, Toothpick.openScope("Application"));
+        initTrackDecoration();
         initScreenWidth();
         initMarkerButtons();
         drawLine();
+    }
+
+    private void initTrackDecoration() {
+        mTrackDecoration = new TrackDecoration();
+        DialogPreference preference = getPreference();
+        if (preference instanceof TrackLinePreference) {
+            TrackLinePreference trackLinePreference = (TrackLinePreference) preference;
+            mTrackDecoration.deserialize(trackLinePreference.getValue());
+        }
     }
 
     private void initScreenWidth() {
@@ -79,7 +92,7 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
         }
     }
 
-    private void initMarkerButtons(){
+    private void initMarkerButtons() {
         mIbMarkerTrack01.setImageResource(mCurrentPreferences.getMarkerResId(1));
         mIbMarkerTrack02.setImageResource(mCurrentPreferences.getMarkerResId(2));
         mIbMarkerTrack03.setImageResource(mCurrentPreferences.getMarkerResId(3));
@@ -87,15 +100,15 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
 
     private void drawLine() {
         try {
-            mTvWidthValue.setText(String.valueOf(mLineWidthValue));
-            int markerResId = mCurrentPreferences.getMarkerResId(mMarkerType);
+            mTvWidthValue.setText(String.valueOf(mTrackDecoration.getLineWidth()));
+            int markerResId = mCurrentPreferences.getMarkerResId(mTrackDecoration.getMarkerType());
             mIvLeftMarker.setImageResource(markerResId);
             mIvRightMarker.setImageResource(markerResId);
-            Bitmap bitmap = Bitmap.createBitmap(mScreenWidth, mLineWidthValue, Bitmap.Config.ARGB_8888);
+            Bitmap bitmap = Bitmap.createBitmap(mScreenWidth, mTrackDecoration.getLineWidth(), Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint();
-            paint.setColor(mColor);
-            canvas.drawRect(0, 0, mScreenWidth, mLineWidthValue, paint);
+            paint.setColor(mTrackDecoration.getColor());
+            canvas.drawRect(0, 0, mScreenWidth, mTrackDecoration.getLineWidth(), paint);
             mImageView.setImageBitmap(bitmap);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -104,21 +117,27 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-
+        if (positiveResult) {
+            DialogPreference preference = getPreference();
+            if (preference instanceof TrackLinePreference) {
+                TrackLinePreference trackLinePreference = (TrackLinePreference) preference;
+                trackLinePreference.setValue(mTrackDecoration.serialize());
+            }
+        }
     }
 
     @OnClick(R.id.ibIncreaseWithValue)
     protected void increaseWeightValue() {
-        if (mLineWidthValue < 100) {
-            mLineWidthValue++;
+        if (mTrackDecoration.getLineWidth() < 100) {
+            mTrackDecoration.setLineWidth(mTrackDecoration.getLineWidth() + 1);
             drawLine();
         }
     }
 
     @OnClick(R.id.ibDecreaseWithValue)
     protected void decreaseWeightValue() {
-        if (mLineWidthValue > 1) {
-            mLineWidthValue--;
+        if (mTrackDecoration.getLineWidth() > 1) {
+            mTrackDecoration.setLineWidth(mTrackDecoration.getLineWidth() - 1);
             drawLine();
         }
     }
@@ -131,7 +150,7 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
             R.id.ibColorTrack06})
     protected void changeColor(View view) {
         if (view.getBackground() instanceof ColorDrawable) {
-            mColor = ((ColorDrawable) view.getBackground()).getColor();
+            mTrackDecoration.setColor(((ColorDrawable) view.getBackground()).getColor());
             drawLine();
         }
     }
@@ -156,9 +175,10 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
                 break;
             }
         }
-        if (mMarkerType != newType) {
-            mMarkerType = newType;
+        if (mTrackDecoration.getMarkerType() != newType) {
+            mTrackDecoration.setMarkerType(newType);
             drawLine();
         }
     }
+
 }

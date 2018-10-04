@@ -6,6 +6,8 @@ import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
+import com.elegion.tracktor.ui.common.TrackDecoration;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -18,11 +20,12 @@ import java.util.Map;
 
 public class CurrentPreferences {
     private Map mPrefs;
-    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key};
+    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key, R.string.track_decoration_key};
     private String mWeightKey;
     private String mHeightKey;
     private String mUnitKey;
     private String mPictureQualityKey;
+    private String mTrackDecorationKey;
     private List<String> mDistanceUnitsSi;
     private List<String> mDistanceUnitsEng;
     private List<String> mSpeedUnitsSi;
@@ -32,12 +35,17 @@ public class CurrentPreferences {
     private List<String> mMessageTemplatePreviewValues;
     private List<Integer> mMarkers;
     private String mMessageTemplateDraft;
+    private TrackDecoration mTrackDecoration;
     public static final int UNITS_SI = 1;
     public static final int UNITS_ENG = 2;
 
 
     public void notifyChanges() {
         EventBus.getDefault().post(new PreferencesChangeEvent());
+    }
+
+    public void notifyChangesTrackDecoration() {
+        EventBus.getDefault().post(new TrackDecorationPreferencesChangeEvent());
     }
 
     public void init(Context context) {
@@ -47,6 +55,11 @@ public class CurrentPreferences {
         initMessageTemplate(context);
         initDistanceUnits(context);
         initMarkers(context);
+        initTrackDecoration(context);
+    }
+
+    private void initTrackDecoration(Context context) {
+        mTrackDecoration = new TrackDecoration(getValue(mTrackDecorationKey));
     }
 
     private void initMarkers(Context context) {
@@ -77,6 +90,8 @@ public class CurrentPreferences {
         mHeightKey = context.getString(R.string.height_key);
         mUnitKey = context.getString(R.string.unit_key);
         mPictureQualityKey = context.getString(R.string.picture_quality_key);
+        mTrackDecorationKey = context.getString(R.string.track_decoration_key);
+
     }
 
     private void initMessageTemplate(Context context) {
@@ -104,7 +119,12 @@ public class CurrentPreferences {
             Object oldValue = mPrefs.get(key);
             if (oldValue == null || !oldValue.toString().equals(value)) {
                 mPrefs.put(key, value);
-                notifyChanges();
+                if (key.equals(mTrackDecorationKey)) {
+                    mTrackDecoration.deserialize(value);
+                    notifyChangesTrackDecoration();
+                } else {
+                    notifyChanges();
+                }
             }
         }
     }
@@ -235,5 +255,17 @@ public class CurrentPreferences {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public int getTrackDecorationColor() {
+        return mTrackDecoration.getColor();
+    }
+
+    public int getTrackDecorationLineWidth() {
+        return mTrackDecoration.getLineWidth();
+    }
+
+    public int getTrackDecorationMakrerResId() {
+        return getMarkerResId(mTrackDecoration.getMarkerType());
     }
 }
