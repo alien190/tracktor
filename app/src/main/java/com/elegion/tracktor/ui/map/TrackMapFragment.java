@@ -10,13 +10,13 @@ import android.widget.Toast;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
-import com.elegion.tracktor.common.event.MapThemePreferencesChangeEvent;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
-import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
+import com.elegion.tracktor.common.lightSensor.ILightSensorCallback;
+import com.elegion.tracktor.common.lightSensor.LightSensor;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.google.android.gms.maps.CameraUpdate;
@@ -43,13 +43,15 @@ import toothpick.Scope;
 import toothpick.Toothpick;
 
 public class TrackMapFragment extends SupportMapFragment implements
-        OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
+        OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, ILightSensorCallback {
 
     private static final int DEFAULT_ZOOM = 15;
     @Inject
     protected MainViewModel mViewModel;
     @Inject
     protected CurrentPreferences mCurrentPreferences;
+    @Inject
+    protected LightSensor mLightSensor;
 
     private int mMapThemeResId;
     private GoogleMap mMap;
@@ -224,12 +226,27 @@ public class TrackMapFragment extends SupportMapFragment implements
     //@Subscribe(threadMode = ThreadMode.ASYNC)
     //MapThemePreferencesChangeEvent event
     public void setMapTheme() {
+        if (mCurrentPreferences != null && mMap != null) {
+            if (!mCurrentPreferences.isMapThemeAutodetection() && mMapThemeResId != mCurrentPreferences.getMapThemeResId()) {
+                mMapThemeResId = mCurrentPreferences.getMapThemeResId();
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapThemeResId));
+                mLightSensor.setOwner(null);
+            } else if (mCurrentPreferences.isMapThemeAutodetection()) {
+                mLightSensor.setOwner(this);
+            }
+        }
+    }
 
-        if (mCurrentPreferences != null
-                && mMap != null
-                && mMapThemeResId != mCurrentPreferences.getMapThemeResId()
-                && !mCurrentPreferences.isMapThemeAutodetection()) {
-            mMapThemeResId = mCurrentPreferences.getMapThemeResId();
+    @Override
+    public void onChangeState(boolean isDark) {
+        int resId;
+        if (isDark) {
+            resId = mCurrentPreferences.getMapDarkThemeResId();
+        } else {
+            resId = mCurrentPreferences.getMapStandardThemeRestId();
+        }
+        if (mMap != null && resId != mMapThemeResId) {
+            mMapThemeResId = resId;
             mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapThemeResId));
         }
     }

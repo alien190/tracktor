@@ -2,9 +2,11 @@ package com.elegion.tracktor.di.application;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.lightSensor.LightSensor;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
@@ -25,11 +27,13 @@ public class ApplicationModule extends Module {
     private SharedPreferences mSharedPreferences;
     private Gson mGson = new Gson();
     private Context mContext;
+    private LightSensor mLightSensor;
 
     public ApplicationModule(Context context) {
         mContext = context;
         mCurrentPreferences.init(mContext);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mLightSensor = provideLightSensor();
 
         bind(IRepository.class).toInstance(mRealmRepository);
         bind(CustomViewModelFactory.class).toProvider(CustomViewModelFactoryProvider.class).providesSingletonInScope();
@@ -42,5 +46,10 @@ public class ApplicationModule extends Module {
         bind(IDistanceConverter.class).toProvider(DistanceConverterProvider.class).providesSingletonInScope();
         bind(Context.class).toInstance(mContext);
         bind(TrackSharing.class).toProvider(TrackSharingProvider.class).providesSingletonInScope();
+        bind(LightSensor.class).toInstance(mLightSensor);
+    }
+
+    private LightSensor provideLightSensor() {
+        return new LightSensor((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE));
     }
 }

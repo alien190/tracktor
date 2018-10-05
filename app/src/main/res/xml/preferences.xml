@@ -42,7 +42,7 @@
     <PreferenceCategory android:title="@string/program_settings_label">
 
         <ListPreference
-            android:defaultValue="2"
+            android:defaultValue="1"
             android:dialogTitle="@string/theme_dialog_title"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_entryvalues"

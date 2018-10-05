@@ -299,11 +299,24 @@ public class CurrentPreferences {
     }
 
     public int getMapThemeResId() {
-        int value = getIntegerValue(mMapThemeKey) - 2;
-        if (value >= 0 && value < mMapThemeResId.size()) {
-            return mMapThemeResId.get(value);
+        int value = getIntegerValue(mMapThemeKey);
+        return getMapThemeResId(value);
+    }
+
+    public int getMapThemeResId(int pos) {
+        pos = pos - 2;
+        if (pos >= 0 && pos < mMapThemeResId.size()) {
+            return mMapThemeResId.get(pos);
         } else {
             return mMapThemeResId.get(0);
         }
+    }
+
+    public int getMapDarkThemeResId() {
+        return getMapThemeResId(3);
+    }
+
+    public int getMapStandardThemeRestId() {
+        return getMapThemeResId(2);
     }
 }
