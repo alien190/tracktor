@@ -92,7 +92,7 @@ public class LightSensor implements SensorEventListener {
                 mDisposable.dispose();
             }
             mDisposable = Single.just(mIsDark)
-                    .delay(5, TimeUnit.SECONDS)
+                    .delay(LIGHTING_CHANGE_DELAY_SECS, TimeUnit.SECONDS)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this::changeState, Throwable::printStackTrace);
