@@ -24,18 +24,19 @@ public class ScreenshotMaker {
         return bitmap;
     }
 
-    public static String toBase64(Bitmap bitmap, int quality) {
-        return Base64.encodeToString(getBytes(bitmap, quality), Base64.DEFAULT);
+    public static String toBase64(Bitmap bitmap, boolean lossless, int quality) {
+        return Base64.encodeToString(getBytes(bitmap, lossless, quality), Base64.DEFAULT);
     }
 
     public static Bitmap fromBase64(String base64) {
         byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0 ,bytes.length);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
-    private static byte[] getBytes(Bitmap bitmap, int quality) {
+    private static byte[] getBytes(Bitmap bitmap, boolean lossless, int quality) {
+        Bitmap.CompressFormat format = lossless ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG;
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+        bitmap.compress(format, quality, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
     }
 

@@ -81,4 +81,7 @@
     <string name="picture_quality_title">Качество скриншотов</string>
     <string name="track_decoration_key">track_line</string>
     <string name="track_decoration_title">Декорирование трека</string>
+    <string name="line_width_label">Толщина линии</string>
+    <string name="line_color_label">Цвет линии</string>
+    <string name="marker_type_label">Маркер</string>
 </resources>

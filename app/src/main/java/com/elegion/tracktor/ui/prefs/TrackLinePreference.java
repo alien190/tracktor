@@ -48,7 +48,7 @@ public class TrackLinePreference extends DialogPreference {
 
     @Override
     public int getDialogLayoutResource() {
-        return R.layout.dialog_track_line;
+        return R.layout.fr_track_decoration_dialog;
     }
 
 }

@@ -16,14 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:src="@drawable/ic_arrow_downward_red_48dp" />
+            android:src="@drawable/ic_pin01_48dp" />
 
         <ImageView
             android:id="@+id/ivRightMarker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_arrow_downward_red_48dp" />
+            android:src="@drawable/ic_pin01_48dp" />
 
     </RelativeLayout>
 
@@ -40,6 +40,14 @@
 
     <View style="@style/separateLine" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/line_width_label"
+        android:textColor="@color/colorBlack"
+        android:textSize="18dp"
+        android:layout_marginEnd="16dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -47,14 +55,18 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
 
+
+
         <TextView
+            android:id="@+id/tvWidthValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Толщина линии:"
+            android:layout_marginEnd="12dp"
             android:textColor="@color/colorBlack"
-            android:textSize="18dp"
-            android:layout_marginEnd="16dp"/>
+            android:textSize="36sp"
+            tools:text="1"
+            />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -65,42 +77,41 @@
                 android:id="@+id/ibIncreaseWithValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:background="@color/colorWhite"
                 android:src="@drawable/ic_add_black_24dp" />
 
             <ImageButton
                 android:id="@+id/ibDecreaseWithValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:background="@color/colorWhite"
                 android:src="@drawable/ic_remove_black_24dp" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvWidthValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/colorBlack"
-            android:textSize="36sp"
-            tools:text="1" />
-
-
     </LinearLayout>
 
-    <LinearLayout
+    <View style="@style/separateLine" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/line_color_label"
+        android:textColor="@color/colorBlack"
+        android:textSize="18dp"
+        android:layout_marginEnd="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+
+
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
 
             <ImageButton
                 android:id="@+id/ibColorTrack01"
@@ -127,7 +138,8 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
 
             <ImageButton
                 android:id="@+id/ibColorTrack04"
@@ -152,11 +164,22 @@
         </LinearLayout>
     </LinearLayout>
 
+    <View style="@style/separateLine" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/marker_type_label"
+        android:textColor="@color/colorBlack"
+        android:textSize="18dp"
+        android:layout_marginEnd="16dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
 
         <ImageButton
             android:id="@+id/ibMarkerTrack01"
@@ -164,7 +187,7 @@
             android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@color/colorWhite"
-            android:src="@drawable/ic_arrow_downward_red_48dp" />
+            android:src="@drawable/ic_pin01_48dp" />
 
         <ImageButton
             android:id="@+id/ibMarkerTrack02"
@@ -172,7 +195,7 @@
             android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@color/colorWhite"
-            android:src="@drawable/ic_arrow_downward_red_48dp" />
+            android:src="@drawable/ic_pin01_48dp" />
 
         <ImageButton
             android:id="@+id/ibMarkerTrack03"
@@ -180,7 +203,7 @@
             android:layout_height="48dp"
             android:layout_margin="8dp"
             android:background="@color/colorWhite"
-            android:src="@drawable/ic_arrow_downward_red_48dp" />
+            android:src="@drawable/ic_pin01_48dp" />
     </LinearLayout>
 
 </LinearLayout>

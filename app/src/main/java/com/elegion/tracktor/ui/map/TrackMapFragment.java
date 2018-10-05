@@ -147,7 +147,8 @@ public class TrackMapFragment extends SupportMapFragment implements
         //takeScreenshot(event, bitmap -> ResultActivity.start(getContext(), event, bitmap));
         takeScreenshot(event, bitmap ->
                 {
-                    String imageBase64 = ScreenshotMaker.toBase64(bitmap, mCurrentPreferences.getPictureQuality());
+                    String imageBase64 = ScreenshotMaker.toBase64(bitmap,
+                            false, mCurrentPreferences.getPictureQuality());
                     long id = mViewModel.saveResults(imageBase64);
                     ResultActivity.start(getContext(), id);
                 }

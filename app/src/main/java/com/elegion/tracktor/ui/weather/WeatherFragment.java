@@ -80,7 +80,7 @@ public class WeatherFragment extends Fragment {
                                     mIvWeather.getDrawable().getIntrinsicHeight();
                             mIvWeather.setMinimumWidth((int) (mIvWeather.getHeight() * ratio));
                             mViewModel.setLastWeatherIcon(ScreenshotMaker.toBase64(
-                                    ((BitmapDrawable) mIvWeather.getDrawable()).getBitmap(), 100));
+                                    ((BitmapDrawable) mIvWeather.getDrawable()).getBitmap(), true, 100));
                         }
 
                         @Override
