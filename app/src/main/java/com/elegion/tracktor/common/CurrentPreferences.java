@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.MapThemePreferencesChangeEvent;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
 import com.elegion.tracktor.ui.common.TrackDecoration;
@@ -20,12 +21,14 @@ import java.util.Map;
 
 public class CurrentPreferences {
     private Map mPrefs;
-    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key, R.string.track_decoration_key};
+    private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key, R.string.track_decoration_key,
+            R.string.map_theme_key};
     private String mWeightKey;
     private String mHeightKey;
     private String mUnitKey;
     private String mPictureQualityKey;
     private String mTrackDecorationKey;
+    private String mMapThemeKey;
     private List<String> mDistanceUnitsSi;
     private List<String> mDistanceUnitsEng;
     private List<String> mSpeedUnitsSi;
@@ -33,20 +36,13 @@ public class CurrentPreferences {
     private List<String> mActions;
     private List<String> mMessageTemplateParamTypes;
     private List<String> mMessageTemplatePreviewValues;
-    private List<Integer> mMarkers;
+    private List<Integer> mMarkersResId;
+    private List<Integer> mMapThemeResId;
     private String mMessageTemplateDraft;
     private TrackDecoration mTrackDecoration;
     public static final int UNITS_SI = 1;
     public static final int UNITS_ENG = 2;
 
-
-    public void notifyChanges() {
-        EventBus.getDefault().post(new PreferencesChangeEvent());
-    }
-
-    public void notifyChangesTrackDecoration() {
-        EventBus.getDefault().post(new TrackDecorationPreferencesChangeEvent());
-    }
 
     public void init(Context context) {
         initPreferences(context);
@@ -56,6 +52,11 @@ public class CurrentPreferences {
         initDistanceUnits(context);
         initMarkers(context);
         initTrackDecoration(context);
+        initMapThemes(context);
+    }
+
+    private void initMapThemes(Context context) {
+        mMapThemeResId = initResIdFromStringResArray(context, R.array.mapThemeJson, R.raw.class);
     }
 
     private void initTrackDecoration(Context context) {
@@ -63,11 +64,21 @@ public class CurrentPreferences {
     }
 
     private void initMarkers(Context context) {
-        List<String> resList = new ArrayList<>(Arrays.asList(
-                context.getResources().getStringArray(R.array.markerIcons)));
-        mMarkers = new ArrayList<>();
-        for (String item : resList) {
-            mMarkers.add(getResId(item, R.drawable.class));
+        mMarkersResId = initResIdFromStringResArray(context, R.array.markerIcons, R.drawable.class);
+    }
+
+    private List<Integer> initResIdFromStringResArray(Context context, int arrayResId, Class resourceClass) {
+        try {
+            List<String> resList = new ArrayList<>(Arrays.asList(
+                    context.getResources().getStringArray(arrayResId)));
+            List<Integer> retList = new ArrayList<>();
+            for (String item : resList) {
+                retList.add(getResId(item, resourceClass));
+            }
+            return retList;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            return new ArrayList<>();
         }
     }
 
@@ -91,6 +102,7 @@ public class CurrentPreferences {
         mUnitKey = context.getString(R.string.unit_key);
         mPictureQualityKey = context.getString(R.string.picture_quality_key);
         mTrackDecorationKey = context.getString(R.string.track_decoration_key);
+        mMapThemeKey = context.getString(R.string.map_theme_key);
 
     }
 
@@ -122,11 +134,25 @@ public class CurrentPreferences {
                 if (key.equals(mTrackDecorationKey)) {
                     mTrackDecoration.deserialize(value);
                     notifyChangesTrackDecoration();
+                } else if (key.equals(mMapThemeKey)) {
+                    notifyChangesMapTheme();
                 } else {
                     notifyChanges();
                 }
             }
         }
+    }
+
+    public void notifyChanges() {
+        EventBus.getDefault().post(new PreferencesChangeEvent());
+    }
+
+    public void notifyChangesTrackDecoration() {
+        EventBus.getDefault().post(new TrackDecorationPreferencesChangeEvent());
+    }
+
+    public void notifyChangesMapTheme() {
+        EventBus.getDefault().postSticky(new MapThemePreferencesChangeEvent());
     }
 
     public String getValue(String key) {
@@ -232,7 +258,6 @@ public class CurrentPreferences {
         list.add(weather);
         list.add(comment);
         list.add("[image]");
-
         return list;
     }
 
@@ -241,10 +266,10 @@ public class CurrentPreferences {
     }
 
     public int getMarkerResId(int pos) {
-        if (pos > 0 && pos <= mMarkers.size()) {
-            return mMarkers.get(pos - 1);
+        if (pos > 0 && pos <= mMarkersResId.size()) {
+            return mMarkersResId.get(pos - 1);
         }
-        return mMarkers.get(0);
+        return mMarkersResId.get(0);
     }
 
     private static int getResId(String resName, Class<?> c) {
@@ -265,7 +290,20 @@ public class CurrentPreferences {
         return mTrackDecoration.getLineWidth();
     }
 
-    public int getTrackDecorationMakrerResId() {
+    public int getTrackDecorationMarkerResId() {
         return getMarkerResId(mTrackDecoration.getMarkerType());
+    }
+
+    public boolean isMapThemeAutodetection() {
+        return getIntegerValue(mMapThemeKey) == 1;
+    }
+
+    public int getMapThemeResId() {
+        int value = getIntegerValue(mMapThemeKey) - 2;
+        if (value >= 0 && value < mMapThemeResId.size()) {
+            return mMapThemeResId.get(value);
+        } else {
+            return mMapThemeResId.get(0);
+        }
     }
 }

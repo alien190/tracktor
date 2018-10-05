@@ -1,19 +1,16 @@
 package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.event.MapThemePreferencesChangeEvent;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
@@ -28,7 +25,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -55,6 +51,7 @@ public class TrackMapFragment extends SupportMapFragment implements
     @Inject
     protected CurrentPreferences mCurrentPreferences;
 
+    private int mMapThemeResId;
     private GoogleMap mMap;
     private SingleObserver mMapSet;
     private Single<Boolean> mIsMapSet = new Single<Boolean>() {
@@ -101,8 +98,7 @@ public class TrackMapFragment extends SupportMapFragment implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_theme_standart));
-
+        setMapTheme();
         mMapSet.onSuccess(true);
     }
 
@@ -118,12 +114,12 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
         EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
+        setMapTheme();
     }
 
 
@@ -197,19 +193,22 @@ public class TrackMapFragment extends SupportMapFragment implements
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRouteUpdate(RouteUpdateEvent event) {
-        if (mMap != null && event.points.size() != 0) {
-            mMap.clear();
-            mMap.addPolyline(new PolylineOptions().addAll(event.points)
-                    .width(mCurrentPreferences.getTrackDecorationLineWidth())
-                    .color(mCurrentPreferences.getTrackDecorationColor()));
-            addMarker(event.points.get(0), getString(R.string.routeStart));
-            animateCamera(event.points.get(event.points.size() - 1));
+        if (mMap != null) {
+
+            if (event.points.size() != 0) {
+                mMap.clear();
+                mMap.addPolyline(new PolylineOptions().addAll(event.points)
+                        .width(mCurrentPreferences.getTrackDecorationLineWidth())
+                        .color(mCurrentPreferences.getTrackDecorationColor()));
+                addMarker(event.points.get(0), getString(R.string.routeStart));
+                animateCamera(event.points.get(event.points.size() - 1));
+            }
         }
     }
 
     private void addMarker(LatLng position, String text) {
         if (mMap != null) {
-            Drawable drawable = getResources().getDrawable(mCurrentPreferences.getTrackDecorationMakrerResId());
+            Drawable drawable = getResources().getDrawable(mCurrentPreferences.getTrackDecorationMarkerResId());
             BitmapDescriptor bitmapDescriptor = ScreenshotMaker.getMarkerIconFromDrawable(drawable);
             mMap.addMarker(new MarkerOptions()
                     .icon(bitmapDescriptor)
@@ -217,9 +216,21 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    public void onChangeTracDecorationPreferences(TrackDecorationPreferencesChangeEvent event) {
-        EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
-    }
+//    @Subscribe(threadMode = ThreadMode.ASYNC)
+//    public void onChangeTracDecorationPreferences(TrackDecorationPreferencesChangeEvent event) {
+//        EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
+//    }
 
+    //@Subscribe(threadMode = ThreadMode.ASYNC)
+    //MapThemePreferencesChangeEvent event
+    public void setMapTheme() {
+
+        if (mCurrentPreferences != null
+                && mMap != null
+                && mMapThemeResId != mCurrentPreferences.getMapThemeResId()
+                && !mCurrentPreferences.isMapThemeAutodetection()) {
+            mMapThemeResId = mCurrentPreferences.getMapThemeResId();
+            mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapThemeResId));
+        }
+    }
 }

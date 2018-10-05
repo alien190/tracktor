@@ -84,4 +84,7 @@
     <string name="line_width_label">Толщина линии</string>
     <string name="line_color_label">Цвет линии</string>
     <string name="marker_type_label">Маркер</string>
+    <string name="theme_dialog_title">Выберите тему для карты</string>
+    <string name="map_theme_key">map_theme</string>
+    <string name="theme_title">Тема карты</string>
 </resources>

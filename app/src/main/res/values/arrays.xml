@@ -98,4 +98,18 @@
         <item>ic_pin02_48dp</item>
         <item>ic_pin03_48dp</item>
     </string-array>
+    <string-array name="theme_entries">
+        <item>Автоопределение</item>
+        <item>Стандартная</item>
+        <item>Ночная</item>
+    </string-array>
+    <string-array name="theme_entryvalues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="mapThemeJson">
+        <item>map_theme_standard</item>
+        <item>map_theme_dark</item>
+    </string-array>
 </resources>

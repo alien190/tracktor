@@ -68,6 +68,7 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
         setSummaryFor(findPreference(getString(R.string.age_key)));
         setSummaryFor(findPreference(getString(R.string.height_key)));
         setSummaryFor(findPreference(getString(R.string.picture_quality_key)));
+        setSummaryFor(findPreference(getString(R.string.map_theme_key)));
     }
 
     private void setSummaryFor(Preference preference) {
