@@ -7,23 +7,23 @@ import android.util.AttributeSet;
 
 import com.elegion.tracktor.R;
 
-public class TrackLinePreference extends DialogPreference {
+public class TrackDecorationPreference extends DialogPreference {
 
     private String mValue;
 
-    public TrackLinePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public TrackDecorationPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public TrackLinePreference(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TrackDecorationPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
-    public TrackLinePreference(Context context, AttributeSet attrs) {
+    public TrackDecorationPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public TrackLinePreference(Context context) {
+    public TrackDecorationPreference(Context context) {
         super(context);
     }
 

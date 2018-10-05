@@ -73,7 +73,7 @@
             android:key="@string/picture_quality_key"
             android:title="@string/picture_quality_title" />
 
-        <com.elegion.tracktor.ui.prefs.TrackLinePreference
+        <com.elegion.tracktor.ui.prefs.TrackDecorationPreference
             android:defaultValue=""
             android:key="@string/track_decoration_key"
             android:title="@string/track_decoration_title" />

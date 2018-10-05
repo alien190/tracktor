@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.Display;
@@ -25,11 +26,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import toothpick.Toothpick;
 
-public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragmentCompat {
+public class TrackDecorationPreferencesDialogFragment extends PreferenceDialogFragmentCompat {
 
-    //private int mLineWidthValue = 1;
-    //private int mColor = Color.GREEN;
-    //private int mMarkerType = 1;
+    private static final String SAVE_STATE_PREFERENCE_VALUE = "TrackDecorationPreferencesDialogFragment.preferenceValue";
+
     private int mScreenWidth;
 
     private TrackDecoration mTrackDecoration;
@@ -51,13 +51,23 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
     @Inject
     CurrentPreferences mCurrentPreferences;
 
-    public static TrackLinePreferencesDialogFragment newInstance(String key) {
+    public static TrackDecorationPreferencesDialogFragment newInstance(String key) {
 
         Bundle args = new Bundle();
         args.putString(ARG_KEY, key);
-        TrackLinePreferencesDialogFragment fragment = new TrackLinePreferencesDialogFragment();
+        TrackDecorationPreferencesDialogFragment fragment = new TrackDecorationPreferencesDialogFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            initTrackDecoration(savedInstanceState.getString(SAVE_STATE_PREFERENCE_VALUE));
+        } else {
+            initTrackDecoration("");
+        }
     }
 
     @Override
@@ -65,18 +75,17 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
         super.onBindDialogView(view);
         ButterKnife.bind(this, view);
         Toothpick.inject(this, Toothpick.openScope("Application"));
-        initTrackDecoration();
         initScreenWidth();
         initMarkerButtons();
         drawLine();
     }
 
-    private void initTrackDecoration() {
+    private void initTrackDecoration(String value) {
         mTrackDecoration = new TrackDecoration();
-        DialogPreference preference = getPreference();
-        if (preference instanceof TrackLinePreference) {
-            TrackLinePreference trackLinePreference = (TrackLinePreference) preference;
-            mTrackDecoration.deserialize(trackLinePreference.getValue());
+        if (value != null && !value.isEmpty()) {
+            mTrackDecoration.deserialize(value);
+        } else {
+            mTrackDecoration.deserialize(getPreferenceValue());
         }
     }
 
@@ -118,11 +127,7 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
     @Override
     public void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            DialogPreference preference = getPreference();
-            if (preference instanceof TrackLinePreference) {
-                TrackLinePreference trackLinePreference = (TrackLinePreference) preference;
-                trackLinePreference.setValue(mTrackDecoration.serialize());
-            }
+            setPreferenceValue(mTrackDecoration.serialize());
         }
     }
 
@@ -181,4 +186,27 @@ public class TrackLinePreferencesDialogFragment extends PreferenceDialogFragment
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SAVE_STATE_PREFERENCE_VALUE, mTrackDecoration.serialize());
+    }
+
+    private String getPreferenceValue() {
+        DialogPreference preference = getPreference();
+        if (preference instanceof TrackDecorationPreference) {
+            TrackDecorationPreference trackDecorationPreference = (TrackDecorationPreference) preference;
+            return trackDecorationPreference.getValue();
+        } else {
+            return "";
+        }
+    }
+
+    private void setPreferenceValue(String value) {
+        DialogPreference preference = getPreference();
+        if (preference instanceof TrackDecorationPreference) {
+            TrackDecorationPreference trackDecorationPreference = (TrackDecorationPreference) preference;
+            trackDecorationPreference.setValue(value);
+        }
+    }
 }

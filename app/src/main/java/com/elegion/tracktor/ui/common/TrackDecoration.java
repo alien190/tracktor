@@ -26,7 +26,7 @@ public class TrackDecoration {
     }
 
     private void initDefaults() {
-        mLineWidth = 1;
+        mLineWidth = 10;
         mColor = Color.GREEN;
         mMarkerType = 1;
     }

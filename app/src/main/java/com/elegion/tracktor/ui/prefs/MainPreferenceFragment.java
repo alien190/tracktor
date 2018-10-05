@@ -79,19 +79,19 @@ public class MainPreferenceFragment extends PreferenceFragmentCompat implements 
         } else if (preference instanceof EditTextPreference) {
             value = String.valueOf(((EditTextPreference) preference).getText());
             preference.setSummary(((EditTextPreference) preference).getText());
-        } else if (preference instanceof TrackLinePreference) {
-            value = ((TrackLinePreference) preference).getValue();
+        } else if (preference instanceof TrackDecorationPreference) {
+            value = ((TrackDecorationPreference) preference).getValue();
         }
         mCurrentPreferences.setValueAndNotify(preference.getKey(), value);
     }
 
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
-        if (preference instanceof TrackLinePreference) {
+        if (preference instanceof TrackDecorationPreference) {
             DialogFragment dialogFragment =
-                    TrackLinePreferencesDialogFragment.newInstance(preference.getKey());
+                    TrackDecorationPreferencesDialogFragment.newInstance(preference.getKey());
             dialogFragment.setTargetFragment(this, 0);
-            dialogFragment.show(getFragmentManager(), "TrackLinePreferencesDialogFragment");
+            dialogFragment.show(getFragmentManager(), "TrackDecorationPreferencesDialogFragment");
         } else {
             super.onDisplayPreferenceDialog(preference);
         }
