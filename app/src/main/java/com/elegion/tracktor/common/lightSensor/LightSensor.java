@@ -7,9 +7,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Scheduler;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class LightSensor implements SensorEventListener {
     private static final int LIGHTING_CHANGE_DELAY_SECS = 5;
@@ -22,6 +30,7 @@ public class LightSensor implements SensorEventListener {
     private boolean mIsDark;
     private boolean mTriggeredState;
     private LightSensorObserver mLightSensorObserver;
+    private Disposable mDisposable;
 
     public LightSensor(SensorManager sensorManager) {
         mSensorManager = sensorManager;
@@ -78,16 +87,22 @@ public class LightSensor implements SensorEventListener {
     private void checkLightLevel(float value) {
         boolean isDark = value < LIGHTING_CHANGE_LEVEL;
         if (isDark != mIsDark) {
-            mLastChangeTime = getCurrentDate().getTime();
             mIsDark = isDark;
-        } else {
-            if (isDark != mTriggeredState && mCallback != null) {
-                long curTime = getCurrentDate().getTime();
-                if (curTime >= mLastChangeTime + LIGHTING_CHANGE_DELAY_SECS * 1000) {
-                    mTriggeredState = isDark;
-                    mCallback.onChangeState(isDark);
-                }
+            if (mDisposable != null) {
+                mDisposable.dispose();
             }
+            mDisposable = Single.just(mIsDark)
+                    .delay(5, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::changeState, Throwable::printStackTrace);
+        }
+    }
+
+    private void changeState(boolean isDark) {
+        if (mCallback != null) {
+            mCallback.onChangeState(isDark);
+            Log.d("changeStateTAG", "changeState: " + isDark);
         }
     }
 

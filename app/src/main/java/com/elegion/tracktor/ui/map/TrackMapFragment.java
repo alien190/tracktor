@@ -233,6 +233,7 @@ public class TrackMapFragment extends SupportMapFragment implements
                 mLightSensor.setOwner(null);
             } else if (mCurrentPreferences.isMapThemeAutodetection()) {
                 mLightSensor.setOwner(this);
+                onChangeState(mLightSensor.isDark());
             }
         }
     }
