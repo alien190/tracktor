@@ -9,9 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.NotificationHelper;
+import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
@@ -45,17 +47,13 @@ import io.reactivex.schedulers.Schedulers;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
-public class CounterService extends Service {
+public class CounterService extends Service implements ITrackHelperCallBack {
 
     public static final int UPDATE_INTERVAL = 5000;
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;
-    private List<LocationData> mRawLocationData = new ArrayList<>();
 
     private ITrackHelper mTrackHelper;
-    private Disposable timerDisposable;
-
-    private boolean isStartPointSend;
 
     private Long mShutdownInterval = -1L;
 
@@ -64,6 +62,8 @@ public class CounterService extends Service {
 
     @Inject
     protected IDistanceConverter mDistanceConverter;
+    @Inject
+    protected CurrentPreferences mCurrentPreferences;
 
     private INotificationHelper mNotificationHelper;
 
@@ -73,7 +73,7 @@ public class CounterService extends Service {
             if (locationResult != null) {
                 Location location = locationResult.getLastLocation();
                 LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                mRawLocationData.add(new LocationData(newPosition, mTrackHelper.getTotalSecond()));
+                mTrackHelper.onRouteUpdate(newPosition);
             }
         }
     };
@@ -90,10 +90,8 @@ public class CounterService extends Service {
         Toothpick.inject(this, scope);
 
         mTrackHelper = new KalmanRoute();
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mShutdownInterval = Long.valueOf(sharedPreferences.getString(getString(R.string.shutdown_key), "-1"));
-
+        mTrackHelper.setCallBack(this);
+        mShutdownInterval = mCurrentPreferences.getShutdownInterval();
         mNotificationHelper = new NotificationHelper(this, mDistanceConverter);
         EventBus.getDefault().register(this);
     }
@@ -102,14 +100,7 @@ public class CounterService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground();
-
         mTrackHelper.start();
-
-        timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(seconds -> onTimerUpdate(seconds.intValue()));
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(UPDATE_FASTEST_INTERVAL);
@@ -129,30 +120,6 @@ public class CounterService extends Service {
                 mNotificationHelper.getNotification(getApplicationContext()));
     }
 
-    private void onTimerUpdate(int totalSeconds) {
-
-        if (!isStartPointSend && mRawLocationData.size() != 0) {
-            EventBus.getDefault().post(new StartRouteEvent(mRawLocationData.get(0)));
-            isStartPointSend = true;
-        }
-
-        if (mRawLocationData.size() != 0) {
-            SegmentForRouteEvent newSegment = mTrackHelper.onRouteUpdate(
-                    new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
-                            totalSeconds));
-            if (newSegment != null) {
-                EventBus.getDefault().post(new SegmentForRouteEvent(newSegment.points));
-            }
-        }
-
-        mNotificationHelper.updateNotification(mTrackHelper);
-        EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
-
-        if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
-            EventBus.getDefault().postSticky(new ShutdownEvent());
-        }
-    }
-
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void postRouterUpdates(RequestRouteUpdateEvent request) {
@@ -161,7 +128,7 @@ public class CounterService extends Service {
 
     @Override
     public void onDestroy() {
-
+        mTrackHelper.stop();
         EventBus.getDefault().unregister(this);
         StringBuilder locationDataBuilder = new StringBuilder();
 
@@ -172,11 +139,36 @@ public class CounterService extends Service {
 
         EventBus.getDefault().post(new StopRouteEvent(mTrackHelper));
 
-
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-        timerDisposable.dispose();
-        timerDisposable = null;
         mTrackHelper = null;
         stopForeground(true);
+    }
+
+    @Override
+    public void onMetricsUpdate() {
+        mNotificationHelper.updateNotification(mTrackHelper);
+        EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
+
+        if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
+            EventBus.getDefault().postSticky(new ShutdownEvent());
+        }
+    }
+
+    @Override
+    public void onFirstPoint(LocationData point) {
+        EventBus.getDefault().post(new StartRouteEvent(point));
+    }
+
+    @Override
+    public void onRouteUpdate(SegmentForRouteEvent segment) {
+        EventBus.getDefault().post(new SegmentForRouteEvent(segment.points));
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onUpdateShutdownInterval(PreferencesChangeEvent event) {
+        long shutdownInterval = mCurrentPreferences.getShutdownInterval();
+        if (mShutdownInterval != shutdownInterval) {
+            mShutdownInterval = shutdownInterval;
+        }
     }
 }

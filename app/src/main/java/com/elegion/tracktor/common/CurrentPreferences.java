@@ -22,13 +22,14 @@ import java.util.Map;
 public class CurrentPreferences {
     private Map mPrefs;
     private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key, R.string.track_decoration_key,
-            R.string.map_theme_key};
+            R.string.map_theme_key, R.string.shutdown_key};
     private String mWeightKey;
     private String mHeightKey;
     private String mUnitKey;
     private String mPictureQualityKey;
     private String mTrackDecorationKey;
     private String mMapThemeKey;
+    private String mShutDownKey;
     private List<String> mDistanceUnitsSi;
     private List<String> mDistanceUnitsEng;
     private List<String> mSpeedUnitsSi;
@@ -103,6 +104,7 @@ public class CurrentPreferences {
         mPictureQualityKey = context.getString(R.string.picture_quality_key);
         mTrackDecorationKey = context.getString(R.string.track_decoration_key);
         mMapThemeKey = context.getString(R.string.map_theme_key);
+        mShutDownKey = context.getString(R.string.shutdown_key);
 
     }
 
@@ -222,6 +224,20 @@ public class CurrentPreferences {
         }
     }
 
+    private Long getLongValue(String key) {
+        Object value = mPrefs.get(key);
+        if (value != null) {
+            try {
+                return Long.valueOf(value.toString());
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return 0L;
+            }
+        } else {
+            return 0L;
+        }
+    }
+
     public List<String> getActions() {
         return mActions;
     }
@@ -318,5 +334,10 @@ public class CurrentPreferences {
 
     public int getMapStandardThemeRestId() {
         return getMapThemeResId(2);
+    }
+
+    public long getShutdownInterval() {
+        long ret = getLongValue(mShutDownKey);
+        return ret != 0 ? ret : -1;
     }
 }
