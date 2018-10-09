@@ -76,7 +76,7 @@ public class CounterService extends Service {
     @Inject
     protected IDistanceConverter mDistanceConverter;
 
-    private NotificationHelper mNotificationHelper;
+    private INotificationHelper mNotificationHelper;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override

@@ -17,9 +17,8 @@ import com.elegion.tracktor.utils.StringUtils;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 
-public class NotificationHelper {
+public class NotificationHelper implements INotificationHelper {
     public static final String NOTIFICATION_CHANNEL_ID = "TRACKTOR_CHANNEL_ID";
-    public static final int DEFAULT_NOTIFICATION_ID = 101;
 
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mNotificationBuilder;
