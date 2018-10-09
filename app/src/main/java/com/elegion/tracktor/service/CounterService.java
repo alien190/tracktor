@@ -57,7 +57,6 @@ public class CounterService extends Service {
     public static final int UPDATE_INTERVAL = 5000;
     public static final int UPDATE_FASTEST_INTERVAL = 2000;
     public static final int UPDATE_MIN_DISTANCE = 10;
-    public static final String NOTIFICATION_CHANNEL_ID = "TRACKTOR_CHANNEL_ID";
     private List<LocationData> mRawLocationData = new ArrayList<>();
 
     private int mTotalSecond;
@@ -69,12 +68,6 @@ public class CounterService extends Service {
     private boolean isStartPointSend;
     private double mAverageSpeed;
 
-    private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mNotificationBuilder;
-    private NotificationChannel mNotificationChannel;
-
-    public static final int DEFAULT_NOTIFICATION_ID = 101;
-
     private Long mShutdownInterval = -1L;
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -82,6 +75,8 @@ public class CounterService extends Service {
 
     @Inject
     protected IDistanceConverter mDistanceConverter;
+
+    private NotificationHelper mNotificationHelper;
 
     private LocationCallback mLocationCallback = new LocationCallback() {
         @Override
@@ -110,31 +105,13 @@ public class CounterService extends Service {
         mDistance = 0;
         mAverageSpeed = 0;
 
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        mNotificationBuilder = getNotificationBuilder();
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mShutdownInterval = Long.valueOf(sharedPreferences.getString(getString(R.string.shutdown_key), "-1"));
 
+        mNotificationHelper = new NotificationHelper(this, mDistanceConverter);
         EventBus.getDefault().register(this);
     }
 
-    private NotificationCompat.Builder getNotificationBuilder() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return new NotificationCompat.Builder(this);
-        } else {
-            if (mNotificationManager.getNotificationChannel(NOTIFICATION_CHANNEL_ID) == null) {
-                NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
-                        getString(R.string.notifChannelLabel),
-                        NotificationManager.IMPORTANCE_LOW);
-
-                //mNotificationChannel.setLightColor(Color.CYAN);
-                //mNotificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-                mNotificationManager.createNotificationChannel(notificationChannel);
-            }
-            return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
-        }
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -162,22 +139,8 @@ public class CounterService extends Service {
     }
 
     public void startForeground() {
-
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction(Intent.ACTION_MAIN);
-        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        mNotificationBuilder.setContentIntent(contentIntent)
-                .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_tracktor)
-                //.setTicker(Ticker)
-                .setContentTitle(getString(R.string.notificationTitle))
-                .setWhen(System.currentTimeMillis())
-                .setColor(getApplicationContext().getResources().getColor(R.color.colorRouteLine));
-
-        startForeground(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
+        startForeground(NotificationHelper.DEFAULT_NOTIFICATION_ID,
+                mNotificationHelper.getNotification(getApplicationContext()));
     }
 
     private void onTimerUpdate(int totalSeconds) {
@@ -199,7 +162,7 @@ public class CounterService extends Service {
         }
 
         mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
-        updateNotification();
+        mNotificationHelper.updateNotification(mTotalSecond, mDistance, mAverageSpeed);
         EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed, mStartDate));
 
         if (mShutdownInterval != -1L && mTotalSecond >= mShutdownInterval) {
@@ -207,25 +170,6 @@ public class CounterService extends Service {
         }
     }
 
-    private void updateNotification() {
-        StringBuilder contentText = new StringBuilder();
-        contentText//.append(getString(R.string.notificationText)).append('\n')
-                .append(getString(R.string.timeLabel))
-                .append(StringUtils.getDurationText(mTotalSecond))
-                .append(" ")
-                .append(getString(R.string.distanceLabel))
-                .append(mDistanceConverter.convertDistance(mDistance))
-                .append(" ")
-                .append(getString(R.string.speedLabel))
-                .append(mDistanceConverter.convertSpeed(mAverageSpeed));
-
-        mNotificationBuilder.setContentText(contentText.toString())
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))
-                .setWhen(System.currentTimeMillis());
-        mNotificationManager.notify(DEFAULT_NOTIFICATION_ID, mNotificationBuilder.build());
-//todo сделать текст уведомления мультистрчным
-
-    }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void postRouterUpdates(RequestRouteUpdateEvent request) {
