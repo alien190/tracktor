@@ -11,6 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.service.INotificationHelper;
+import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
@@ -73,17 +74,17 @@ public class NotificationHelper implements INotificationHelper {
                 .build();
     }
 
-    public void updateNotification(int totalSecond, double distance, double averageSpeed) {
+    public void updateNotification(ITrackHelper trackHelper) {
         StringBuilder contentText = new StringBuilder();
         contentText//.append(getString(R.string.notificationText)).append('\n')
                 .append(mTimeLabel)
-                .append(StringUtils.getDurationText(totalSecond))
+                .append(StringUtils.getDurationText(trackHelper.getTotalSecond()))
                 .append(" ")
                 .append(mDistanceLabel)
-                .append(mDistanceConverter.convertDistance(distance))
+                .append(mDistanceConverter.convertDistance(trackHelper.getDistance()))
                 .append(" ")
                 .append(mSpeedLabel)
-                .append(mDistanceConverter.convertSpeed(averageSpeed));
+                .append(mDistanceConverter.convertSpeed(trackHelper.getAverageSpeed()));
 
         mNotificationBuilder.setContentText(contentText.toString())
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(contentText.toString()))

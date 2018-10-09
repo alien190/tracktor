@@ -2,7 +2,6 @@ package com.elegion.tracktor.common;
 
 import android.util.Pair;
 
-import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.utils.StringUtils;
@@ -10,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class KalmanRoute implements ITrackHelper {
@@ -19,6 +20,11 @@ public class KalmanRoute implements ITrackHelper {
     private List<LocationData> mRoutePoints = new ArrayList<>();
     private LocationData lastRawPoint;
     private LocationData lastPointForSegment;
+    private double mDistance;
+    private long mTotalSecond;
+    private Date mStartDate;
+    private double mAverageSpeed;
+
 
     public KalmanRoute(double koeff) {
         mKoeff = koeff;
@@ -28,24 +34,44 @@ public class KalmanRoute implements ITrackHelper {
         mKoeff = 1;
     }
 
-    public void onRouteUpdate(LocationData newPoint) {
+    private void init() {
+        mDistance = 0;
+        mTotalSecond = 0;
+        mAverageSpeed = 0;
+    }
 
+    @Override
+    public void start() {
+        init();
+        mStartDate = Calendar.getInstance().getTime();
+    }
+
+    public SegmentForRouteEvent onRouteUpdate(LocationData newPoint) {
         lastRawPoint = newPoint;
 
         if (mRoutePoints.size() == 0) {
             mRoutePoints.add(newPoint);
         } else {
             LocationData lastPoint = mRoutePoints.get(mRoutePoints.size() - 1);
-
             double newPointLat = mKoeff * newPoint.point.latitude
                     + (1 - mKoeff) * lastPoint.point.latitude;
-
             double newPointLng = mKoeff * newPoint.point.longitude
                     + (1 - mKoeff) * lastPoint.point.longitude;
-
             mRoutePoints.add(new LocationData(new LatLng(newPointLat, newPointLng),
                     newPoint.timeSeconds));
+
         }
+        return updateMetrics();
+    }
+
+    private SegmentForRouteEvent updateMetrics() {
+        mTotalSecond = (Calendar.getInstance().getTimeInMillis() - mStartDate.getTime()) / 1000;
+        SegmentForRouteEvent newSegment = getLastSegment();
+        if (newSegment != null) {
+            mDistance += newSegment.getSegmentDistance();
+        }
+        mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
+        return newSegment;
     }
 
     @Override
@@ -68,26 +94,32 @@ public class KalmanRoute implements ITrackHelper {
                 return segmentForRouteEvent;
             }
         }
-
         return null;
     }
 
-    public List<LatLng> getRoute(){
+    public List<LatLng> getRoute() {
         List<LatLng> route = new ArrayList<>();
 
-        for(LocationData locationData : mRoutePoints) {
+        for (LocationData locationData : mRoutePoints) {
             route.add(locationData.point);
         }
 
         return route;
     }
-    public List<Pair<LatLng,LatLng>> getRouteUpdates(RequestRouteUpdateEvent request){
-        if (request == null) {
-            request = new RequestRouteUpdateEvent(new ArrayList<>());
-        }
 
-        //for()
+    public double getDistance() {
+        return mDistance;
+    }
 
-        return null;
+    public long getTotalSecond() {
+        return mTotalSecond;
+    }
+
+    public Date getStartDate() {
+        return mStartDate;
+    }
+
+    public double getAverageSpeed() {
+        return mAverageSpeed;
     }
 }

@@ -52,14 +52,10 @@ public class CounterService extends Service {
     public static final int UPDATE_MIN_DISTANCE = 10;
     private List<LocationData> mRawLocationData = new ArrayList<>();
 
-    private int mTotalSecond;
-    private Date mStartDate;
-
     private ITrackHelper mTrackHelper;
     private Disposable timerDisposable;
-    private double mDistance;
+
     private boolean isStartPointSend;
-    private double mAverageSpeed;
 
     private Long mShutdownInterval = -1L;
 
@@ -77,7 +73,7 @@ public class CounterService extends Service {
             if (locationResult != null) {
                 Location location = locationResult.getLastLocation();
                 LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
-                mRawLocationData.add(new LocationData(newPosition, mTotalSecond));
+                mRawLocationData.add(new LocationData(newPosition, mTrackHelper.getTotalSecond()));
             }
         }
     };
@@ -94,9 +90,6 @@ public class CounterService extends Service {
         Toothpick.inject(this, scope);
 
         mTrackHelper = new KalmanRoute();
-        mTotalSecond = 0;
-        mDistance = 0;
-        mAverageSpeed = 0;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mShutdownInterval = Long.valueOf(sharedPreferences.getString(getString(R.string.shutdown_key), "-1"));
@@ -108,9 +101,9 @@ public class CounterService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        mStartDate = Calendar.getInstance().getTime();
         startForeground();
+
+        mTrackHelper.start();
 
         timerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
@@ -137,7 +130,6 @@ public class CounterService extends Service {
     }
 
     private void onTimerUpdate(int totalSeconds) {
-        mTotalSecond = totalSeconds;
 
         if (!isStartPointSend && mRawLocationData.size() != 0) {
             EventBus.getDefault().post(new StartRouteEvent(mRawLocationData.get(0)));
@@ -145,20 +137,18 @@ public class CounterService extends Service {
         }
 
         if (mRawLocationData.size() != 0) {
-            mTrackHelper.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
-                    totalSeconds));
-            SegmentForRouteEvent newSegment = mTrackHelper.getLastSegment();
+            SegmentForRouteEvent newSegment = mTrackHelper.onRouteUpdate(
+                    new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
+                            totalSeconds));
             if (newSegment != null) {
-                mDistance += newSegment.getSegmentDistance();
                 EventBus.getDefault().post(new SegmentForRouteEvent(newSegment.points));
             }
         }
 
-        mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
-        mNotificationHelper.updateNotification(mTotalSecond, mDistance, mAverageSpeed);
-        EventBus.getDefault().post(new TimerUpdateEvent(mDistance, mTotalSecond, mAverageSpeed, mStartDate));
+        mNotificationHelper.updateNotification(mTrackHelper);
+        EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
 
-        if (mShutdownInterval != -1L && mTotalSecond >= mShutdownInterval) {
+        if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
             EventBus.getDefault().postSticky(new ShutdownEvent());
         }
     }
@@ -180,8 +170,7 @@ public class CounterService extends Service {
         locationDataBuilder.append("Отфильтрованные данные:\n");
         // locationDataBuilder.append(mTrackHelper.toString());
 
-        EventBus.getDefault().post(new StopRouteEvent(mTrackHelper.getRoute(), mTotalSecond,
-                mDistance, locationDataBuilder.toString()));
+        EventBus.getDefault().post(new StopRouteEvent(mTrackHelper));
 
 
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);

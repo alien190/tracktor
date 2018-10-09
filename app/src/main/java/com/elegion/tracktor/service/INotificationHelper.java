@@ -6,5 +6,5 @@ import android.content.Context;
 public interface INotificationHelper {
     int DEFAULT_NOTIFICATION_ID = 101;
     Notification getNotification(Context context);
-    void updateNotification(int totalSecond, double distance, double averageSpeed);
+    void updateNotification(ITrackHelper trackHelper);
 }

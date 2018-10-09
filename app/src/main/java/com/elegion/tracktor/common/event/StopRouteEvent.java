@@ -4,6 +4,7 @@ package com.elegion.tracktor.common.event;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.elegion.tracktor.service.ITrackHelper;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
@@ -12,16 +13,16 @@ import java.util.Date;
 import java.util.List;
 
 public class StopRouteEvent implements Parcelable{
-    public int routeTime;
+    public long routeTime;
     public Double routeDistance;
     public String mRawLocationDataText;
     public List<LatLng> route;
 
-    public StopRouteEvent(List<LatLng> route, int routeTime, Double routeDistance, String rawLocationData) {
-        this.route = route;
-        this.routeTime = routeTime;
-        this.routeDistance = routeDistance;
-        this.mRawLocationDataText = rawLocationData;
+    public StopRouteEvent(ITrackHelper trackHelper) {
+        this.route = trackHelper.getRoute();
+        this.routeTime = trackHelper.getTotalSecond();
+        this.routeDistance = trackHelper.getDistance();
+        //this.mRawLocationDataText = rawLocationData;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class StopRouteEvent implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(routeTime);
+        parcel.writeLong(routeTime);
         parcel.writeDouble(routeDistance);
         parcel.writeString(mRawLocationDataText);
         parcel.writeList(route);
@@ -50,7 +51,7 @@ public class StopRouteEvent implements Parcelable{
         }
     };
     private StopRouteEvent(Parcel parcel){
-        routeTime = parcel.readInt();
+        routeTime = parcel.readLong();
         routeDistance = parcel.readDouble();
         mRawLocationDataText = parcel.readString();
         route = new ArrayList<>();

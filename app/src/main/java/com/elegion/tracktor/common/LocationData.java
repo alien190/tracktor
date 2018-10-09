@@ -6,14 +6,14 @@ import java.io.Serializable;
 
 public class LocationData implements Serializable {
     public LatLng point;
-    public int timeSeconds;
+    public long timeSeconds;
 
-    public LocationData(LatLng point, int timeSeconds) {
+    public LocationData(LatLng point, long  timeSeconds) {
         this.point = point;
         this.timeSeconds = timeSeconds;
     }
 
-    public LocationData(LocationData locationData, int timeSeconds) {
+    public LocationData(LocationData locationData, long timeSeconds) {
         this.point = locationData.point;
         this.timeSeconds = timeSeconds;
     }
