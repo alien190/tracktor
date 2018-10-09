@@ -21,6 +21,7 @@ import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -137,7 +138,7 @@ public class CounterService extends Service implements ITrackHelperCallBack {
         locationDataBuilder.append("Отфильтрованные данные:\n");
         // locationDataBuilder.append(mTrackHelper.toString());
 
-        EventBus.getDefault().post(new StopRouteEvent(mTrackHelper));
+        EventBus.getDefault().postSticky(new StopRouteEvent(mTrackHelper));
 
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         mTrackHelper = null;
@@ -150,6 +151,12 @@ public class CounterService extends Service implements ITrackHelperCallBack {
         EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
 
         if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
+
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            startActivity(intent);
+
             EventBus.getDefault().postSticky(new ShutdownEvent());
         }
     }

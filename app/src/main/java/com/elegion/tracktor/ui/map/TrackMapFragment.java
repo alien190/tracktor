@@ -5,7 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.elegion.tracktor.R;
@@ -35,10 +37,17 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
+import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
@@ -52,6 +61,8 @@ public class TrackMapFragment extends SupportMapFragment implements
     protected CurrentPreferences mCurrentPreferences;
     @Inject
     protected LightSensor mLightSensor;
+    private View mView;
+    private View mProgressBarView;
 
     private int mMapThemeResId;
     private GoogleMap mMap;
@@ -62,6 +73,7 @@ public class TrackMapFragment extends SupportMapFragment implements
             mMapSet = observer;
         }
     };
+
 
     public static TrackMapFragment newInstance() {
 
@@ -93,8 +105,7 @@ public class TrackMapFragment extends SupportMapFragment implements
             getMapAsync(this);
             setRetainInstance(true);
         }
-
-
+        mView = view;
     }
 
     @Override
@@ -112,7 +123,6 @@ public class TrackMapFragment extends SupportMapFragment implements
                     .width(mCurrentPreferences.getTrackDecorationLineWidth())
                     .color(mCurrentPreferences.getTrackDecorationColor()));
             animateCamera(segmentForRouteEvent.points.second.point);
-
         }
     }
 
@@ -166,20 +176,46 @@ public class TrackMapFragment extends SupportMapFragment implements
             }
             int padding = 100;
             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), padding);
+            Log.d("tracktor_log", "takeScreenshot: ");
+            setMapTheme();
+
             mMap.animateCamera(cu, 1, new GoogleMap.CancelableCallback() {
                 @Override
                 public void onFinish() {
-                    mMap.snapshot(snapshotReadyCallback);
+                    waitForLoadMap(snapshotReadyCallback);
                 }
 
                 @Override
                 public void onCancel() {
+                    Log.d("TAG", "takeScreenshot: onCancel");
+                    waitForLoadMap(snapshotReadyCallback);
                 }
             });
-
         } else {
             Toast.makeText(getContext(), R.string.emptyRoute, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void waitForLoadMap(GoogleMap.SnapshotReadyCallback snapshotReadyCallback) {
+        showProgressBar();
+        Disposable disposable = Single.just(1)
+                .delay(10, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(integer -> {
+                    mMap.snapshot(snapshotReadyCallback);
+                    hideProgressBar();
+                }, throwable -> {
+                    hideProgressBar();
+                    throwable.printStackTrace();
+                });
+
+        mMap.setOnMapLoadedCallback(() ->
+        {
+            hideProgressBar();
+            disposable.dispose();
+            mMap.snapshot(snapshotReadyCallback);
+        });
     }
 
     @Override
@@ -250,5 +286,13 @@ public class TrackMapFragment extends SupportMapFragment implements
             mMapThemeResId = resId;
             mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), mMapThemeResId));
         }
+    }
+
+    private void showProgressBar() {
+        mViewModel.getIsScreenshotInProgress().postValue(true);
+    }
+
+    private void hideProgressBar() {
+        mViewModel.getIsScreenshotInProgress().postValue(false);
     }
 }

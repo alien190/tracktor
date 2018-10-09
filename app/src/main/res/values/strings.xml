@@ -87,4 +87,5 @@
     <string name="theme_dialog_title">Выберите тему для карты</string>
     <string name="map_theme_key">map_theme</string>
     <string name="theme_title">Тема карты</string>
+    <string name="make_screenshot">Подготовка скриншота</string>
 </resources>

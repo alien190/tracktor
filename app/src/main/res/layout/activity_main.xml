@@ -29,4 +29,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true" />
 
+    <include
+        android:id="@+id/progressbar"
+        layout="@layout/fr_wait_map_load"
+        android:visibility="visible" />
+
 </RelativeLayout>

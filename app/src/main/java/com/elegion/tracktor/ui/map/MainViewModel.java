@@ -3,6 +3,7 @@ package com.elegion.tracktor.ui.map;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.api.IOpenweathermapApi;
@@ -48,6 +49,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<Boolean> mIsBigStyleWeather = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsShowWeather = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsWeatherRefreshing = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsScreenshotInProgress = new MutableLiveData<>();
 
     private long mTotalTime;
     private double mDistance;
@@ -74,8 +76,10 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private String mLastWeatherDescription;
 
 
+
     public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi, IDistanceConverter distanceConverter) {
         // mIsPermissionGranted.setValue(false);
+        Log.d("tracktor_log", "MainViewModel: create");
         EventBus.getDefault().register(this);
         mRealmRepository = repository;
         mOpenweathermapApi = openweathermapApi;
@@ -84,6 +88,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mIsShowWeather.postValue(false);
         mIsSuccessLastWeatherUpdate = false;
         mIsWeatherRefreshing.postValue(false);
+        mIsScreenshotInProgress.postValue(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -230,6 +235,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     @Override
     protected void onCleared() {
         EventBus.getDefault().unregister(this);
+        Log.d("tracktor_log", "MainViewModel: onCleared");
         super.onCleared();
     }
 
@@ -271,5 +277,9 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
 
     public void setLastWeatherIcon(String lastWeatherIcon) {
         mLastWeatherIcon = lastWeatherIcon;
+    }
+
+    public MutableLiveData<Boolean> getIsScreenshotInProgress() {
+        return mIsScreenshotInProgress;
     }
 }

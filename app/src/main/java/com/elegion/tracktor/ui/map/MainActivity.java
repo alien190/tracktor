@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.data.model.Track;
@@ -30,12 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     MainViewModel mViewModel;
+    private View mProgressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mProgressBar = findViewById(R.id.progressbar);
 
         Scope scope = Toothpick.openScopes("Application", "MainActivity");
         scope.installModules(new MainModule(this));
@@ -53,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.weatherContainer, weatherFragment)
                     .commit();
         }
+        mViewModel.getIsScreenshotInProgress().observe(this,
+                v -> mProgressBar.setVisibility(v ? View.VISIBLE : View.GONE)
+        );
         requestPermissions();
     }
 
@@ -110,4 +117,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        Toothpick.closeScope("MainActivity");
+        super.onDestroy();
+    }
 }
