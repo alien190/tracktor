@@ -4,6 +4,7 @@ import android.util.Pair;
 
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -11,7 +12,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KalmanRoute {
+public class KalmanRoute implements ITrackHelper {
     private static String TAG = "KalmanRouteTAG";
     private static double ROUTE_ACCURACY_METERS = 10;
     private double mKoeff;

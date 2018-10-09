@@ -1,4 +1,4 @@
-package com.elegion.tracktor.service;
+package com.elegion.tracktor.common;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.service.INotificationHelper;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;

@@ -1,21 +1,17 @@
 package com.elegion.tracktor.service;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.NotificationHelper;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
@@ -23,10 +19,7 @@ import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
-import com.elegion.tracktor.ui.map.MainActivity;
-import com.elegion.tracktor.utils.DistanceConverter;
 import com.elegion.tracktor.utils.IDistanceConverter;
-import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -62,7 +55,7 @@ public class CounterService extends Service {
     private int mTotalSecond;
     private Date mStartDate;
 
-    private KalmanRoute mKalmanRoute;
+    private ITrackHelper mTrackHelper;
     private Disposable timerDisposable;
     private double mDistance;
     private boolean isStartPointSend;
@@ -100,7 +93,7 @@ public class CounterService extends Service {
         Scope scope = Toothpick.openScope("Application");
         Toothpick.inject(this, scope);
 
-        mKalmanRoute = new KalmanRoute();
+        mTrackHelper = new KalmanRoute();
         mTotalSecond = 0;
         mDistance = 0;
         mAverageSpeed = 0;
@@ -152,9 +145,9 @@ public class CounterService extends Service {
         }
 
         if (mRawLocationData.size() != 0) {
-            mKalmanRoute.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
+            mTrackHelper.onRouteUpdate(new LocationData(mRawLocationData.get(mRawLocationData.size() - 1),
                     totalSeconds));
-            SegmentForRouteEvent newSegment = mKalmanRoute.getLastSegment();
+            SegmentForRouteEvent newSegment = mTrackHelper.getLastSegment();
             if (newSegment != null) {
                 mDistance += newSegment.getSegmentDistance();
                 EventBus.getDefault().post(new SegmentForRouteEvent(newSegment.points));
@@ -173,7 +166,7 @@ public class CounterService extends Service {
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void postRouterUpdates(RequestRouteUpdateEvent request) {
-        EventBus.getDefault().post(new RouteUpdateEvent(mKalmanRoute.getRoute()));
+        EventBus.getDefault().post(new RouteUpdateEvent(mTrackHelper.getRoute()));
     }
 
     @Override
@@ -185,16 +178,16 @@ public class CounterService extends Service {
         locationDataBuilder.append("Сырые данные:\n");
         // locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
         locationDataBuilder.append("Отфильтрованные данные:\n");
-        // locationDataBuilder.append(mKalmanRoute.toString());
+        // locationDataBuilder.append(mTrackHelper.toString());
 
-        EventBus.getDefault().post(new StopRouteEvent(mKalmanRoute.getRoute(), mTotalSecond,
+        EventBus.getDefault().post(new StopRouteEvent(mTrackHelper.getRoute(), mTotalSecond,
                 mDistance, locationDataBuilder.toString()));
 
 
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
         timerDisposable.dispose();
         timerDisposable = null;
-        mKalmanRoute = null;
+        mTrackHelper = null;
         stopForeground(true);
     }
 }
