@@ -1,5 +1,6 @@
 package com.elegion.tracktor.ui.weather;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -60,35 +61,41 @@ public class WeatherFragment extends Fragment {
             mViewModel.getTemperature().observe(this, mTvDegrees::setText);
             mViewModel.getIsShowWeather().observe(this,
                     isShow -> mLayoutWeather.setVisibility(isShow ? View.VISIBLE : View.GONE));
-            mViewModel.getWeatherIconURL().observe(this, this::showWeatherIcon);
+            mViewModel.getWeatherIconBase64().observe(this, this::showWeatherIcon);
             mViewModel.getIsWeatherRefreshing().observe(this,
                     isRefreshing -> mPbWeather.setVisibility(isRefreshing ? View.VISIBLE : View.GONE));
         }
         return view;
     }
 
-    private void showWeatherIcon(String url) {
-        if (url != null && !url.isEmpty()) {
-            Picasso.get()
-                    .load(url)
-                    .transform(mTransformation)
-                    .into(mIvWeather, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            mIvWeather.refreshDrawableState();
-                            double ratio = (double) mIvWeather.getDrawable().getIntrinsicWidth() /
-                                    mIvWeather.getDrawable().getIntrinsicHeight();
-                            mIvWeather.setMinimumWidth((int) (mIvWeather.getHeight() * ratio));
-                            mViewModel.setLastWeatherIcon(ScreenshotMaker.toBase64(
-                                    ((BitmapDrawable) mIvWeather.getDrawable()).getBitmap(), true, 100));
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-
-                        }
-                    });
+    private void showWeatherIcon(String iconBase64) {
+        if (iconBase64 != null && !iconBase64.isEmpty()) {
+            Bitmap icon = ScreenshotMaker.fromBase64(iconBase64);
+            mIvWeather.setImageBitmap(icon);
+            double ratio = (double) mIvWeather.getDrawable().getIntrinsicWidth() /
+                    mIvWeather.getDrawable().getIntrinsicHeight();
+            mIvWeather.setMinimumWidth((int) (mIvWeather.getHeight() * ratio));
         }
+//            Picasso.get()
+//                    .load(url)
+//                    .transform(mTransformation)
+//                    .into(mIvWeather, new Callback() {
+//                        @Override
+//                        public void onSuccess() {
+//                            mIvWeather.refreshDrawableState();
+//                            double ratio = (double) mIvWeather.getDrawable().getIntrinsicWidth() /
+//                                    mIvWeather.getDrawable().getIntrinsicHeight();
+//                            mIvWeather.setMinimumWidth((int) (mIvWeather.getHeight() * ratio));
+//                            mViewModel.setLastWeatherIcon(ScreenshotMaker.toBase64(
+//                                    ((BitmapDrawable) mIvWeather.getDrawable()).getBitmap(), true, 100));
+//                        }
+//
+//                        @Override
+//                        public void onError(Exception e) {
+//
+//                        }
+//                    });
+//        }
     }
 
     @Override

@@ -5,14 +5,9 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.api.IOpenweathermapApi;
-import com.elegion.tracktor.api.model.Weather;
-import com.elegion.tracktor.api.model.WeatherItem;
-import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
-import com.elegion.tracktor.common.event.SegmentForRouteEvent;
-import com.elegion.tracktor.common.event.StartRouteEvent;
+import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.common.IWeatherViewModel;
@@ -24,13 +19,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Date;
-import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 
 //todo выделить погоду в отдельную ViewModel
@@ -50,7 +41,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
     private MutableLiveData<Double> mAverageSpeedLive = new MutableLiveData<>();
     private MutableLiveData<String> mTemperature = new MutableLiveData<>();
-    private MutableLiveData<String> mWeatherIconURL = new MutableLiveData<>();
+    private MutableLiveData<String> mWeatherIconBase64 = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsBigStyleWeather = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsShowWeather = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsWeatherRefreshing = new MutableLiveData<>();
@@ -103,13 +94,12 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mDistance = event.distance;
         mAverageSpeed = event.averageSpeed;
         mStartDate = event.startDate;
-
+        mTemperature.postValue(StringUtils.getTemperatureText(event.temperature));
+        mWeatherIconBase64.postValue(event.weatherIcon);
+        mIsShowWeather.postValue(event.weatherIcon != null && !event.weatherIcon.isEmpty());
         timeText.postValue(StringUtils.getDurationText(mTotalTime));
         mDistanceText.postValue(mDistanceConverter.convertDistance(mDistance));
         mAverageSpeedLive.postValue(mAverageSpeed);
-//        if (!isRouteStart) {
-//            startRoute();
-//        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -171,7 +161,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
 //        List<WeatherItem> weatherItems = weather.getWeather();
 //        if (weatherItems != null && !weatherItems.isEmpty()) {
 //            WeatherItem item = weatherItems.get(0);
-//            mWeatherIconURL.postValue(StringUtils.getWeatherIconURL(item.getIcon()));
+//            mWeatherIconBase64.postValue(StringUtils.getWeatherIconBase64(item.getIcon()));
 //            mLastWeatherDescription = item.getDescription();
 //        }
 //        if (mIsShowWeather.getValue() != null && !mIsShowWeather.getValue()) {
@@ -218,8 +208,8 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     }
 
     @Override
-    public LiveData<String> getWeatherIconURL() {
-        return mWeatherIconURL;
+    public LiveData<String> getWeatherIconBase64() {
+        return mWeatherIconBase64;
     }
 
     @Override
@@ -254,16 +244,16 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         return mIsPermissionGranted;
     }
 
-    public long saveResults(String imageBase64) {
+    public long saveResults(StopRouteEvent event, String imageBase64) {
         return mRealmRepository.createTrackAndSave(
-                mTotalTime,
-                mDistance,
-                mAverageSpeed,
-                mStartDate,
+                event.routeTime,
+                event.routeDistance,
+                event.averageSpeed,
+                event.startDate,
                 imageBase64,
-                0,
-                "",
-                "");
+                event.temperature,
+                event.weatherIcon,
+                event.weatherDescription);
     }
 
 //    public MutableLiveData<Boolean> getIsShutdown() {

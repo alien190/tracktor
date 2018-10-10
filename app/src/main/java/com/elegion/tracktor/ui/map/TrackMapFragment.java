@@ -160,7 +160,7 @@ public class TrackMapFragment extends SupportMapFragment implements
                 {
                     String imageBase64 = ScreenshotMaker.toBase64(bitmap,
                             false, mCurrentPreferences.getPictureQuality());
-                    long id = mViewModel.saveResults(imageBase64);
+                    long id = mViewModel.saveResults(event, imageBase64);
                     ResultActivity.start(getContext(), id);
                 }
         );

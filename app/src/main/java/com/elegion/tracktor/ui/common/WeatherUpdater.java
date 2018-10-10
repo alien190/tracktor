@@ -1,10 +1,17 @@
 package com.elegion.tracktor.ui.common;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 import com.elegion.tracktor.BuildConfig;
 import com.elegion.tracktor.api.IOpenweathermapApi;
 import com.elegion.tracktor.api.model.WeatherItem;
 import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.utils.PicassoCropTransform;
+import com.elegion.tracktor.utils.ScreenshotMaker;
 import com.elegion.tracktor.utils.StringUtils;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -25,11 +32,13 @@ public class WeatherUpdater {
     private Disposable mWeatherDisposable;
     private String mWeatherIconURL;
     private String mLastWeatherIconBase64;
+    private PicassoCropTransform mPicassoCropTransform;
 
     public WeatherUpdater(IOpenweathermapApi openweathermapApi) {
         mOpenweathermapApi = openweathermapApi;
         mNormalWeatherUpdateCounter = 0;
         mErrorWeatherUpdateCounter = 0;
+        mPicassoCropTransform = new PicassoCropTransform();
     }
 
     public void updateWeatherPeriodically(LocationData locationData) {
@@ -67,10 +76,28 @@ public class WeatherUpdater {
         if (weatherItems != null && !weatherItems.isEmpty()) {
             WeatherItem item = weatherItems.get(0);
             mWeatherIconURL = StringUtils.getWeatherIconURL(item.getIcon());
-
+            Picasso.get().load(mWeatherIconURL).transform(mPicassoCropTransform).into(mWeatherIconTarget);
             mLastWeatherDescription = item.getDescription();
         }
     }
+
+    private Target mWeatherIconTarget = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            mLastWeatherIconBase64 = ScreenshotMaker.toBase64(bitmap, true, 100);
+        }
+
+        @Override
+        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+    };
+
 
     private void weatherUpdateError(Throwable throwable) {
         mIsSuccessLastWeatherUpdate = false;
@@ -82,7 +109,7 @@ public class WeatherUpdater {
     }
 
     public String getWeatherIcon() {
-        return mLastWeatherIcon;
+        return mLastWeatherIconBase64;
     }
 
     public String getWeatherDescription() {
