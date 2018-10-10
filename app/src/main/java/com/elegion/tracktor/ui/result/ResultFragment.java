@@ -162,7 +162,11 @@ public class ResultFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        try {
+            EventBus.getDefault().register(this);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Override
@@ -172,18 +176,18 @@ public class ResultFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onTrackCommentEdit(TrackCommentEditEvent editEvent) {
+    public void onTrackCommentEdit(TrackCommentEditEvent editEvent) {
         mResultViewModel.setTrackIdForComment(editEvent.mId);
         mCommentDialogFragment.show(getActivity().getSupportFragmentManager(), "result");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onTrackDelete(TrackDeleteEvent event) {
+    public void onTrackDelete(TrackDeleteEvent event) {
         mResultViewModel.deleteTrack(event.trackId);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    protected void onTrackShare(TrackShareEvent event) {
+    public void onTrackShare(TrackShareEvent event) {
         mTrackSharing.doShare(mResultViewModel.getTrack(event.trackId), getContext());
     }
 }
