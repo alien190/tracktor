@@ -15,4 +15,7 @@ public interface ITrackHelper {
     Date getStartDate();
     double getAverageSpeed();
     void setCallBack(ITrackHelperCallBack callBack);
+    Double getTemperature();
+    String getWeatherDescription();
+    String getWeatherIcon();
 }

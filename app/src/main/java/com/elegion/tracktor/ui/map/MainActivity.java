@@ -1,9 +1,9 @@
 package com.elegion.tracktor.ui.map;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.elegion.tracktor.R;
-import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.di.main.MainModule;
+import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.ui.weather.WeatherFragment;
+import com.elegion.tracktor.utils.CommonUtils;
 
 import javax.inject.Inject;
 
@@ -45,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         scope.installModules(new MainModule(this));
         Toothpick.inject(this, scope);
 
+        mViewModel.getServiceState().observe(this, this::serviceStateObserver);
+
         if (savedInstanceState == null) {
 
             WeatherFragment weatherFragment = WeatherFragment.newInstance();
@@ -58,9 +61,11 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
         mViewModel.getIsScreenshotInProgress().observe(this,
-                v -> mProgressBar.setVisibility(v ? View.VISIBLE : View.GONE)
-        );
+                v -> mProgressBar.setVisibility(v ? View.VISIBLE : View.GONE));
         requestPermissions();
+
+        checkIntentExtra(getIntent());
+
     }
 
     @Override
@@ -121,5 +126,51 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         Toothpick.closeScope("MainActivity");
         super.onDestroy();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntentExtra(intent);
+    }
+
+    private void checkIntentExtra(Intent intent) {
+        if (intent != null && intent.getBooleanExtra("STOP_TRACK", false)) {
+            mViewModel.stopRoute();
+        }
+    }
+
+    private void startService() {
+        Intent serviceIntent = new Intent(this, CounterService.class);
+        startService(serviceIntent);
+    }
+
+    private void stopService() {
+        Intent serviceIntent = new Intent(this, CounterService.class);
+        stopService(serviceIntent);
+    }
+
+    private void serviceStateObserver(int state) {
+        switch (state) {
+            case MainViewModel.SERVICE_STATE_UNKNOWN: {
+                mViewModel.getServiceState().postValue(
+                        CommonUtils.isServiceRunningInForeground(this, CounterService.class) ?
+                                MainViewModel.SERVICE_STATE_RUNNING : MainViewModel.SERVICE_STATE_STOPPING);
+                break;
+            }
+            case MainViewModel.SERVICE_STATE_MUST_RUN: {
+                startService();
+                mViewModel.getServiceState().postValue(MainViewModel.SERVICE_STATE_RUNNING);
+                break;
+            }
+            case MainViewModel.SERVICE_STATE_MUST_STOP: {
+                stopService();
+                mViewModel.getServiceState().postValue(MainViewModel.SERVICE_STATE_STOPPING);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
     }
 }

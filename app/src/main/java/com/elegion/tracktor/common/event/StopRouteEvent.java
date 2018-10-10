@@ -12,17 +12,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StopRouteEvent implements Parcelable{
+public class StopRouteEvent implements Parcelable {
     public long routeTime;
     public Double routeDistance;
     public String mRawLocationDataText;
     public List<LatLng> route;
+    public double averageSpeed;
+    public Date startDate;
+    public Double temperature;
+    public String weatherIcon;
+    public String weatherDescription;
 
     public StopRouteEvent(ITrackHelper trackHelper) {
         this.route = trackHelper.getRoute();
         this.routeTime = trackHelper.getTotalSecond();
         this.routeDistance = trackHelper.getDistance();
-        //this.mRawLocationDataText = rawLocationData;
+        this.averageSpeed = trackHelper.getAverageSpeed();
+        this.startDate = trackHelper.getStartDate();
+        this.temperature = trackHelper.getTemperature();
+        this.weatherIcon = trackHelper.getWeatherIcon();
+        this.weatherDescription = trackHelper.getWeatherDescription();
     }
 
     @Override
@@ -36,6 +45,11 @@ public class StopRouteEvent implements Parcelable{
         parcel.writeDouble(routeDistance);
         parcel.writeString(mRawLocationDataText);
         parcel.writeList(route);
+        parcel.writeDouble(averageSpeed);
+        parcel.writeLong(startDate.getTime());
+        parcel.writeDouble(temperature);
+        parcel.writeString(weatherIcon);
+        parcel.writeString(weatherDescription);
     }
 
     public static final Parcelable.Creator<StopRouteEvent> CREATOR
@@ -50,12 +64,18 @@ public class StopRouteEvent implements Parcelable{
             return new StopRouteEvent[i];
         }
     };
-    private StopRouteEvent(Parcel parcel){
+
+    private StopRouteEvent(Parcel parcel) {
         routeTime = parcel.readLong();
         routeDistance = parcel.readDouble();
         mRawLocationDataText = parcel.readString();
         route = new ArrayList<>();
         parcel.readList(route, LatLng.class.getClassLoader());
+        averageSpeed = parcel.readDouble();
+        startDate.setTime(parcel.readLong());
+        temperature = parcel.readDouble();
+        weatherIcon = parcel.readString();
+        weatherDescription = parcel.readString();
     }
 
 

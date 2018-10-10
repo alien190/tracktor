@@ -62,8 +62,17 @@ public class NotificationHelper implements INotificationHelper {
         Intent notificationIntent = new Intent(context, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.putExtra("STOP_TRACK", false);
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent stopIntent = new Intent(context, MainActivity.class);
+        stopIntent.setAction(Intent.ACTION_MAIN);
+        stopIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        stopIntent.putExtra("STOP_TRACK", true);
+
+        PendingIntent stopPendingIntent = PendingIntent.getActivity(context, 1, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 
         return mNotificationBuilder.setContentIntent(contentIntent)
                 .setOngoing(true)
@@ -71,6 +80,7 @@ public class NotificationHelper implements INotificationHelper {
                 .setContentTitle(mNotificationTitle)
                 .setWhen(System.currentTimeMillis())
                 .setColor(context.getResources().getColor(R.color.colorRouteLine))
+                .addAction(R.drawable.ic_stop_white_24dp, "Остановить", stopPendingIntent)
                 .build();
     }
 

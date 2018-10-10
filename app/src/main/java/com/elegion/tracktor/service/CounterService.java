@@ -21,6 +21,7 @@ import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.ui.common.WeatherUpdater;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -65,6 +66,8 @@ public class CounterService extends Service implements ITrackHelperCallBack {
     protected IDistanceConverter mDistanceConverter;
     @Inject
     protected CurrentPreferences mCurrentPreferences;
+    @Inject
+    protected WeatherUpdater mWeatherUpdater;
 
     private INotificationHelper mNotificationHelper;
 
@@ -90,7 +93,7 @@ public class CounterService extends Service implements ITrackHelperCallBack {
         Scope scope = Toothpick.openScope("Application");
         Toothpick.inject(this, scope);
 
-        mTrackHelper = new KalmanRoute();
+        mTrackHelper = new KalmanRoute(mWeatherUpdater);
         mTrackHelper.setCallBack(this);
         mShutdownInterval = mCurrentPreferences.getShutdownInterval();
         mNotificationHelper = new NotificationHelper(this, mDistanceConverter);
@@ -155,9 +158,10 @@ public class CounterService extends Service implements ITrackHelperCallBack {
             Intent intent = new Intent(this, MainActivity.class);
             intent.setAction(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.putExtra("STOP_TRACK", true);
             startActivity(intent);
 
-            EventBus.getDefault().postSticky(new ShutdownEvent());
+            //EventBus.getDefault().postSticky(new ShutdownEvent());
         }
     }
 

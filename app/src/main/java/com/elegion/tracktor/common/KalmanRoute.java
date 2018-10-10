@@ -5,6 +5,7 @@ import android.util.Pair;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.service.ITrackHelperCallBack;
+import com.elegion.tracktor.ui.common.WeatherUpdater;
 import com.elegion.tracktor.utils.StringUtils;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
@@ -34,13 +35,15 @@ public class KalmanRoute implements ITrackHelper {
     private ITrackHelperCallBack mCallBack;
     private boolean isStarted;
 
+    private WeatherUpdater mWeatherUpdater;
 
     public KalmanRoute(double koeff) {
         mKoeff = koeff;
     }
 
-    public KalmanRoute() {
+    public KalmanRoute(WeatherUpdater weatherUpdater) {
         mKoeff = 1;
+        mWeatherUpdater = weatherUpdater;
     }
 
     private void init() {
@@ -73,6 +76,7 @@ public class KalmanRoute implements ITrackHelper {
             mLastRawPoint = new LocationData(newPoint, mTotalSecond);
             if (mRoutePoints.size() == 0) {
                 mRoutePoints.add(mLastRawPoint);
+                mWeatherUpdater.updateWeatherPeriodically(mLastRawPoint);
                 if (mCallBack != null) {
                     mCallBack.onFirstPoint(mLastRawPoint);
                 }
@@ -82,9 +86,10 @@ public class KalmanRoute implements ITrackHelper {
                         + (1 - mKoeff) * lastPoint.point.latitude;
                 double newPointLng = mKoeff * mLastRawPoint.point.longitude
                         + (1 - mKoeff) * lastPoint.point.longitude;
-                mRoutePoints.add(new LocationData(new LatLng(newPointLat, newPointLng),
-                        mTotalSecond));
-
+                LocationData newLocationData = new LocationData(new LatLng(newPointLat, newPointLng),
+                        mTotalSecond);
+                mRoutePoints.add(newLocationData);
+                mWeatherUpdater.updateWeatherPeriodically(newLocationData);
                 SegmentForRouteEvent newSegment = getLastSegment();
                 if (newSegment != null) {
                     mCallBack.onRouteUpdate(newSegment);
@@ -97,6 +102,7 @@ public class KalmanRoute implements ITrackHelper {
 
     private void updateMetrics() {
         updateTotalSeconds();
+        mWeatherUpdater.updateWeather();
         mAverageSpeed = mDistance / (mTotalSecond == 0 ? 1 : mTotalSecond);
         if (mCallBack != null) {
             mCallBack.onMetricsUpdate();
@@ -159,5 +165,20 @@ public class KalmanRoute implements ITrackHelper {
 
     public double getAverageSpeed() {
         return mAverageSpeed;
+    }
+
+    @Override
+    public Double getTemperature() {
+        return mWeatherUpdater.getTemperature();
+    }
+
+    @Override
+    public String getWeatherDescription() {
+        return mWeatherUpdater.getWeatherDescription();
+    }
+
+    @Override
+    public String getWeatherIcon() {
+        return mWeatherUpdater.getWeatherIcon();
     }
 }

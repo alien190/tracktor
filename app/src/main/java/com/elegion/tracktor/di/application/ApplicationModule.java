@@ -11,8 +11,8 @@ import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.ui.common.CustomViewModelFactory;
 import com.elegion.tracktor.ui.common.TrackSharing;
+import com.elegion.tracktor.ui.common.WeatherUpdater;
 import com.elegion.tracktor.ui.result.CommentDialogFragment;
-import com.elegion.tracktor.utils.DistanceConverter;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.PicassoCropTransform;
 import com.squareup.picasso.Transformation;
@@ -47,6 +47,7 @@ public class ApplicationModule extends Module {
         bind(Context.class).toInstance(mContext);
         bind(TrackSharing.class).toProvider(TrackSharingProvider.class).providesSingletonInScope();
         bind(LightSensor.class).toInstance(mLightSensor);
+        bind(WeatherUpdater.class).toProvider(WeatherUpdateProvider.class).providesSingletonInScope();
     }
 
     private LightSensor provideLightSensor() {

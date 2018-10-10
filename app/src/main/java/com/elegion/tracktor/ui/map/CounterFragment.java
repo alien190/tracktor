@@ -46,9 +46,9 @@ public class CounterFragment extends Fragment {
     protected IDistanceConverter mDistanceConverter;
 
     public static CounterFragment newInstance() {
-        
+
         Bundle args = new Bundle();
-        
+
         CounterFragment fragment = new CounterFragment();
         fragment.setArguments(args);
         return fragment;
@@ -66,9 +66,10 @@ public class CounterFragment extends Fragment {
         mViewModel.getTimeText().observe(this, tvTime::setText);
         mViewModel.getDistanceText().observe(this, tvDistance::setText);
         mViewModel.getAverageSpeed().observe(this, this::setAverageSpeed);
-        mViewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
-        mViewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
-        mViewModel.getIsShutdown().observe(this, this::stopService);
+        mViewModel.getServiceState().observe(this, this::serviceStateObserver);
+       // mViewModel.getStartEnabled().observe(this, buttonStart::setEnabled);
+        //mViewModel.getStopEnabled().observe(this, buttonStop::setEnabled);
+        //mViewModel.getIsShutdown().observe(this, this::stopService);
 
         return view;
     }
@@ -77,24 +78,29 @@ public class CounterFragment extends Fragment {
         tvSpeed.setText(mDistanceConverter.convertSpeed(speed));
         mIvAverageSpeedIcon.setImageResource(CommonUtils.detectActionIconId(speed));
     }
+
     @OnClick(R.id.buttonStart)
     void onStartClick() {
         mViewModel.startRoute();
-        Intent serviceIntent = new Intent(getContext(), CounterService.class);
-        getActivity().startService(serviceIntent);
     }
 
     @OnClick(R.id.buttonStop)
     void onStopClick() {
         mViewModel.stopRoute();
-        stopService(true);
     }
 
-    private void stopService(boolean stop) {
-        if (stop) {
-            Intent serviceIntent = new Intent(getContext(), CounterService.class);
-            getActivity().stopService(serviceIntent);
+    private void serviceStateObserver(int state) {
+        switch (state) {
+            case MainViewModel.SERVICE_STATE_RUNNING: {
+                buttonStart.setEnabled(false);
+                buttonStop.setEnabled(true);
+                break;
+            }
+            default: {
+                buttonStart.setEnabled(true);
+                buttonStop.setEnabled(false);
+                break;
+            }
         }
-
     }
 }
