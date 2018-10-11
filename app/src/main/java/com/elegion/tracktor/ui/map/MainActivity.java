@@ -13,11 +13,16 @@ import android.view.View;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.di.main.MainModule;
+import com.elegion.tracktor.job.LocationJob;
 import com.elegion.tracktor.service.CounterService;
 import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.ui.weather.WeatherFragment;
 import com.elegion.tracktor.utils.CommonUtils;
+import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.util.support.PersistableBundleCompat;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -141,13 +146,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startService() {
-        Intent serviceIntent = new Intent(this, CounterService.class);
-        startService(serviceIntent);
+        //startService(getServiceIntent());
+
+        PersistableBundleCompat bundleCompat = new PersistableBundleCompat();
+        bundleCompat.putBoolean(LocationJob.RESCHEDULE_KEY, false);
+
+        int jobId = new JobRequest.Builder(LocationJob.TAG)
+                .setExact(TimeUnit.SECONDS.toMillis(1))
+                .setBackoffCriteria(TimeUnit.SECONDS.toMillis(1), JobRequest.BackoffPolicy.LINEAR)
+                .setExtras(bundleCompat)
+                .build()
+                .schedule();
     }
 
     private void stopService() {
-        Intent serviceIntent = new Intent(this, CounterService.class);
-        stopService(serviceIntent);
+        //stopService(getServiceIntent());
+    }
+
+    private Intent getServiceIntent() {
+        return new Intent(this, CounterService.class);
     }
 
     private void serviceStateObserver(int state) {

@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -51,6 +52,7 @@ public class LocationJob extends Job implements ITrackHelperCallBack {
     public static final String TAG = "LocationJobTag";
     public static final String RESCHEDULE_KEY = "LocationJobRescheduleKey";
     private final CountDownLatch doneSignal = new CountDownLatch(1);
+    private static final int DONE_SIGNAL_WAIT_INTERVAL = 30;
     private final JobLocationCallback mCallback = locationResult -> {
         if (locationResult != null) {
             Location location = locationResult.getLastLocation();
@@ -71,10 +73,11 @@ public class LocationJob extends Job implements ITrackHelperCallBack {
     @Override
     @NonNull
     protected Result onRunJob(Params params) {
+        mTrackHelper.start();
         LocationThread thread = new LocationThread("locationThread", getContext(), mCallback);
         thread.start();
         try {
-            doneSignal.await();
+            doneSignal.await(DONE_SIGNAL_WAIT_INTERVAL, TimeUnit.SECONDS);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
