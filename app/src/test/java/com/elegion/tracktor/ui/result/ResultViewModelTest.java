@@ -2,7 +2,6 @@ package com.elegion.tracktor.ui.result;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
 
 import com.elegion.tracktor.data.RealmRepository;
 import com.elegion.tracktor.data.model.Track;
@@ -48,7 +47,7 @@ public class ResultViewModelTest {
         mTracks = new ArrayList<>();
         mTracks.add(new Track());
 
-        when(mRepository.getAll()).thenReturn(mTracks);
+        when(mRepository.getAllTracks()).thenReturn(mTracks);
 
         mResultViewModel = new ResultViewModel(mRepository);
 

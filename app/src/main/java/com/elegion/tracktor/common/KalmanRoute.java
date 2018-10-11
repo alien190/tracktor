@@ -3,6 +3,9 @@ package com.elegion.tracktor.common;
 import android.util.Pair;
 
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.data.IRepository;
+import com.elegion.tracktor.data.model.LocationJobState;
+import com.elegion.tracktor.data.model.RealmLocationData;
 import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.service.ITrackHelperCallBack;
 import com.elegion.tracktor.ui.common.WeatherUpdater;
@@ -19,8 +22,10 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import io.realm.RealmList;
 
 public class KalmanRoute implements ITrackHelper {
+
     private static String TAG = "KalmanRouteTAG";
     private static double ROUTE_ACCURACY_METERS = 10;
     private double mKoeff;
@@ -34,8 +39,8 @@ public class KalmanRoute implements ITrackHelper {
     private Disposable mTimerDisposable;
     private ITrackHelperCallBack mCallBack;
     private boolean isStarted;
-
     private WeatherUpdater mWeatherUpdater;
+
 
     public KalmanRoute(double koeff) {
         mKoeff = koeff;
@@ -52,15 +57,81 @@ public class KalmanRoute implements ITrackHelper {
         mAverageSpeed = 0;
     }
 
+    public void loadFromRealm(IRepository repository) {
+        LocationJobState state = null;
+        if (repository != null) {
+            state = repository.getLocationJobState();
+            if (state != null) {
+                mKoeff = state.getKoeff();
+                mRoutePoints = new ArrayList<>();
+                for (RealmLocationData data : state.getRoutePoints()) {
+                    mRoutePoints.add(realmToLocationData(data));
+                }
+                mLastRawPoint = realmToLocationData(state.getLastRawPoint());
+                mLastPointForSegment = realmToLocationData(state.getLastPointForSegment());
+                mDistance = state.getDistance();
+                mTotalSecond = state.getTotalSecond();
+                mStartDate = state.getStartDate();
+                mAverageSpeed = state.getAverageSpeed();
+                isStarted = state.isStarted();
+            }
+        }
+        if (state == null) {
+            fixStartTime();
+        }
+    }
+
+    public void saveToRealm(IRepository repository) {
+        if (repository != null) {
+            LocationJobState state = new LocationJobState();
+            state.setKoeff(mKoeff);
+            RealmList<RealmLocationData> routePoints = new RealmList<>();
+            for (LocationData data : mRoutePoints) {
+                routePoints.add(locationDataToRealm(data));
+            }
+            state.setRoutePoints(routePoints);
+            state.setLastRawPoint(locationDataToRealm(mLastRawPoint));
+            state.setLastPointForSegment(locationDataToRealm(mLastPointForSegment));
+            state.setDistance(mDistance);
+            state.setTotalSecond(mTotalSecond);
+            state.setStartDate(mStartDate);
+            state.setAverageSpeed(mAverageSpeed);
+            state.setStarted(isStarted);
+            repository.updateLocationJobState(state);
+        }
+    }
+
+    private RealmLocationData locationDataToRealm(LocationData data) {
+        if (data != null) {
+            return new RealmLocationData(data.timeSeconds,
+                    data.point.latitude,
+                    data.point.longitude);
+        } else {
+            return null;
+        }
+    }
+
+    private LocationData realmToLocationData(RealmLocationData data) {
+        if (data != null) {
+            return new LocationData(new LatLng(data.getLat(), data.getLng()), data.getTimeSeconds());
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void start() {
-        init();
-        isStarted = true;
-        mStartDate = Calendar.getInstance().getTime();
+        fixStartTime();
         mTimerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(seconds -> updateMetrics());
+    }
+
+    private void fixStartTime() {
+        init();
+        isStarted = true;
+        mStartDate = Calendar.getInstance().getTime();
     }
 
     @Override
@@ -181,4 +252,5 @@ public class KalmanRoute implements ITrackHelper {
     public String getWeatherIcon() {
         return mWeatherUpdater.getWeatherIcon();
     }
+
 }

@@ -19,6 +19,7 @@ import com.elegion.tracktor.ui.prefs.PreferenceActivity;
 import com.elegion.tracktor.ui.result.ResultActivity;
 import com.elegion.tracktor.ui.weather.WeatherFragment;
 import com.elegion.tracktor.utils.CommonUtils;
+import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 
@@ -147,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void startService() {
         //startService(getServiceIntent());
+
+        JobManager.instance().cancelAll();
 
         PersistableBundleCompat bundleCompat = new PersistableBundleCompat();
         bundleCompat.putBoolean(LocationJob.RESCHEDULE_KEY, false);

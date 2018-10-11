@@ -58,7 +58,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     }
 
     public void loadTrack() {
-        mTrack = mRepository.getItem(mId);
+        mTrack = mRepository.getTrack(mId);
         if (mTrack != null) {
             mStartDate.postValue(StringUtils.getDateText(mTrack.getDate()));
             mScreenShotBase64.postValue(mTrack.getImage());
@@ -80,7 +80,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     public void updateTrackAction(Integer action) {
         if (mTrack.getAction() != action) {
             mTrack.setAction(action);
-            mRepository.updateItem(mTrack);
+            mRepository.updateTrack(mTrack);
             calculateCalories();
         }
     }
@@ -88,14 +88,14 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     public void updateComment(String comment) {
         if (mTrack.getComment() == null || comment == null || !mTrack.getComment().equals(comment)) {
             mTrack.setComment(comment);
-            mRepository.updateItem(mTrack);
+            mRepository.updateTrack(mTrack);
         }
     }
 
     public void updateCalories(double calories) {
         if (mTrack.getCalories() != calories) {
             mTrack.setCalories(calories);
-            mRepository.updateItem(mTrack);
+            mRepository.updateTrack(mTrack);
         }
     }
 
@@ -106,7 +106,7 @@ public class ResultDetailsViewModel extends ViewModel implements ICommentViewMod
     }
 
     public void deleteTrack() {
-        mRepository.deleteItem(mId);
+        mRepository.deleteTrack(mId);
     }
 
     @Override

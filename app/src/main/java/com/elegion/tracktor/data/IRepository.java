@@ -1,5 +1,7 @@
 package com.elegion.tracktor.data;
 
+import com.elegion.tracktor.data.model.LocationJobState;
+
 import java.util.Date;
 import java.util.List;
 
@@ -11,19 +13,26 @@ public interface IRepository<T> {
     int SORT_BY_DURATION = 2;
     int SORT_BY_DISTANCE = 3;
 
-    long insertItem(T t);
+    long insertTrack(T t);
 
-    T getItem(long id);
+    T getTrack(long id);
 
-    boolean deleteItem(long id);
+    boolean deleteTrack(long id);
 
-    List<T> getAll();
+    List<T> getAllTracks();
 
-    List<T> getAll(int sortOrder, int sortBy);
+    List<T> getAllTracks(int sortOrder, int sortBy);
 
-    void updateItem(T t);
+    void updateTrack(T t);
 
     long createTrackAndSave(long duration, double distance, double averageSpeed, Date startDate,
                             String imageBase64, double temperature, String weatherIconBase64,
                             String weatherDescription);
+
+    void updateLocationJobState(LocationJobState state);
+
+
+    LocationJobState getLocationJobState();
+
+    void deleteLocationJobState();
 }

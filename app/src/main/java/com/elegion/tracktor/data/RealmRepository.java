@@ -1,5 +1,6 @@
 package com.elegion.tracktor.data;
 
+import com.elegion.tracktor.data.model.LocationJobState;
 import com.elegion.tracktor.data.model.Track;
 
 import java.util.Date;
@@ -13,28 +14,31 @@ import io.realm.Sort;
 
 public class RealmRepository implements IRepository<Track> {
 
-    private AtomicLong currentId = new AtomicLong();
+    private AtomicLong currentTrackId = new AtomicLong();
     private Realm mRealm;
+    private RealmConfiguration mRealmConfiguration;
 
     public RealmRepository() {
-
-        RealmConfiguration config = new RealmConfiguration.Builder()
+        mRealmConfiguration = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
 
-        mRealm = Realm.getInstance(config);
-        Number number = mRealm.where(Track.class).max("id");
-        if (number != null) {
-            currentId.set(number.longValue());
-        } else {
-            currentId.set(0);
-        }
+        mRealm = Realm.getInstance(mRealmConfiguration);
+        currentTrackId.set(getInitialId(Track.class));
+    }
 
+    private long getInitialId(Class itemClass) {
+        Number number = mRealm.where(itemClass).max("id");
+        if (number != null) {
+            return number.longValue();
+        } else {
+            return 0;
+        }
     }
 
     @Override
-    public long insertItem(Track track) {
-        track.setId(currentId.incrementAndGet());
+    public long insertTrack(Track track) {
+        track.setId(currentTrackId.incrementAndGet());
         mRealm.beginTransaction();
         mRealm.copyToRealm(track);
         mRealm.commitTransaction();
@@ -42,13 +46,35 @@ public class RealmRepository implements IRepository<Track> {
     }
 
     @Override
-    public Track getItem(long id) {
+    public void updateLocationJobState(LocationJobState state) {
+        Realm realm = Realm.getInstance(mRealmConfiguration);
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(state);
+        realm.commitTransaction();
+    }
+
+    @Override
+    public LocationJobState getLocationJobState() {
+        Realm realm = Realm.getInstance(mRealmConfiguration);
+        LocationJobState state = realm.where(LocationJobState.class).findFirst();
+        return state != null ? realm.copyFromRealm(state) : null;
+
+    }
+
+    @Override
+    public void deleteLocationJobState() {
+        Realm realm = Realm.getInstance(mRealmConfiguration);
+        realm.where(LocationJobState.class).findAll().deleteAllFromRealm();
+    }
+
+    @Override
+    public Track getTrack(long id) {
         Track track = getTrackById(id);
         return track != null ? mRealm.copyFromRealm(track) : null;
     }
 
     @Override
-    public boolean deleteItem(long id) {
+    public boolean deleteTrack(long id) {
         boolean isSuccessful = false;
         Track track = getTrackById(id);
         mRealm.beginTransaction();
@@ -61,12 +87,12 @@ public class RealmRepository implements IRepository<Track> {
     }
 
     @Override
-    public List<Track> getAll() {
+    public List<Track> getAllTracks() {
         return mRealm.copyFromRealm(mRealm.where(Track.class).findAll().sort("id", Sort.ASCENDING));
     }
 
     @Override
-    public void updateItem(Track track) {
+    public void updateTrack(Track track) {
         mRealm.beginTransaction();
         mRealm.copyToRealmOrUpdate(track);
         mRealm.commitTransaction();
@@ -90,11 +116,11 @@ public class RealmRepository implements IRepository<Track> {
         track.setTemperature(temperature);
         track.setWeatherIcon(weatherIcon);
         track.setWeatherDescription(weatherDescription);
-        return insertItem(track);
+        return insertTrack(track);
     }
 
     @Override
-    public List<Track> getAll(int sortOrder, int sortBy) {
+    public List<Track> getAllTracks(int sortOrder, int sortBy) {
         RealmResults realmResults = mRealm.where(Track.class).findAll();
         Sort realmSortOrder = sortOrder == IRepository.SORT_ORDER_ASC ? Sort.ASCENDING : Sort.DESCENDING;
 

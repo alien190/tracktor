@@ -17,6 +17,7 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.service.ITrackHelper;
 import com.elegion.tracktor.service.ITrackHelperCallBack;
 import com.elegion.tracktor.ui.common.WeatherUpdater;
@@ -43,11 +44,14 @@ import toothpick.Toothpick;
 
 public class LocationJob extends Job implements ITrackHelperCallBack {
 
-    private ITrackHelper mTrackHelper;
     @Inject
     protected WeatherUpdater mWeatherUpdater;
     @Inject
     protected CurrentPreferences mCurrentPreferences;
+    @Inject
+    protected IRepository mRepository;
+
+    private ITrackHelper mTrackHelper;
     private Long mShutdownInterval = -1L;
     public static final String TAG = "LocationJobTag";
     public static final String RESCHEDULE_KEY = "LocationJobRescheduleKey";
@@ -73,7 +77,7 @@ public class LocationJob extends Job implements ITrackHelperCallBack {
     @Override
     @NonNull
     protected Result onRunJob(Params params) {
-        mTrackHelper.start();
+        mTrackHelper.loadFromRealm(mRepository);
         LocationThread thread = new LocationThread("locationThread", getContext(), mCallback);
         thread.start();
         try {
@@ -143,16 +147,15 @@ public class LocationJob extends Job implements ITrackHelperCallBack {
     @Override
     public void onMetricsUpdate() {
         // mNotificationHelper.updateNotification(mTrackHelper);
+        mTrackHelper.saveToRealm(mRepository);
         EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
 
         if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
-
             Intent intent = new Intent(getContext(), MainActivity.class);
             intent.setAction(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
             intent.putExtra("STOP_TRACK", true);
             getContext().startActivity(intent);
-
             //EventBus.getDefault().postSticky(new ShutdownEvent());
         }
     }

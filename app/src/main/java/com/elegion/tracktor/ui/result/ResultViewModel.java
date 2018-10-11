@@ -7,7 +7,6 @@ import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.data.model.Track;
 import com.elegion.tracktor.ui.common.ICommentViewModel;
 import com.elegion.tracktor.ui.messageTemplate.MessageTemplate;
-import com.elegion.tracktor.utils.StringUtils;
 
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
 
 
     public void loadTracks() {
-        mTracks.postValue(mRepository.getAll(mRepositorySortOrder, mRepositorySortBy));
+        mTracks.postValue(mRepository.getAllTracks(mRepositorySortOrder, mRepositorySortBy));
     }
 
     public void changeSortOrder() {
@@ -75,7 +74,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     }
 
     public void deleteTrack(long trackId) {
-        mRepository.deleteItem(trackId);
+        mRepository.deleteTrack(trackId);
         loadTracks();
     }
 
@@ -84,7 +83,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     }
 
     public Track getTrack(long trackId) {
-        return mRepository.getItem(trackId);
+        return mRepository.getTrack(trackId);
     }
 
     public MutableLiveData<List<Track>> getTracks() {
@@ -110,7 +109,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
     @Override
     public MutableLiveData<String> getComment() {
         MutableLiveData<String> comment = new MutableLiveData<>();
-        Track track = mRepository.getItem(mTrackIdForComment);
+        Track track = mRepository.getTrack(mTrackIdForComment);
         if (track.getComment() == null) {
             track.setComment("");
         }
@@ -118,7 +117,7 @@ public class ResultViewModel extends ViewModel implements ICommentViewModel {
         comment.observeForever(newComment -> {
             if (!track.getComment().equals(newComment)) {
                 track.setComment(newComment);
-                mRepository.updateItem(track);
+                mRepository.updateTrack(track);
                 //todo переделать такой рефреш
                 loadTracks();
             }

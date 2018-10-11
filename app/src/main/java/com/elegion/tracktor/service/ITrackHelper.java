@@ -1,5 +1,6 @@
 package com.elegion.tracktor.service;
 
+import com.elegion.tracktor.data.IRepository;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
@@ -18,4 +19,6 @@ public interface ITrackHelper {
     Double getTemperature();
     String getWeatherDescription();
     String getWeatherIcon();
+    void loadFromRealm(IRepository repository);
+    void saveToRealm(IRepository repository);
 }
