@@ -43,6 +43,14 @@
 
         <ListPreference
             android:defaultValue="1"
+            android:dialogTitle="@string/background_dialog_title"
+            android:entries="@array/background_entries"
+            android:entryValues="@array/background_entryvalues"
+            android:key="@string/background_key"
+            android:title="@string/background_title" />
+
+        <ListPreference
+            android:defaultValue="1"
             android:dialogTitle="@string/theme_dialog_title"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_entryvalues"

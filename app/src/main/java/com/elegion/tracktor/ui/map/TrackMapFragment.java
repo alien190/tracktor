@@ -37,6 +37,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -105,6 +106,7 @@ public class TrackMapFragment extends SupportMapFragment implements
             getMapAsync(this);
             setRetainInstance(true);
         }
+        mViewModel.getRoutePoints().observe(this, this::onRouteUpdate);
         mView = view;
     }
 
@@ -130,7 +132,7 @@ public class TrackMapFragment extends SupportMapFragment implements
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
+        mViewModel.routeUpdateRequest();
         setMapTheme();
     }
 
@@ -229,20 +231,32 @@ public class TrackMapFragment extends SupportMapFragment implements
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onRouteUpdate(RouteUpdateEvent event) {
+    private void onRouteUpdate(List<LatLng> points) {
         if (mMap != null) {
-
-            if (event.points.size() != 0) {
+            if (points != null && points.size() != 0) {
                 mMap.clear();
-                mMap.addPolyline(new PolylineOptions().addAll(event.points)
+                mMap.addPolyline(new PolylineOptions().addAll(points)
                         .width(mCurrentPreferences.getTrackDecorationLineWidth())
                         .color(mCurrentPreferences.getTrackDecorationColor()));
-                addMarker(event.points.get(0), getString(R.string.routeStart));
-                animateCamera(event.points.get(event.points.size() - 1));
+                addMarker(points.get(0), getString(R.string.routeStart));
+                animateCamera(points.get(points.size() - 1));
             }
         }
     }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onRouteUpdate(RouteUpdateEvent event) {
+//        if (mMap != null) {
+//
+//            if (event.points.size() != 0) {
+//                mMap.clear();
+//                mMap.addPolyline(new PolylineOptions().addAll(event.points)
+//                        .width(mCurrentPreferences.getTrackDecorationLineWidth())
+//                        .color(mCurrentPreferences.getTrackDecorationColor()));
+//                addMarker(event.points.get(0), getString(R.string.routeStart));
+//                animateCamera(event.points.get(event.points.size() - 1));
+//            }
+//        }
+//    }
 
     private void addMarker(LatLng position, String text) {
         if (mMap != null) {

@@ -4,7 +4,10 @@ package com.elegion.tracktor.common.event;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.elegion.tracktor.data.model.LocationJobState;
+import com.elegion.tracktor.data.model.RealmLocationData;
 import com.elegion.tracktor.service.ITrackHelper;
+import com.elegion.tracktor.utils.CommonUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
@@ -32,6 +35,19 @@ public class StopRouteEvent implements Parcelable {
         this.temperature = trackHelper.getTemperature();
         this.weatherIcon = trackHelper.getWeatherIcon();
         this.weatherDescription = trackHelper.getWeatherDescription();
+    }
+
+    public StopRouteEvent(LocationJobState state) {
+        if (state != null) {
+            this.route = CommonUtils.locationJobStatePointsToLatLngList(state);
+            this.routeTime = state.getTotalSecond();
+            this.routeDistance = state.getDistance();
+            this.averageSpeed = state.getAverageSpeed();
+            this.startDate = state.getStartDate();
+            this.temperature = state.getTemperature();
+            this.weatherIcon = state.getWeatherIcon();
+            this.weatherDescription = state.getWeatherDescription();
+        }
     }
 
     @Override

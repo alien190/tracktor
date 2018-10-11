@@ -115,4 +115,5 @@ public class WeatherUpdater {
     public String getWeatherDescription() {
         return mLastWeatherDescription;
     }
+
 }

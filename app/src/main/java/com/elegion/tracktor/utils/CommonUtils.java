@@ -5,7 +5,14 @@ import android.content.Context;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.data.model.LocationJobState;
+import com.elegion.tracktor.data.model.RealmLocationData;
 import com.elegion.tracktor.data.model.Track;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommonUtils {
     public static int detectActionIconId(double speed) {
@@ -51,7 +58,6 @@ public class CommonUtils {
     }
 
 
-
     public static boolean isServiceRunningInForeground(Context context, Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -65,5 +71,32 @@ public class CommonUtils {
         return false;
     }
 
+    public static RealmLocationData locationDataToRealm(LocationData data) {
+        if (data != null) {
+            return new RealmLocationData(data.timeSeconds,
+                    data.point.latitude,
+                    data.point.longitude);
+        } else {
+            return null;
+        }
+    }
 
+    public static LocationData realmToLocationData(RealmLocationData data) {
+        if (data != null) {
+            return new LocationData(new LatLng(data.getLat(), data.getLng()), data.getTimeSeconds());
+        } else {
+            return null;
+        }
+    }
+
+    public static List<LatLng> locationJobStatePointsToLatLngList(LocationJobState state) {
+        if (state != null && state.getRoutePoints() != null) {
+            List<LatLng> list = new ArrayList<>();
+            for (RealmLocationData data : state.getRoutePoints()) {
+                list.add(CommonUtils.realmToLocationData(data).point);
+            }
+            return list;
+        }
+        return null;
+    }
 }

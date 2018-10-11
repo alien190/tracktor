@@ -18,6 +18,9 @@ public class LocationJobState extends RealmObject {
     private Date mStartDate;
     private double mAverageSpeed;
     private boolean isStarted;
+    private Double temperature;
+    private String weatherIcon;
+    private String weatherDescription;
 
     public LocationJobState() {
     }
@@ -102,5 +105,27 @@ public class LocationJobState extends RealmObject {
         isStarted = started;
     }
 
+    public Double getTemperature() {
+        return temperature;
+    }
 
+    public void setTemperature(Double temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getWeatherIcon() {
+        return weatherIcon;
+    }
+
+    public void setWeatherIcon(String weatherIcon) {
+        this.weatherIcon = weatherIcon;
+    }
+
+    public String getWeatherDescription() {
+        return weatherDescription;
+    }
+
+    public void setWeatherDescription(String weatherDescription) {
+        this.weatherDescription = weatherDescription;
+    }
 }

@@ -158,6 +158,7 @@ public class LocationJob extends Job implements ITrackHelperCallBack {
             getContext().startActivity(intent);
             //EventBus.getDefault().postSticky(new ShutdownEvent());
         }
+        doneSignal.countDown();
     }
 
     @Override

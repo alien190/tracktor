@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.data.model.LocationJobState;
 import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.job.LocationJob;
 import com.elegion.tracktor.service.CounterService;
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Inject
     MainViewModel mViewModel;
+    @Inject
+    CurrentPreferences mCurrentPreferences;
     private View mProgressBar;
 
 
@@ -147,23 +151,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startService() {
-        //startService(getServiceIntent());
-
-        JobManager.instance().cancelAll();
-
-        PersistableBundleCompat bundleCompat = new PersistableBundleCompat();
-        bundleCompat.putBoolean(LocationJob.RESCHEDULE_KEY, false);
-
-        int jobId = new JobRequest.Builder(LocationJob.TAG)
-                .setExact(TimeUnit.SECONDS.toMillis(1))
-                .setBackoffCriteria(TimeUnit.SECONDS.toMillis(1), JobRequest.BackoffPolicy.LINEAR)
-                .setExtras(bundleCompat)
-                .build()
-                .schedule();
+        if (mCurrentPreferences.getIsBackground()) {
+            PersistableBundleCompat bundleCompat = new PersistableBundleCompat();
+            bundleCompat.putBoolean(LocationJob.RESCHEDULE_KEY, true);
+            int jobId = new JobRequest.Builder(LocationJob.TAG)
+                    .setExact(TimeUnit.SECONDS.toMillis(1))
+                    .setBackoffCriteria(TimeUnit.SECONDS.toMillis(1), JobRequest.BackoffPolicy.LINEAR)
+                    .setExtras(bundleCompat)
+                    .build()
+                    .schedule();
+        } else {
+            startService(getServiceIntent());
+        }
     }
 
     private void stopService() {
-        //stopService(getServiceIntent());
+        if (mCurrentPreferences.getIsBackground()) {
+            JobManager.instance().cancelAll();
+        } else {
+            stopService(getServiceIntent());
+        }
     }
 
     private Intent getServiceIntent() {
@@ -173,9 +180,14 @@ public class MainActivity extends AppCompatActivity {
     private void serviceStateObserver(int state) {
         switch (state) {
             case MainViewModel.SERVICE_STATE_UNKNOWN: {
-                mViewModel.getServiceState().postValue(
-                        CommonUtils.isServiceRunningInForeground(this, CounterService.class) ?
-                                MainViewModel.SERVICE_STATE_RUNNING : MainViewModel.SERVICE_STATE_STOPPING);
+                boolean value;
+                if (mCurrentPreferences.getIsBackground()) {
+                    value = mViewModel.isBackgroundJobRunning();
+                } else {
+                    value = CommonUtils.isServiceRunningInForeground(this, CounterService.class);
+                }
+                mViewModel.getServiceState().postValue(value ?
+                        MainViewModel.SERVICE_STATE_RUNNING : MainViewModel.SERVICE_STATE_STOPPING);
                 break;
             }
             case MainViewModel.SERVICE_STATE_MUST_RUN: {

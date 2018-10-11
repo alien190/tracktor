@@ -88,4 +88,7 @@
     <string name="map_theme_key">map_theme</string>
     <string name="theme_title">Тема карты</string>
     <string name="make_screenshot">Подготовка скриншота</string>
+    <string name="background_dialog_title" >Работа в фоне</string>
+    <string name="background_key">background_key</string>
+    <string name="background_title">Работа в фоне</string>
 </resources>

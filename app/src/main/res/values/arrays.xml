@@ -114,4 +114,12 @@
         <item>map_theme_standard</item>
         <item>map_theme_dark</item>
     </string-array>
+    <string-array name="background_entries">
+        <item>Да</item>
+        <item>Нет</item>
+    </string-array>
+    <string-array name="background_entryvalues">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 </resources>

@@ -5,20 +5,32 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.elegion.tracktor.R;
 import com.elegion.tracktor.api.IOpenweathermapApi;
+import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
+import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
 import com.elegion.tracktor.data.IRepository;
+import com.elegion.tracktor.data.model.LocationJobState;
+import com.elegion.tracktor.data.model.RealmLocationData;
 import com.elegion.tracktor.ui.common.IWeatherViewModel;
+import com.elegion.tracktor.utils.CommonUtils;
 import com.elegion.tracktor.utils.IDistanceConverter;
 import com.elegion.tracktor.utils.StringUtils;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
@@ -47,6 +59,7 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     private MutableLiveData<Boolean> mIsWeatherRefreshing = new MutableLiveData<>();
     private MutableLiveData<Boolean> mIsScreenshotInProgress = new MutableLiveData<>();
     private MutableLiveData<Integer> mServiceState = new MutableLiveData<>();
+    private MutableLiveData<List<LatLng>> mRoutePoints = new MutableLiveData<>();
 
     private long mTotalTime;
     private double mDistance;
@@ -61,28 +74,17 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     };
     private boolean isRouteStart;
     private IRepository mRealmRepository;
-    //private IOpenweathermapApi mOpenweathermapApi;
     private IDistanceConverter mDistanceConverter;
-    //private Disposable mWeatherDisposable;
-//    private int mNormalWeatherUpdateCounter;
-//    private int mErrorWeatherUpdateCounter;
-//    private boolean mIsSuccessLastWeatherUpdate;
-//    private LocationData mLastWeatherUpdateLocation;
-//    private double mLastTemperature;
-//    private String mLastWeatherIcon;
-//    private String mLastWeatherDescription;
+    private CurrentPreferences mCurrentPreferences;
 
 
-    public MainViewModel(IRepository repository, IOpenweathermapApi openweathermapApi, IDistanceConverter distanceConverter) {
-        // mIsPermissionGranted.setValue(false);
+    public MainViewModel(IRepository repository, CurrentPreferences currentPreferences, IDistanceConverter distanceConverter) {
         Log.d("tracktor_log", "MainViewModel: create");
         EventBus.getDefault().register(this);
         mRealmRepository = repository;
-        //  mOpenweathermapApi = openweathermapApi;
         mDistanceConverter = distanceConverter;
-        // mIsShutdown.postValue(false);
+        mCurrentPreferences = currentPreferences;
         mIsShowWeather.postValue(false);
-        //mIsSuccessLastWeatherUpdate = false;
         mIsWeatherRefreshing.postValue(false);
         mIsScreenshotInProgress.postValue(false);
         mServiceState.postValue(SERVICE_STATE_UNKNOWN);
@@ -108,80 +110,13 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         mAverageSpeedLive.postValue(mAverageSpeed);
     }
 
-    //@Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onShutdown() {
-//       // mIsShutdown.postValue(true);
-//        stopRoute();
-//    }
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onRouteUpdate(SegmentForRouteEvent event) {
-//        updateWeatherPeriodically(event.points.second);
-//    }
-
-//    @Subscribe(threadMode = ThreadMode.MAIN)
-//    public void onStartRoute(StartRouteEvent event) {
-//        updateWeatherPeriodically(event.firstPoint);
-//    }
-
-//    private void updateWeatherPeriodically(LocationData locationData) {
-//        if ((mIsSuccessLastWeatherUpdate &&
-//                mTotalTime >= BuildConfig.NORMAL_WEATHER_UPDATE_PERIOD_SECS * mNormalWeatherUpdateCounter) ||
-//                (!mIsSuccessLastWeatherUpdate &&
-//                        mTotalTime >= BuildConfig.ERROR_WEATHER_UPDATE_PERIOD_SECS * mErrorWeatherUpdateCounter)) {
-//            updateWeather(locationData);
-//        }
-//    }
-
-//    private void updateWeather(LocationData locationData) {
-//        if (mWeatherDisposable != null) {
-//            mWeatherDisposable.dispose();
-//        }
-//        mWeatherDisposable = mOpenweathermapApi.getWeather(locationData.point.latitude,
-//                locationData.point.longitude)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .doOnSubscribe(disposable -> mIsWeatherRefreshing.postValue(true))
-//                .doFinally(() -> mIsWeatherRefreshing.postValue(false))
-//                .subscribe(this::setWeather, this::weatherUpdateError);
-//        mLastWeatherUpdateLocation = locationData;
-//        mNormalWeatherUpdateCounter = ((int) mTotalTime / BuildConfig.NORMAL_WEATHER_UPDATE_PERIOD_SECS) + 1;
-//        mErrorWeatherUpdateCounter = ((int) mTotalTime / BuildConfig.ERROR_WEATHER_UPDATE_PERIOD_SECS) + 1;
-//    }
-
-//    public void updateWeather() {
-//        if (mLastWeatherUpdateLocation != null)
-//            updateWeather(mLastWeatherUpdateLocation);
-//    }
-//
-//    private void setWeather(Weather weather) {
-//        mIsSuccessLastWeatherUpdate = true;
-//        mLastTemperature = weather.getMain().getTemp();
-//        mTemperature.postValue(StringUtils.getTemperatureText(mLastTemperature));
-//        List<WeatherItem> weatherItems = weather.getWeather();
-//        if (weatherItems != null && !weatherItems.isEmpty()) {
-//            WeatherItem item = weatherItems.get(0);
-//            mWeatherIconBase64.postValue(StringUtils.getWeatherIconBase64(item.getIcon()));
-//            mLastWeatherDescription = item.getDescription();
-//        }
-//        if (mIsShowWeather.getValue() != null && !mIsShowWeather.getValue()) {
-//            mIsShowWeather.postValue(true);
-//        }
-//    }
-//
-//    private void weatherUpdateError(Throwable throwable) {
-//        mIsSuccessLastWeatherUpdate = false;
-//        throwable.printStackTrace();
-//    }
 
     public void startRoute() {
-
         isRouteStart = true;
         if (!(mServiceState != null && mServiceState.getValue() != null && mServiceState.getValue() == SERVICE_STATE_RUNNING)) {
+            mRealmRepository.deleteLocationJobState();
             mServiceState.postValue(SERVICE_STATE_MUST_RUN);
         }
-        //startEnabled.postValue(false);
-        //stopEnabled.postValue(true);
     }
 
     public void stopRoute() {
@@ -190,8 +125,10 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         if (!(mServiceState != null && mServiceState.getValue() != null && mServiceState.getValue() == SERVICE_STATE_STOPPING)) {
             mServiceState.postValue(SERVICE_STATE_MUST_STOP);
         }
-        //startEnabled.postValue(true);
-        //stopEnabled.postValue(false);
+        if (mCurrentPreferences.getIsBackground()) {
+            EventBus.getDefault().postSticky(new StopRouteEvent(mRealmRepository.getLocationJobState()));
+            mRealmRepository.deleteLocationJobState();
+        }
     }
 
     public void onPermissionGranted() {
@@ -200,6 +137,11 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
         } else {
             mIsPermissionGranted = Single.just(true);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRouteUpdate(RouteUpdateEvent event) {
+        mRoutePoints.postValue(event.points);
     }
 
     @Override
@@ -256,9 +198,26 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
                 event.weatherDescription);
     }
 
-//    public MutableLiveData<Boolean> getIsShutdown() {
-//        return mIsShutdown;
-//    }
+    public void routeUpdateRequest() {
+        if (mCurrentPreferences.getIsBackground()) {
+            LocationJobState state = mRealmRepository.getLocationJobState();
+            if (state != null) {
+                mRoutePoints.postValue(CommonUtils.locationJobStatePointsToLatLngList(state));
+                mTemperature.postValue(StringUtils.getTemperatureText(state.getTemperature()));
+                mWeatherIconBase64.postValue(state.getWeatherIcon());
+                mIsShowWeather.postValue(state.getWeatherIcon() != null && !state.getWeatherIcon().isEmpty());
+                mDistance = state.getDistance();
+                mTotalTime = state.getTotalSecond();
+                mAverageSpeed = state.getAverageSpeed();
+                mStartDate = state.getStartDate();
+                mDistanceText.postValue(mDistanceConverter.convertDistance(mDistance));
+                timeText.postValue(StringUtils.getDurationText(mTotalTime));
+                mAverageSpeedLive.postValue(mAverageSpeed);
+            }
+        } else {
+            EventBus.getDefault().post(new RequestRouteUpdateEvent(null));
+        }
+    }
 
     public MutableLiveData<Double> getAverageSpeed() {
         return mAverageSpeedLive;
@@ -290,5 +249,13 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     @Override
     public void updateWeather() {
 
+    }
+
+    public boolean isBackgroundJobRunning() {
+        return mRealmRepository.getLocationJobState() != null;
+    }
+
+    public MutableLiveData<List<LatLng>> getRoutePoints() {
+        return mRoutePoints;
     }
 }

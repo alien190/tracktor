@@ -1,5 +1,7 @@
 package com.elegion.tracktor.data;
 
+import android.util.Log;
+
 import com.elegion.tracktor.data.model.LocationJobState;
 import com.elegion.tracktor.data.model.Track;
 
@@ -14,6 +16,7 @@ import io.realm.Sort;
 
 public class RealmRepository implements IRepository<Track> {
 
+    private static final String TAG = "RealmRepositoryTag";
     private AtomicLong currentTrackId = new AtomicLong();
     private Realm mRealm;
     private RealmConfiguration mRealmConfiguration;
@@ -47,24 +50,34 @@ public class RealmRepository implements IRepository<Track> {
 
     @Override
     public void updateLocationJobState(LocationJobState state) {
+        Log.d(TAG, "updateLocationJobState: " + state);
         Realm realm = Realm.getInstance(mRealmConfiguration);
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(state);
         realm.commitTransaction();
+        realm.close();
     }
 
     @Override
     public LocationJobState getLocationJobState() {
+
         Realm realm = Realm.getInstance(mRealmConfiguration);
         LocationJobState state = realm.where(LocationJobState.class).findFirst();
-        return state != null ? realm.copyFromRealm(state) : null;
+        state = state != null ? realm.copyFromRealm(state) : null;
+        realm.close();
+        Log.d(TAG, "getLocationJobState: " + state);
+        return state;
 
     }
 
     @Override
     public void deleteLocationJobState() {
+        Log.d(TAG, "deleteLocationJobState: ");
         Realm realm = Realm.getInstance(mRealmConfiguration);
+        realm.beginTransaction();
         realm.where(LocationJobState.class).findAll().deleteAllFromRealm();
+        realm.commitTransaction();
+        realm.close();
     }
 
     @Override

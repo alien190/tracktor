@@ -24,6 +24,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.realm.RealmList;
 
+import static com.elegion.tracktor.utils.CommonUtils.locationDataToRealm;
+import static com.elegion.tracktor.utils.CommonUtils.realmToLocationData;
+
 public class KalmanRoute implements ITrackHelper {
 
     private static String TAG = "KalmanRouteTAG";
@@ -74,6 +77,9 @@ public class KalmanRoute implements ITrackHelper {
                 mStartDate = state.getStartDate();
                 mAverageSpeed = state.getAverageSpeed();
                 isStarted = state.isStarted();
+//                mWeatherUpdater.setTemperature(state.getTemperature());
+//                mWeatherUpdater.setWeatherDescription(state.getWeatherDescription());
+//                mWeatherUpdater.setWeatherIcon(state.getWeatherIcon());
             }
         }
         if (state == null) {
@@ -97,27 +103,13 @@ public class KalmanRoute implements ITrackHelper {
             state.setStartDate(mStartDate);
             state.setAverageSpeed(mAverageSpeed);
             state.setStarted(isStarted);
+            state.setTemperature(mWeatherUpdater.getTemperature());
+            state.setWeatherIcon(mWeatherUpdater.getWeatherIcon());
+            state.setWeatherDescription(mWeatherUpdater.getWeatherDescription());
             repository.updateLocationJobState(state);
         }
     }
 
-    private RealmLocationData locationDataToRealm(LocationData data) {
-        if (data != null) {
-            return new RealmLocationData(data.timeSeconds,
-                    data.point.latitude,
-                    data.point.longitude);
-        } else {
-            return null;
-        }
-    }
-
-    private LocationData realmToLocationData(RealmLocationData data) {
-        if (data != null) {
-            return new LocationData(new LatLng(data.getLat(), data.getLng()), data.getTimeSeconds());
-        } else {
-            return null;
-        }
-    }
 
     @Override
     public void start() {
