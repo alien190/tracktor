@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.elegion.tracktor.di.application.ApplicationModule;
 import com.elegion.tracktor.di.application.NetworkModule;
+import com.elegion.tracktor.job.LocationJobCreator;
+import com.evernote.android.job.JobManager;
 import com.squareup.picasso.Picasso;
 
 import io.realm.Realm;
@@ -12,7 +14,6 @@ import toothpick.Toothpick;
 import toothpick.configuration.Configuration;
 import toothpick.registries.FactoryRegistryLocator;
 import toothpick.registries.MemberInjectorRegistryLocator;
-import toothpick.smoothie.module.SmoothieApplicationModule;
 
 public class App extends Application {
 
@@ -34,6 +35,7 @@ public class App extends Application {
 
         Picasso.Builder builder = new Picasso.Builder(this);
         Picasso.setSingletonInstance(builder.build());
+        JobManager.create(this).addJobCreator(new LocationJobCreator());
     }
 
 }

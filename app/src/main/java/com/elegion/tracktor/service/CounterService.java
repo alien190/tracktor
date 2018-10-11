@@ -2,13 +2,10 @@ package com.elegion.tracktor.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.preference.PreferenceManager;
 
-import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
@@ -17,7 +14,6 @@ import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
-import com.elegion.tracktor.common.event.ShutdownEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
@@ -35,17 +31,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
