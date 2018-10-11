@@ -2,29 +2,71 @@ package com.elegion.tracktor.job;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.location.Location;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.KalmanRoute;
+import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.NotificationHelper;
+import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.common.event.SegmentForRouteEvent;
+import com.elegion.tracktor.common.event.StartRouteEvent;
+import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.service.ITrackHelper;
+import com.elegion.tracktor.service.ITrackHelperCallBack;
+import com.elegion.tracktor.ui.common.WeatherUpdater;
+import com.elegion.tracktor.ui.map.MainActivity;
 import com.evernote.android.job.Job;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.CountDownLatch;
 
-public class LocationJob extends Job {
+import javax.inject.Inject;
 
+import toothpick.Scope;
+import toothpick.Toothpick;
+
+public class LocationJob extends Job implements ITrackHelperCallBack {
+
+    private ITrackHelper mTrackHelper;
+    @Inject
+    protected WeatherUpdater mWeatherUpdater;
+    @Inject
+    protected CurrentPreferences mCurrentPreferences;
+    private Long mShutdownInterval = -1L;
     public static final String TAG = "LocationJobTag";
     public static final String RESCHEDULE_KEY = "LocationJobRescheduleKey";
-    private static final CountDownLatch doneSignal = new CountDownLatch(1);
-    private static final JobLocationCallback mCallback = locationResult -> {
-        Log.d(TAG, "onLocationResult: " + locationResult.toString());
-        doneSignal.countDown();
+    private final CountDownLatch doneSignal = new CountDownLatch(1);
+    private final JobLocationCallback mCallback = locationResult -> {
+        if (locationResult != null) {
+            Location location = locationResult.getLastLocation();
+            LatLng newPosition = new LatLng(location.getLatitude(), location.getLongitude());
+            mTrackHelper.onRouteUpdate(newPosition);
+            Log.d(TAG, "onLocationResult: " + locationResult.toString());
+        }
     };
+
+    public LocationJob() {
+        Scope scope = Toothpick.openScope("Application");
+        Toothpick.inject(this, scope);
+        mTrackHelper = new KalmanRoute(mWeatherUpdater);
+        mTrackHelper.setCallBack(this);
+        mShutdownInterval = mCurrentPreferences.getShutdownInterval();
+    }
 
     @Override
     @NonNull
@@ -94,4 +136,39 @@ public class LocationJob extends Job {
     interface JobLocationCallback {
         void onLocationResult(LocationResult locationResult);
     }
+
+    @Override
+    public void onMetricsUpdate() {
+        // mNotificationHelper.updateNotification(mTrackHelper);
+        EventBus.getDefault().post(new TimerUpdateEvent(mTrackHelper));
+
+        if (mShutdownInterval != -1L && mTrackHelper.getTotalSecond() >= mShutdownInterval) {
+
+            Intent intent = new Intent(getContext(), MainActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            intent.putExtra("STOP_TRACK", true);
+            getContext().startActivity(intent);
+
+            //EventBus.getDefault().postSticky(new ShutdownEvent());
+        }
+    }
+
+    @Override
+    public void onFirstPoint(LocationData point) {
+        EventBus.getDefault().post(new StartRouteEvent(point));
+    }
+
+    @Override
+    public void onRouteUpdate(SegmentForRouteEvent segment) {
+        EventBus.getDefault().post(new SegmentForRouteEvent(segment.points));
+    }
+
+//    @Subscribe(threadMode = ThreadMode.ASYNC)
+//    public void onUpdateShutdownInterval(PreferencesChangeEvent event) {
+//        long shutdownInterval = mCurrentPreferences.getShutdownInterval();
+//        if (mShutdownInterval != shutdownInterval) {
+//            mShutdownInterval = shutdownInterval;
+//        }
+//    }
 }
