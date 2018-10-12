@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,6 +52,7 @@ public class DistanceConverterTest {
 
     private IDistanceConverter mDistanceConverterSi;
     private IDistanceConverter mDistanceConverterEng;
+    private IDistanceConverter mDistanceConverterException;
 
     @Before
     public void setUp() throws Exception {
@@ -62,6 +66,7 @@ public class DistanceConverterTest {
 
         mDistanceConverterSi = new DistanceConverter(mCurrentPreferencesSi);
         mDistanceConverterEng = new DistanceConverter(mCurrentPreferencesEng);
+        mDistanceConverterException = new DistanceConverter(null);
     }
 
     @Test
@@ -101,6 +106,17 @@ public class DistanceConverterTest {
         assertEquals("45.2 mph", mDistanceConverterEng.convertSpeed(20.222d));
         assertEquals("721.0 mph", mDistanceConverterEng.convertSpeed(322.334d));
     }
+
+    @Test
+    public void testConvertException() {
+        try {
+            mDistanceConverterException.convertSpeed(-1d);
+            fail();
+        } catch (Throwable throwable) {
+            assertTrue(true);
+        }
+    }
+
 
     @After
     public void tearDown() throws Exception {
