@@ -9,6 +9,7 @@ import com.elegion.tracktor.common.event.MapThemePreferencesChangeEvent;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
 import com.elegion.tracktor.ui.common.TrackDecoration;
+import com.elegion.tracktor.utils.DistanceConverter;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CurrentPreferences {
+public class CurrentPreferences implements DistanceConverter.ICurrentPreferences {
     private Map mPrefs;
     private Integer[] mKeys = {R.string.sex_key, R.string.weight_key, R.string.height_key, R.string.unit_key, R.string.picture_quality_key, R.string.track_decoration_key,
             R.string.map_theme_key, R.string.shutdown_key, R.string.background_key};
@@ -173,8 +174,8 @@ public class CurrentPreferences {
         return value != 0 ? value : 175;
     }
 
-    public double getUnit() {
-        double value = getDoubleValue(mUnitKey);
+    public int getUnit() {
+        int value = getIntegerValue(mUnitKey);
         return value != 0 ? value : 1;
     }
 
