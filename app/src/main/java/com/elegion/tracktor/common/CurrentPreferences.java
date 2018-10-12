@@ -173,8 +173,8 @@ public class CurrentPreferences implements DistanceConverter.ICurrentPreferences
         return value != 0 ? value : 175;
     }
 
-    public double getUnit() {
-        double value = getDoubleValue(mUnitKey);
+    public int getUnit() {
+        int value = getIntegerValue(mUnitKey);
         return value != 0 ? value : 1;
     }
 

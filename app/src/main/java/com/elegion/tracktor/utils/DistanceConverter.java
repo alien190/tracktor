@@ -72,7 +72,7 @@ public class DistanceConverter implements IDistanceConverter {
     }
 
     public interface ICurrentPreferences {
-        double getUnit();
+        int getUnit();
 
         List<String> getDistanceUnitSymbol();
 
