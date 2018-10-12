@@ -5,10 +5,10 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import java.util.List;
 import java.util.Locale;
 
-public class DistanceConverter  implements IDistanceConverter{
-    private CurrentPreferences mCurrentPreferences;
+public class DistanceConverter implements IDistanceConverter {
+    private ICurrentPreferences mCurrentPreferences;
 
-    public DistanceConverter(CurrentPreferences currentPreferences) {
+    public DistanceConverter(ICurrentPreferences currentPreferences) {
         mCurrentPreferences = currentPreferences;
     }
 
@@ -49,15 +49,15 @@ public class DistanceConverter  implements IDistanceConverter{
     }
 
 
-    public String convertSpeed(Double sppedMetersPerSecs) {
+    public String convertSpeed(Double speedMetersPerSecs) {
         try {
             double speed;
             String format = "%.1f " + mCurrentPreferences.getSpeedUnitSymbol().get(0);
 
-            if (sppedMetersPerSecs == null || sppedMetersPerSecs < 0) {
+            if (speedMetersPerSecs == null || speedMetersPerSecs < 0) {
                 speed = 0d;
             } else {
-                speed = sppedMetersPerSecs;
+                speed = speedMetersPerSecs;
             }
             if (mCurrentPreferences.getUnit() == CurrentPreferences.UNITS_SI) {
                 speed = speed * 3.6;
@@ -69,6 +69,14 @@ public class DistanceConverter  implements IDistanceConverter{
             throwable.printStackTrace();
             return "";
         }
+    }
+
+    public interface ICurrentPreferences {
+        double getUnit();
+
+        List<String> getDistanceUnitSymbol();
+
+        List<String> getSpeedUnitSymbol();
     }
 
 }
