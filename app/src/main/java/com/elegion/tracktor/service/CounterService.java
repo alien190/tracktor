@@ -10,13 +10,16 @@ import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.KalmanRoute;
 import com.elegion.tracktor.common.LocationData;
 import com.elegion.tracktor.common.NotificationHelper;
+import com.elegion.tracktor.common.event.GoToBackgroundEvent;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.common.event.ReadyToBackground;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.SegmentForRouteEvent;
 import com.elegion.tracktor.common.event.StartRouteEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
 import com.elegion.tracktor.common.event.TimerUpdateEvent;
+import com.elegion.tracktor.data.IRepository;
 import com.elegion.tracktor.ui.common.WeatherUpdater;
 import com.elegion.tracktor.ui.map.MainActivity;
 import com.elegion.tracktor.utils.IDistanceConverter;
@@ -48,6 +51,8 @@ public class CounterService extends Service implements ITrackHelperCallBack {
 
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest mLocationRequest = new LocationRequest();
+    private boolean mIsResume;
+    private boolean mGoToBackground;
 
     @Inject
     protected IDistanceConverter mDistanceConverter;
@@ -55,6 +60,8 @@ public class CounterService extends Service implements ITrackHelperCallBack {
     protected CurrentPreferences mCurrentPreferences;
     @Inject
     protected WeatherUpdater mWeatherUpdater;
+    @Inject
+    protected IRepository mRepository;
 
     private INotificationHelper mNotificationHelper;
 
@@ -77,21 +84,19 @@ public class CounterService extends Service implements ITrackHelperCallBack {
 
     @Override
     public void onCreate() {
-        Scope scope = Toothpick.openScope("Application");
-        Toothpick.inject(this, scope);
 
-        mTrackHelper = new KalmanRoute(mWeatherUpdater);
-        mTrackHelper.setCallBack(this);
-        mShutdownInterval = mCurrentPreferences.getShutdownInterval();
-        mNotificationHelper = new NotificationHelper(this, mDistanceConverter);
-        EventBus.getDefault().register(this);
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        init();
         startForeground();
-        mTrackHelper.start();
+        if (mIsResume) {
+            mTrackHelper.resume();
+        } else {
+            mTrackHelper.start();
+        }
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(UPDATE_FASTEST_INTERVAL);
@@ -102,8 +107,19 @@ public class CounterService extends Service implements ITrackHelperCallBack {
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-
         return START_REDELIVER_INTENT;
+    }
+
+    private void init() {
+        Scope scope = Toothpick.openScope("Application");
+        Toothpick.inject(this, scope);
+        mShutdownInterval = mCurrentPreferences.getShutdownInterval();
+        mNotificationHelper = new NotificationHelper(this, mDistanceConverter);
+        EventBus.getDefault().register(this);
+        mTrackHelper = new KalmanRoute(mWeatherUpdater);
+        mIsResume = mTrackHelper.loadFromRealm(mRepository);
+        mTrackHelper.setCallBack(this);
+        mGoToBackground = false;
     }
 
     public void startForeground() {
@@ -119,20 +135,7 @@ public class CounterService extends Service implements ITrackHelperCallBack {
 
     @Override
     public void onDestroy() {
-        mTrackHelper.stop();
-        EventBus.getDefault().unregister(this);
-        StringBuilder locationDataBuilder = new StringBuilder();
-
-        locationDataBuilder.append("Сырые данные:\n");
-        // locationDataBuilder.append(StringUtils.getLocationDataText(mRawLocationData));
-        locationDataBuilder.append("Отфильтрованные данные:\n");
-        // locationDataBuilder.append(mTrackHelper.toString());
-
-        EventBus.getDefault().postSticky(new StopRouteEvent(mTrackHelper));
-
-        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
-        mTrackHelper = null;
-        stopForeground(true);
+        stop();
     }
 
     @Override
@@ -168,5 +171,26 @@ public class CounterService extends Service implements ITrackHelperCallBack {
         if (mShutdownInterval != shutdownInterval) {
             mShutdownInterval = shutdownInterval;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void goToBackground(GoToBackgroundEvent event) {
+        mGoToBackground = true;
+        mTrackHelper.saveToRealm(mRepository);
+        stop();
+    }
+
+    private void stop() {
+        if (mGoToBackground) {
+            EventBus.getDefault().post(new ReadyToBackground());
+        } else {
+            EventBus.getDefault().postSticky(new StopRouteEvent(mTrackHelper));
+        }
+
+        mTrackHelper.stop();
+        EventBus.getDefault().unregister(this);
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        mTrackHelper = null;
+        stopForeground(true);
     }
 }

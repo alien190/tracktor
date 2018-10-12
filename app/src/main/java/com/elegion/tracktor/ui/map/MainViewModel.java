@@ -9,7 +9,10 @@ import com.elegion.tracktor.R;
 import com.elegion.tracktor.api.IOpenweathermapApi;
 import com.elegion.tracktor.common.CurrentPreferences;
 import com.elegion.tracktor.common.LocationData;
+import com.elegion.tracktor.common.event.BackgroundPreferencesChangeEvent;
+import com.elegion.tracktor.common.event.GoToBackgroundEvent;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
+import com.elegion.tracktor.common.event.ReadyToBackground;
 import com.elegion.tracktor.common.event.RequestRouteUpdateEvent;
 import com.elegion.tracktor.common.event.RouteUpdateEvent;
 import com.elegion.tracktor.common.event.StopRouteEvent;
@@ -44,11 +47,11 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     public static final int SERVICE_STATE_STOPPING = 2;
     public static final int SERVICE_STATE_MUST_RUN = 3;
     public static final int SERVICE_STATE_MUST_STOP = 4;
+    public static final int SERVICE_STATE_GO_TO_FOREGROUND = 5;
 
 
     private MutableLiveData<Boolean> startEnabled = new MutableLiveData<>();
     private MutableLiveData<Boolean> stopEnabled = new MutableLiveData<>();
-    //private MutableLiveData<Boolean> mIsShutdown = new MutableLiveData<>();
     private MutableLiveData<String> timeText = new MutableLiveData<>();
     private MutableLiveData<String> mDistanceText = new MutableLiveData<>();
     private MutableLiveData<Double> mAverageSpeedLive = new MutableLiveData<>();
@@ -108,6 +111,24 @@ public class MainViewModel extends ViewModel implements IWeatherViewModel {
     public void onPreferencesChange(PreferencesChangeEvent event) {
         mDistanceText.postValue(mDistanceConverter.convertDistance(mDistance));
         mAverageSpeedLive.postValue(mAverageSpeed);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onBackgroundPreferencesChange(BackgroundPreferencesChangeEvent event) {
+        if (mServiceState != null &&
+                mServiceState.getValue() != null &&
+                mServiceState.getValue() == SERVICE_STATE_RUNNING) {
+            if (mCurrentPreferences.getIsBackground()) {
+                EventBus.getDefault().post(new GoToBackgroundEvent());
+            } else {
+                mServiceState.postValue(SERVICE_STATE_GO_TO_FOREGROUND);
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onReadyToBackground(ReadyToBackground event) {
+        mServiceState.postValue(SERVICE_STATE_MUST_RUN);
     }
 
 

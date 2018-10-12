@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ITrackHelper {
     void start();
+    void resume();
     void stop();
     void onRouteUpdate(LatLng newPoint);
     List<LatLng> getRoute();
@@ -19,6 +20,6 @@ public interface ITrackHelper {
     Double getTemperature();
     String getWeatherDescription();
     String getWeatherIcon();
-    void loadFromRealm(IRepository repository);
+    boolean loadFromRealm(IRepository repository);
     void saveToRealm(IRepository repository);
 }

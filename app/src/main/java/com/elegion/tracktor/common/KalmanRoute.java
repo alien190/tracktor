@@ -60,7 +60,7 @@ public class KalmanRoute implements ITrackHelper {
         mAverageSpeed = 0;
     }
 
-    public void loadFromRealm(IRepository repository) {
+    public boolean loadFromRealm(IRepository repository) {
         LocationJobState state = null;
         if (repository != null) {
             state = repository.getLocationJobState();
@@ -77,14 +77,11 @@ public class KalmanRoute implements ITrackHelper {
                 mStartDate = state.getStartDate();
                 mAverageSpeed = state.getAverageSpeed();
                 isStarted = state.isStarted();
-//                mWeatherUpdater.setTemperature(state.getTemperature());
-//                mWeatherUpdater.setWeatherDescription(state.getWeatherDescription());
-//                mWeatherUpdater.setWeatherIcon(state.getWeatherIcon());
+                return true;
             }
         }
-        if (state == null) {
-            fixStartTime();
-        }
+        fixStartTime();
+        return false;
     }
 
     public void saveToRealm(IRepository repository) {
@@ -114,6 +111,14 @@ public class KalmanRoute implements ITrackHelper {
     @Override
     public void start() {
         fixStartTime();
+        mTimerDisposable = Observable.interval(1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(seconds -> updateMetrics());
+    }
+
+    @Override
+    public void resume() {
         mTimerDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())

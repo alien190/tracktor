@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.elegion.tracktor.R;
 import com.elegion.tracktor.common.CurrentPreferences;
+import com.elegion.tracktor.common.event.GoToBackgroundEvent;
 import com.elegion.tracktor.data.model.LocationJobState;
 import com.elegion.tracktor.di.main.MainModule;
 import com.elegion.tracktor.job.LocationJob;
@@ -24,6 +25,8 @@ import com.elegion.tracktor.utils.CommonUtils;
 import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.TimeUnit;
 
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
             PersistableBundleCompat bundleCompat = new PersistableBundleCompat();
             bundleCompat.putBoolean(LocationJob.RESCHEDULE_KEY, true);
             int jobId = new JobRequest.Builder(LocationJob.TAG)
-                    .setExact(TimeUnit.SECONDS.toMillis(1))
+                    .setExact(TimeUnit.SECONDS.toMillis(1))   //для отладки!!!
                     .setBackoffCriteria(TimeUnit.SECONDS.toMillis(1), JobRequest.BackoffPolicy.LINEAR)
                     .setExtras(bundleCompat)
                     .build()
@@ -198,6 +201,12 @@ public class MainActivity extends AppCompatActivity {
             case MainViewModel.SERVICE_STATE_MUST_STOP: {
                 stopService();
                 mViewModel.getServiceState().postValue(MainViewModel.SERVICE_STATE_STOPPING);
+                break;
+            }
+            case MainViewModel.SERVICE_STATE_GO_TO_FOREGROUND: {
+                JobManager.instance().cancelAll();
+                startService();
+                mViewModel.getServiceState().postValue(MainViewModel.SERVICE_STATE_RUNNING);
                 break;
             }
             default: {

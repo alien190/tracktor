@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.preference.PreferenceManager;
 
 import com.elegion.tracktor.R;
+import com.elegion.tracktor.common.event.BackgroundPreferencesChangeEvent;
 import com.elegion.tracktor.common.event.MapThemePreferencesChangeEvent;
 import com.elegion.tracktor.common.event.PreferencesChangeEvent;
 import com.elegion.tracktor.common.event.TrackDecorationPreferencesChangeEvent;
@@ -140,6 +141,8 @@ public class CurrentPreferences implements DistanceConverter.ICurrentPreferences
                     notifyChangesTrackDecoration();
                 } else if (key.equals(mMapThemeKey)) {
                     notifyChangesMapTheme();
+                } else if (key.equals(mBackgroundKey)) {
+                    notifyChangesBackground();
                 } else {
                     notifyChanges();
                 }
@@ -159,6 +162,9 @@ public class CurrentPreferences implements DistanceConverter.ICurrentPreferences
         EventBus.getDefault().postSticky(new MapThemePreferencesChangeEvent());
     }
 
+    public void notifyChangesBackground() {
+        EventBus.getDefault().postSticky(new BackgroundPreferencesChangeEvent());
+    }
     public String getValue(String key) {
         Object value = mPrefs.get(key);
         return value != null ? value.toString() : "";
