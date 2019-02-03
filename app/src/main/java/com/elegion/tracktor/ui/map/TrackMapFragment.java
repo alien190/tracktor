@@ -2,6 +2,8 @@ package com.elegion.tracktor.ui.map;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,6 +40,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -125,6 +128,15 @@ public class TrackMapFragment extends SupportMapFragment implements
                     .width(mCurrentPreferences.getTrackDecorationLineWidth())
                     .color(mCurrentPreferences.getTrackDecorationColor()));
             animateCamera(segmentForRouteEvent.points.second.point);
+
+            Geocoder geo = new Geocoder(getContext(), Locale.getDefault());
+            try {
+                List<Address> addresses = geo.getFromLocation(segmentForRouteEvent.points.second.point.latitude,
+                        segmentForRouteEvent.points.second.point.longitude, 1);
+                int i=0;
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
         }
     }
 
